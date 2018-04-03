@@ -1,0 +1,89 @@
+///
+/// Convert a list to a string
+/// Copied from https://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+///
+/// @arg {List} $list [null]
+///   A list.
+///
+/// @arg {String} $glue ['']
+///   A string used to join elements.
+///
+/// @arg {Bool} $is-nested [false]
+///   A pointer used when function does call itself.
+///
+@function to-string($list, $glue: '', $is-nested: false) {
+    $result: null;
+
+    @for $i from 1 through length($list) {
+        $e: nth($list, $i);
+
+        @if type-of($e) == list {
+            $result: $result#{to-string($e, $glue, true)};
+        } @else {
+            $result: if(
+                $i != length($list) or $is-nested,
+                $result#{$e}#{$glue},
+                $result#{$e}
+            );
+        }
+    }
+
+    @return $result;
+}
+
+///
+/// Get key names from a map to return a string of names separated by
+/// an empty space.
+///
+/// @arg {Map} $map [null]
+///   A map.
+///
+/// @arg {String} $prefix ['']
+///   A string to preprend to each item.
+///
+@function get-names($map, $prefix: "") {
+    $values: ();
+    @each $name in map-keys($map) {
+        $values: append($values, $prefix+$name);
+    }
+    @return '["' + to-string($values, $glue: '", "') + '"]';
+}
+
+///
+/// Get item values from a map to return a string of names separated by
+/// an empty space.
+///
+/// @arg {Map} $map [null]
+///   A map.
+///
+/// @arg {String} $prefix ['']
+///   A string to preprend to each item.
+///
+@function get-values($map, $prefix: "") {
+    $values: ();
+    @each $name in map-values($map) {
+        $values: append($values, $prefix+$name);
+    }
+    @return '["' + to-string($values, $glue: '", "') + '"]';
+}
+
+///
+/// Get property values from a map to return a string of values separated by
+/// an empty space.
+///
+/// @arg {Map} $map [null]
+///   A map.
+///
+/// @arg {String} $property [null]
+///   Property name to get.
+///
+/// @arg {String} $prefix ['']
+///   A string to preprend to each item.
+///
+@function get-props($map, $property, $prefix: "") {
+    $values: ();
+    @each $name, $scheme in $map {
+        $values: append($values, $prefix+map-get($scheme, $property));
+    }
+    @return '["' + to-string($values, $glue: '", "') + '"]';
+}
