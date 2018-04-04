@@ -1,1 +1,4 @@
  -r tests.txt
+sphinx
+sphinx-rtd-theme
+sphinx-autobuild
