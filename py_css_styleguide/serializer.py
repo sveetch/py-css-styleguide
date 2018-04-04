@@ -1,5 +1,4 @@
 from py_css_styleguide.nomenclature import (
-    RULE_BASE_PREFIX,
     RULE_META_REFERENCES,
     RULE_REFERENCE,
     RULE_ALLOWED_START,
@@ -86,7 +85,8 @@ class ManifestSerializer(object):
 
         ``list`` is allways the default format.
 
-        Value is not getted from a safe get, if it does not exist it raises an exception.
+        Value is not getted from a safe get, if it does not exist it raises an
+        exception.
 
         It is assumed that asked value is allways a string.
 
@@ -201,17 +201,18 @@ class ManifestSerializer(object):
         """
         Get manifest enabled references declaration
 
-        This required declaration is readed from ``styleguide-metas-references``
-        rule that require a ``--names`` property. Format kind should not be
-        defined since attempted value is allways a list.
+        This required declaration is readed from
+        ``styleguide-metas-references`` rule that require a ``--names``
+        property. Format kind should not be defined since attempted value is
+        allways a list.
 
         Section name (and so Reference name also) must no contains special
         character nor ``-`` so they still be valid variable name for almost
         any languages. For word separator inside name, use ``_``.
 
         Arguments:
-            datas (dict): Data where to search for meta references declaration. This
-                is commonly the fully parsed manifest.
+            datas (dict): Data where to search for meta references declaration.
+                This is commonly the fully parsed manifest.
 
         Returns:
             (list): A list of reference names.
@@ -284,12 +285,12 @@ class ManifestSerializer(object):
         """
         Get enabled manifest references declarations.
 
-        Enabled references are defined through meta references declaration, every
-        other references are ignored.
+        Enabled references are defined through meta references declaration,
+        every other references are ignored.
 
         Arguments:
-            datas (dict): Data where to search for reference declarations. This
-                is commonly the fully parsed manifest.
+            datas (dict): Data where to search for reference declarations.
+                This is commonly the fully parsed manifest.
             meta_references (list): List of enabled reference names.
 
         Returns:

@@ -53,7 +53,7 @@ class Manifest(object):
         self.metas = serializer._metas
 
         # Set every enabled rule as object attribute
-        for k,v in references.items():
+        for k, v in references.items():
             self.set_rule(k, v)
 
         return self._datas
@@ -93,6 +93,6 @@ class Manifest(object):
             'metas': self.metas,
         }
 
-        agregate.update({k:getattr(self, k) for k in self._rule_attrs})
+        agregate.update({k: getattr(self, k) for k in self._rule_attrs})
 
         return json.dumps(agregate, indent=indent)
