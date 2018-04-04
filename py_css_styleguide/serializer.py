@@ -17,6 +17,9 @@ class ManifestSerializer(object):
     """
     Serialize parsed CSS to data suitable to Manifest
 
+    Raises:
+        SerializerError: When there is invalid syntax in datas.
+
     Attributes:
         _metas (dict): Buffer to store serialized metas from parsed source.
             Default is an empty dict which reseted and filled from
@@ -125,7 +128,7 @@ class ManifestSerializer(object):
         value (according to key index position).
 
         Arguments:
-            name (string): Name only used inside possible exceptions.
+            name (string): Name only used inside possible exception message.
             datas (dict): Datas to serialize.
 
         Returns:
@@ -166,6 +169,13 @@ class ManifestSerializer(object):
         This means both ``keys`` and ``values`` are required property to be
         correctly filled (each one is a string of item separated with an empty
         space). Both resulting list must be the same length.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            (dict): Serialized reference datas.
         """
         context = {}
 

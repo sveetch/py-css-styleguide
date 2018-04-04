@@ -1,3 +1,5 @@
+import json
+
 from py_css_styleguide.parser import TinycssSourceParser
 from py_css_styleguide.serializer import ManifestSerializer
 
@@ -11,21 +13,22 @@ class Manifest(object):
 
     Attributes:
         _path (string): Possible filepath for source if it has been given.
-        _datas (dict): Dictionnary of every rules returned by serializer. This
+        _datas (dict): Dictionnary of every rules returned by parser. This
             is not something you would need to reach commonly.
         metas (dict): Dictionnary of every metas returned by serializer.
     """
     def __init__(self):
         self._path = None
         self._datas = None
+        self._rule_attrs = []
 
         self.metas = {}
 
     def load(self, source, filepath=None):
         """
-        Set a rules as object attribute.
+        Load source as manifest attributes
 
-        Args:
+        Arguments:
             source (string): CSS source to parse and serialize to find metas
                 and rules.
 
@@ -59,8 +62,37 @@ class Manifest(object):
         """
         Set a rules as object attribute.
 
-        Args:
+        Arguments:
             name (string): Rule name to set as attribute name.
             properties (dict): Dictionnary of properties.
         """
+        self._rule_attrs.append(name)
         setattr(self, name, properties)
+
+    def remove_rule(self, name):
+        """
+        Remove a rule from attributes.
+
+        Arguments:
+            name (string): Rule name to remove.
+        """
+        self._rule_attrs.remove(name)
+        delattr(self, name)
+
+    def to_json(self, indent=4):
+        """
+        Serialize metas and reference attributes to a JSON string.
+
+        Keyword Arguments:
+            indent (int): Space indentation, default to ``4``.
+
+        Returns:
+            string: JSON datas.
+        """
+        agregate = {
+            'metas': self.metas,
+        }
+
+        agregate.update({k:getattr(self, k) for k in self._rule_attrs})
+
+        return json.dumps(agregate, indent=indent)
