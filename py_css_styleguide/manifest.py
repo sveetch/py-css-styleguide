@@ -3,6 +3,8 @@ import json
 from py_css_styleguide.parser import TinycssSourceParser
 from py_css_styleguide.serializer import ManifestSerializer
 
+class FooP(Exception):
+    pass
 
 class Manifest(object):
     """
@@ -29,22 +31,36 @@ class Manifest(object):
         Load source as manifest attributes
 
         Arguments:
-            source (string): CSS source to parse and serialize to find metas
-                and rules.
+            source (string or file-object): CSS source to parse and serialize
+                to find metas and rules. It can be either a string or a
+                file-like object (aka with a ``read()`` method which return
+                string).
 
         Keyword Arguments:
             filepath (string): Optional filepath to memorize if source comes
                 from a file. Default is ``None`` as if source comes from a
-                string.
+                string. If ``source`` argument is a file-like object, you
+                should not need to bother of this argument since filepath will
+                be filled from source ``name`` attribute.
 
         Returns:
             dict: Dictionnary of serialized rules.
         """
-        self._path = filepath
+        # Set _path if source is a file-like object
+        try:
+            self._path = source.name
+        except AttributeError:
+            self._path = filepath
+
+        # Get source content either it's a string or a file-like object
+        try:
+            source_content = source.read()
+        except AttributeError:
+            source_content = source
 
         # Parse and serialize given source
         parser = TinycssSourceParser()
-        self._datas = parser.parse(source)
+        self._datas = parser.parse(source_content)
 
         serializer = ManifestSerializer()
         references = serializer.serialize(self._datas)

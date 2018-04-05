@@ -25,12 +25,8 @@ class FixturesSettingsTestMixin(object):
             self.fixtures_dir
         )
 
-        # Some sample libraries
-        self.colors_dir = 'colors'
-        self.colors_path = os.path.join(self.fixtures_path, self.colors_dir)
-
 
 @pytest.fixture(scope="module")
-def settings():
+def fixtures_settings():
     """Initialize and return settings (mostly paths) for fixtures (scope at module level)"""
     return FixturesSettingsTestMixin()

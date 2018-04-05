@@ -7,6 +7,7 @@ Version 0.1.0 - Unreleased
 --------------------------
 
 * Added documentation with Sphinx;
+* Changed ``Manifest.load`` so it also accepts a file-like object;
 
 Version 0.0.2 - 2018/04/04
 --------------------------
