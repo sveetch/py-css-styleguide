@@ -1,8 +1,8 @@
 .. _intro_install:
 
-*******
+=======
 Install
-*******
+=======
 
 Easy as : ::
 

@@ -3,8 +3,6 @@ import json
 from py_css_styleguide.parser import TinycssSourceParser
 from py_css_styleguide.serializer import ManifestSerializer
 
-class FooP(Exception):
-    pass
 
 class Manifest(object):
     """

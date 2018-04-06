@@ -40,6 +40,7 @@ User’s Guide
 
    install.rst
    basics.rst
+   usage.rst
 
 Developer’s Guide
 *****************

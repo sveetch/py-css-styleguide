@@ -10,19 +10,19 @@ from py_css_styleguide.manifest import Manifest
 def test_manifest_load_string():
     source = (
         '.styleguide-metas-references{\n'
-        '    names: "palette schemes";\n'
+        '    --names: "palette text_color";\n'
         '}\n'
         '\n'
         '.styleguide-reference-palette{\n'
-        '    flat: "true";\n'
-        '    keys: "black white";\n'
-        '    values: "#000000 #ffffff";\n'
+        '    --flat: "true";\n'
+        '    --keys: "black white";\n'
+        '    --values: "#000000 #ffffff";\n'
         '}\n'
         '\n'
-        '.styleguide-reference-schemes{\n'
-        '    keys: "black white";\n'
-        '    selectors: ".bg-black .bg-white";\n'
-        '    values: "#000000 #ffffff";\n'
+        '.styleguide-reference-text_color{\n'
+        '    --keys: "black white";\n'
+        '    --selectors: ".bg-black .bg-white";\n'
+        '    --values: "#000000 #ffffff";\n'
         '}'
     )
 
@@ -33,7 +33,7 @@ def test_manifest_load_string():
 
     assert sorted(manifest.metas.get('references')) == sorted([
         'palette',
-        'schemes'
+        'text_color'
     ])
 
     assert manifest.palette == {
@@ -41,7 +41,7 @@ def test_manifest_load_string():
         'black': '#000000',
     }
 
-    assert manifest.schemes == {
+    assert manifest.text_color == {
         'black': {
             'selectors': ".bg-black",
             'values': "#000000",
@@ -68,7 +68,7 @@ def test_manifest_load_fileobject(fixtures_settings):
 
     assert sorted(manifest.metas.get('references')) == sorted([
         'palette',
-        'schemes'
+        'text_color'
     ])
 
     assert manifest.palette == {
@@ -76,7 +76,7 @@ def test_manifest_load_fileobject(fixtures_settings):
         'black': '#000000',
     }
 
-    assert manifest.schemes == {
+    assert manifest.text_color == {
         'black': {
             'selectors': ".bg-black",
             'values': "#000000",
@@ -91,19 +91,19 @@ def test_manifest_load_fileobject(fixtures_settings):
 def test_manifest_to_json():
     source = (
         '.styleguide-metas-references{\n'
-        '    names: "palette schemes";\n'
+        '    --names: "palette text_color";\n'
         '}\n'
         '\n'
         '.styleguide-reference-palette{\n'
-        '    flat: "true";\n'
-        '    keys: "black white";\n'
-        '    values: "#000000 #ffffff";\n'
+        '    --flat: "true";\n'
+        '    --keys: "black white";\n'
+        '    --values: "#000000 #ffffff";\n'
         '}\n'
         '\n'
-        '.styleguide-reference-schemes{\n'
-        '    keys: "black white";\n'
-        '    selectors: ".bg-black .bg-white";\n'
-        '    values: "#000000 #ffffff";\n'
+        '.styleguide-reference-text_color{\n'
+        '    --keys: "black white";\n'
+        '    --selectors: ".bg-black .bg-white";\n'
+        '    --values: "#000000 #ffffff";\n'
         '}'
     )
 
@@ -116,14 +116,14 @@ def test_manifest_to_json():
         'metas': {
             'references': [
                 'palette',
-                'schemes',
+                'text_color',
             ],
         },
         'palette': {
             'white': '#ffffff',
             'black': '#000000',
         },
-        'schemes': {
+        'text_color': {
             'black': {
                 'selectors': ".bg-black",
                 'values': "#000000",
