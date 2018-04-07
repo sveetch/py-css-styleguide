@@ -24,7 +24,7 @@ This library doesn't provide template or application to build the styleguide pag
 Links
 *****
 
-* Read the documentation on `Read the docs <https://py-css-styleguide.readthedocs.io/>`_;
+* Read the documentation on `Read the docs <https://pycssstyleguide.readthedocs.io/>`_;
 * Download its `PyPi package <http://pypi.python.org/pypi/py-css-styleguide>`_;
 * Clone it on its `Github repository <https://github.com/sveetch/py-css-styleguide>`_;
 
