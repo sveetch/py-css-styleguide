@@ -1,0 +1,15 @@
+.styleguide-metas-references {
+  --names: "palette schemes";
+}
+
+.styleguide-reference-palette {
+  --flat: "true";
+  --keys: "black white";
+  --values: "#000000 #ffffff";
+}
+
+.styleguide-reference-schemes {
+  --keys: "black white";
+  --selector: ".bg-black .bg-white";
+  --value: "#000000 #ffffff";
+}

@@ -1,3 +1,14 @@
+"""
+Model
+=====
+
+The model manifest contains structured datas of parsed and serialized
+CSS manifest.
+
+Each reference rule is stored in as object attribute and every metas rules are
+stored in ``Manifest.metas`` attribute.
+
+"""
 import json
 
 from py_css_styleguide.parser import TinycssSourceParser
@@ -12,9 +23,12 @@ class Manifest(object):
     reach them directly.
 
     Attributes:
-        _path (string): Possible filepath for source if it has been given.
+        _path (string): Possible filepath for source if it has been given or
+            finded from source file-object.
         _datas (dict): Dictionnary of every rules returned by parser. This
             is not something you would need to reach commonly.
+        _rule_attrs (list): List of registered reference rules. You may use
+            it in iteration to find available reference attribute names.
         metas (dict): Dictionnary of every metas returned by serializer.
     """
     def __init__(self):

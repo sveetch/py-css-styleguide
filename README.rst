@@ -14,7 +14,12 @@ Why a dedicated CSS file for a manifest ? Because it can be automatically writed
 
 Manifest syntax rules are writed so the CSS file is still a valid CSS, mostly using CSS3 variables.
 
-Actually this library provide an API to load a CSS manifest and return it has structured datas.
+This library provides:
+
+* An API to load a CSS manifest and return it has structured datas;
+* A Sass source with some mixin helpers to help you to write CSS manifest from your Sass sources;
+
+This library doesn't provide template or application to build the styleguide page, it's up to you to integrate it in your project.
 
 Links
 *****

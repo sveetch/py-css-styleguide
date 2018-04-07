@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+@import "settings";
+
+@import "styleguide_helpers";
+
+.styleguide-metas-references{
+    --names: "palette schemes";
+}
+
+.styleguide-reference-palette{
+    --flat: "true";
+    --keys: "#{get-names($palette)}";
+    --values: "#{get-values($palette)}";
+}
+
+.styleguide-reference-schemes {
+    --keys: "#{get-names($schemes-colors)}";
+    --selector: "#{get-names($schemes-colors, '.bg-')}";
+    --value: "#{get-props($schemes-colors, 'background')}";
+}

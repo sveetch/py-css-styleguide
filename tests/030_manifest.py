@@ -4,7 +4,7 @@ import json
 import os
 import pytest
 
-from py_css_styleguide.manifest import Manifest
+from py_css_styleguide.model import Manifest
 
 
 def test_manifest_load_string():

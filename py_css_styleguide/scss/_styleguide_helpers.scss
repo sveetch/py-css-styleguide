@@ -46,7 +46,7 @@
     @each $name in map-keys($map) {
         $values: append($values, $prefix+$name);
     }
-    @return '["' + to-string($values, $glue: '", "') + '"]';
+    @return to-string($values, $glue: ' ');
 }
 
 ///
@@ -64,7 +64,7 @@
     @each $name in map-values($map) {
         $values: append($values, $prefix+$name);
     }
-    @return '["' + to-string($values, $glue: '", "') + '"]';
+    @return to-string($values, $glue: ' ');
 }
 
 ///
@@ -85,5 +85,5 @@
     @each $name, $scheme in $map {
         $values: append($values, $prefix+map-get($scheme, $property));
     }
-    @return '["' + to-string($values, $glue: '", "') + '"]';
+    @return to-string($values, $glue: ' ');
 }

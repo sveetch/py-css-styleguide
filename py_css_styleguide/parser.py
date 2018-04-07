@@ -1,3 +1,8 @@
+"""
+Parser
+======
+
+"""
 from tinycss2 import parse_stylesheet
 
 from py_css_styleguide.nomenclature import RULE_BASE_PREFIX
@@ -16,7 +21,19 @@ class TinycssSourceParser(object):
     def digest_prelude(self, rule):
         """
         Walk on rule prelude (aka CSS selector) tokens to return a string of
-        the value name (from css selector)
+        the value name (from css selector).
+
+        Actually only simple selector and selector with descendant combinator
+        are supported. Using any other selector kind may leads to unexpected
+        issues.
+
+        Arguments:
+            rule (tinycss2.ast.QualifiedRule): Qualified rule object as
+                returned by  tinycss2.
+
+        Returns:
+            string: Selector name. If it's a descendant combinator, items are
+                joined with ``__``.
         """
         name = []
 
@@ -28,10 +45,17 @@ class TinycssSourceParser(object):
 
     def digest_content(self, rule):
         """
-        Walk on rule content tokens to return a dict of properties
+        Walk on rule content tokens to return a dict of properties.
 
         This is pretty naive and will choke/fail on everything that is more
         evolved than simple ``ident(string):value(string)``
+
+        Arguments:
+            rule (tinycss2.ast.QualifiedRule): Qualified rule object as
+                returned by  tinycss2.
+
+        Returns:
+            dict: Dictionnary of retrieved variables and properties.
         """
         data = {}
 
@@ -56,10 +80,13 @@ class TinycssSourceParser(object):
 
     def consume(self, source):
         """
-        Consume token from parsed CSS with tinycss2
+        Parse source and consume tokens from tinycss2.
+
+        Arguments:
+            source (string): Source content to parse.
 
         Returns:
-            dict: Selectors with their properties.
+            dict: Retrieved rules.
         """
         manifest = {}
 
@@ -84,6 +111,12 @@ class TinycssSourceParser(object):
 
     def parse(self, source):
         """
-        Read and parse CSS source and return dict of selectors.
+        Read and parse CSS source and return dict of rules.
+
+        Arguments:
+            source (string): Source content to parse.
+
+        Returns:
+            dict: Selectors with their properties.
         """
         return self.consume(source)

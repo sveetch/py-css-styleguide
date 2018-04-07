@@ -1,3 +1,8 @@
+"""
+Serializer
+==========
+
+"""
 from py_css_styleguide.nomenclature import (
     RULE_META_REFERENCES,
     RULE_REFERENCE,
@@ -9,6 +14,9 @@ from py_css_styleguide.nomenclature import (
 
 
 class SerializerError(Exception):
+    """
+    Exception to raise when there is a syntax issue during serialization.
+    """
     pass
 
 
@@ -102,7 +110,7 @@ class ManifestSerializer(object):
 
         Returns:
             Variable type following triggered format. Can be either a string
-                or a list.
+            or a list.
         """
         format_kind = data.get('{}-format'.format(name), default)
 
@@ -132,7 +140,7 @@ class ManifestSerializer(object):
             datas (dict): Datas to serialize.
 
         Returns:
-            (dict): Serialized reference datas.
+            dict: Serialized reference datas.
        """
         keys = datas.get('keys', None)
 
@@ -175,7 +183,7 @@ class ManifestSerializer(object):
             datas (dict): Datas to serialize.
 
         Returns:
-            (dict): Serialized reference datas.
+            dict: Serialized reference datas.
         """
         context = {}
 
@@ -215,7 +223,7 @@ class ManifestSerializer(object):
                 This is commonly the fully parsed manifest.
 
         Returns:
-            (list): A list of reference names.
+            list: A list of reference names.
         """
         rule = datas.get(RULE_META_REFERENCES, {})
 
@@ -252,7 +260,7 @@ class ManifestSerializer(object):
             name (string): Reference name to get and serialize.
 
         Returns:
-            (dict): Serialized reference datas.
+            dict: Serialized reference datas.
         """
         rule_name = '-'.join((RULE_REFERENCE, name))
         flat_mode = False
@@ -294,7 +302,7 @@ class ManifestSerializer(object):
             meta_references (list): List of enabled reference names.
 
         Returns:
-            (dict): Serialized enabled references datas.
+            dict: Serialized enabled references datas.
         """
         references = {}
 
@@ -310,7 +318,6 @@ class ManifestSerializer(object):
         Arguments:
             datas (dict): Data where to search for reference declarations. This
                 is commonly the fully parsed manifest.
-            meta_references (list): List of enabled reference names.
         """
         self._metas = {
             'references': self.get_meta_references(datas),

@@ -6,4 +6,4 @@ Install
 
 Easy as : ::
 
-    sudo pip install py-css-styleguide
+    pip install py-css-styleguide

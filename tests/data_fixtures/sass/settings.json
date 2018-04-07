@@ -1,0 +1,8 @@
+{
+    "EXCLUDES": [],
+    "LIBRARY_PATHS": [],
+    "SOURCE_COMMENTS": false,
+    "TARGET_PATH": "css",
+    "SOURCES_PATH": "scss",
+    "OUTPUT_STYLES": "expanded"
+}

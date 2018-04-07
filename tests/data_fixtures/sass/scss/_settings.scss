@@ -1,0 +1,22 @@
+$black: #000000;
+$white: #ffffff;
+
+// Palette
+// ---------
+$palette: (
+    black: $black,
+    white: $white,
+);
+
+// Schemes colors
+// ---------
+$schemes-colors: (
+    black: (
+        background: $black,
+        font-color: $white,
+    ),
+    white: (
+        background: $white,
+        font-color: $black,
+    ),
+);

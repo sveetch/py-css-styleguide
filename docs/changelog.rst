@@ -3,11 +3,12 @@
 Changelog
 =========
 
-Version 0.1.0 - Unreleased
+Version 0.1.0 - 2018/04/07
 --------------------------
 
 * Added documentation with Sphinx;
-* Changed ``Manifest.load`` so it also accepts a file-like object;
+* Changed ``Manifest.load()`` so it also accepts a file-like object;
+* Added test for Sass mixin helper using Boussole;
 
 Version 0.0.2 - 2018/04/04
 --------------------------
