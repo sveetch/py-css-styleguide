@@ -32,6 +32,28 @@
 }
 
 ///
+/// Get numbers from a list to return a string of floor number separated by an
+/// empty space.
+///
+/// Floor number can so be used as valid class names, since decimals are not
+/// valid selector.
+///
+/// @arg {List} $list [null]
+///   A list of number.
+///
+/// @arg {String} $prefix ['']
+///   A string to preprend to each item.
+///
+@function floor-number-items($list, $prefix: "") {
+    $values: ();
+    @each $number in $list {
+        $number: floor($number);
+        $values: append($values, $prefix+$number);
+    }
+    @return to-string($values, $glue: ' ');
+}
+
+///
 /// Get key names from a map to return a string of names separated by
 /// an empty space.
 ///
