@@ -2,6 +2,15 @@
 Parser
 ======
 
+This parser has been done quickly standing only on cases involved by CSS
+manifest syntax so it is very naive and may breaks on everything else.
+
+We assume CSS source only contains supported syntax for manifest, everything
+else could break process.
+
+This flaw is tempered by the behavior of parser that ignores rules that
+don't start with the manifest prefix, so CSS manifest could contains some
+other syntax for non styleguide rules.
 """
 from tinycss2 import parse_stylesheet
 
@@ -14,9 +23,6 @@ class TinycssSourceParser(object):
 
     Since tinycss2 only return tokens, this parser is in charge to turn them
     to usable datas: a dict of properties for each selector.
-
-    We assume CSS source only contains supported syntax for manifest,
-    everything else could break process.
     """
     def digest_prelude(self, rule):
         """

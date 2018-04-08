@@ -155,7 +155,7 @@ class ManifestSerializer(object):
         # Tidy each property value to its respective reference
         for k,v in datas.items():
             # Ignore reserved internal keywords
-            if k not in ('keys', 'flat'):
+            if k not in ('keys', 'structure'):
                 values = v.split(" ")
 
                 if len(values) != len(keys):
@@ -170,7 +170,7 @@ class ManifestSerializer(object):
 
     def serialize_to_flat(self, name, datas):
         """
-        Serialize given datas to a flat structure KEY:VALUE where ``KEY``
+        Serialize given datas to a flat structure ``KEY:VALUE`` where ``KEY``
         comes from ``keys`` property and ``VALUE`` comes from ``values``
         property.
 
@@ -250,9 +250,8 @@ class ManifestSerializer(object):
         A reference name starts with 'styleguide-reference-' followed by
         name for reference.
 
-        A reference can contains property ``flat`` setted to ``"true"`` (as a
-        string since there is no boolean in CSS) to indicate reference must be
-        serialized a simple pair keys/values.
+        A reference can contains property ``structure`` setted to ``"flat"`` to
+        indicate reference must be serialized a simple pair keys/values.
 
         Arguments:
             datas (dict): Data where to search for reference declaration. This
@@ -263,7 +262,7 @@ class ManifestSerializer(object):
             dict: Serialized reference datas.
         """
         rule_name = '-'.join((RULE_REFERENCE, name))
-        flat_mode = False
+        structure_mode = 'nested'
         context = {}
 
         if rule_name not in datas:
@@ -271,20 +270,23 @@ class ManifestSerializer(object):
 
         properties = datas.get(rule_name)
 
-        # Search for "flat" flag
-        if 'flat' in properties:
-            if properties['flat'].lower() == 'true':
-                flat_mode = True
-            del properties['flat']
+        # Search for "structure" property
+        if 'structure' in properties:
+            if properties['structure'] == 'flat':
+                structure_mode = 'flat'
+            else:
+                raise SerializerError("Invalide structure mode name '{}' for reference '{}'".format(structure_mode, name))
+            del properties['structure']
 
         # Validate property names
         for item in properties.keys():
             self.validate_property_name(item)
 
-        # Perform serialize nested(default)/flat
-        if flat_mode:
+        # Perform serialize according to structure mode
+        if structure_mode == 'flat':
             context = self.serialize_to_flat(name, properties)
         else:
+            # Default nested structure
             context = self.serialize_to_nested(name, properties)
 
         return context

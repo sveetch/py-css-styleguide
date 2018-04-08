@@ -187,12 +187,12 @@ def test_get_meta_references_error(context):
 
 
 @pytest.mark.parametrize('context,attempted', [
-    # Nested mode with single property and 'flat' is an ignored keyword
+    # Nested mode with single property and 'structure' is an ignored keyword
     (
         {
             'keys': "black white",
             'value': "#000000 #ffffff",
-            "flat": "whatever",
+            "structure": "whatever",
         },
         {
             'black': {
@@ -337,7 +337,7 @@ def test_serialize_to_flat_error(context):
         'palette',
         {
             'styleguide-reference-palette': {
-                'flat': 'true',
+                'structure': 'flat',
                 'keys': "black white",
                 'values': "#000000 #ffffff",
             },
@@ -377,12 +377,23 @@ def test_get_reference_success(name, context, attempted):
         {
             'styleguide-reference-palette': {
                 'keys': "black white",
-                'font-color': "red",
+                'font-color': "red blue",
                 'value': "#000000 #ffffff",
             },
         },
     ),
-    # Missing reference with multiple rules
+    # Invalid structure mode name
+    (
+        'palette',
+        {
+            'styleguide-reference-palette': {
+                'structure': "whatever",
+                'keys': "black white",
+                'values': "#000000 #ffffff",
+            },
+        },
+    ),
+    # Missing required reference from enabled references
     (
         'foo',
         {
@@ -440,7 +451,7 @@ def test_get_reference_error(name, context):
                 'names': "palette schemes",
             },
             'styleguide-reference-palette': {
-                'flat': 'true',
+                'structure': 'flat',
                 'keys': "black white",
                 'values': "#000000 #ffffff",
             },
@@ -496,7 +507,7 @@ def test_get_references(context, attempted):
                 'content': "foo",
             },
             'styleguide-reference-palette': {
-                'flat': 'true',
+                'structure': 'flat',
                 'keys': "black white",
                 'values': "#000000 #ffffff",
             },

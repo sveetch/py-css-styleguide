@@ -3,7 +3,7 @@
 }
 
 .styleguide-reference-palette {
-  --flat: "true";
+  --structure: "flat";
   --keys: "black white";
   --values: "#000000 #ffffff";
 }
@@ -15,7 +15,7 @@
 }
 
 .styleguide-reference-grid_cell_sizes {
-  --flat: "true";
+  --structure: "flat";
   --keys: "5 25 33 75 100";
   --values: "5 25 33.3333 75 100";
 }

@@ -3,7 +3,7 @@
 }
 
 .styleguide-reference-palette{
-    --flat: "true";
+    --structure: "flat";
     --keys: "black white";
     --values: "#000000 #ffffff";
 }

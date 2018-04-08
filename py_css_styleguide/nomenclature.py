@@ -48,5 +48,6 @@ RESERVED_RULE_NAMES = (
 
 # Not validated, just here for mention
 RESERVED_PROPERTY_NAMES = (
-    "flat",
+    #"flat",
+    "structure",
 )

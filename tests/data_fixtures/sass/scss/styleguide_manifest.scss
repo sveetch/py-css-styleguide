@@ -9,7 +9,7 @@
 }
 
 .styleguide-reference-palette{
-    --flat: "true";
+    --structure: "flat";
     --keys: "#{get-names($palette)}";
     --values: "#{get-values($palette)}";
 }
@@ -21,7 +21,7 @@
 }
 
 .styleguide-reference-grid_cell_sizes{
-    --flat: "true";
+    --structure: "flat";
     --keys: "#{floor-number-items($grid-cell-sizes)}";
     --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
 }
