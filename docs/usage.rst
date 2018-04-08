@@ -6,23 +6,9 @@ Usage sample
 1. Writing a CSS manifest
 *************************
 
-Write it to a ``styleguide_manifest.css`` file: ::
+Write it to a ``styleguide_manifest.css`` file:
 
-    .styleguide-metas-references {
-        --names: "palette schemes";
-    }
-
-    .styleguide-reference-palette {
-        --flat: "true";
-        --keys: "black white";
-        --values: "#000000 #ffffff";
-    }
-
-    .styleguide-reference-schemes {
-        --keys: "black white";
-        --selector: ".bg-black .bg-white";
-        --value: "#000000 #ffffff";
-    }
+.. literalinclude:: ../tests/data_fixtures/sass/css/styleguide_manifest.css
 
 2. Writing Python script to load manifest
 *****************************************
@@ -55,7 +41,7 @@ Everything before was to introduce you to manifest to know how they work. But th
 
 The real benefit comes when you build manifest from Sass sources so this will automatically update manifest when you change your Sass settings.
 
-So go into your Sass source directory and copy `this Sass file <https://github.com/sveetch/py-css-styleguide/blob/master/py_css_styleguide/scss/_styleguide_helpers.scss>`_ to ``_styleguide_helpers.scss``. It contains some mixin helper to ease writing manifest from Sass maps.
+So go into your Sass source directory and copy `this Sass file <https://github.com/sveetch/py-css-styleguide/blob/master/py_css_styleguide/scss/_styleguide_helpers.scss>`_ to ``_styleguide_helpers.scss``. It contains some Sass helpers to ease writing manifest from Sass maps.
 
 For this sample purpose we will create a basic settings file to ``_settings.scss``:
 
