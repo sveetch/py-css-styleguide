@@ -7,6 +7,8 @@ Version 0.2.0 - Unreleased
 --------------------------
 
 * Added Sass function ``floor-number-items()``;
+* Removed ``flat`` property in favor of ``structure`` to be able to allow other structure modes;
+* Added new structure mode ``list``;
 
 Version 0.1.0 - 2018/04/07
 --------------------------

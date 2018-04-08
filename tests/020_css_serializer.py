@@ -359,7 +359,7 @@ def test_serialize_to_list_error(context):
 
 
 @pytest.mark.parametrize('name,context,attempted', [
-    # Nested mode with single value
+    # Nested structure with single property
     (
         'palette',
         {
@@ -377,7 +377,28 @@ def test_serialize_to_list_error(context):
             },
         },
     ),
-    # Flat mode
+    # Nested structure with multiple properties
+    (
+        'palette',
+        {
+            'styleguide-reference-palette': {
+                'keys': "black white",
+                'value': "#000000 #ffffff",
+                'foo': "one two",
+            },
+        },
+        {
+            'black': {
+                'value': "#000000",
+                'foo': "one",
+            },
+            'white': {
+                'value': "#ffffff",
+                'foo': "two",
+            },
+        },
+    ),
+    # Flat structure
     (
         'palette',
         {
@@ -395,6 +416,24 @@ def test_serialize_to_list_error(context):
             'black': "#000000",
             'white': "#ffffff",
         },
+    ),
+    # List structure
+    (
+        'palette',
+        {
+            'styleguide-reference-palette': {
+                'structure': 'list',
+                'items': "black white",
+            },
+            'styleguide-reference-dummy': {
+                'keys': "foo",
+                'values': "bar",
+            },
+        },
+        [
+            'black',
+            'white',
+        ],
     ),
 ])
 def test_get_reference_success(name, context, attempted):
@@ -489,11 +528,11 @@ def test_get_reference_error(name, context):
             },
         },
     ),
-    # Flat mode for a reference
+    # Every structure modes
     (
         {
             'styleguide-metas-references': {
-                'names': "palette schemes",
+                'names': "palette schemes spaces",
             },
             'styleguide-reference-palette': {
                 'structure': 'flat',
@@ -505,6 +544,10 @@ def test_get_reference_error(name, context):
                 'background': "#000000 #ffffff #404040",
                 'font_color': "#ffffff #000000 #ffffff",
                 'selector': ".black .white .gray25",
+            },
+            'styleguide-reference-spaces': {
+                'structure': 'list',
+                'items': "short normal large",
             },
         },
         {
@@ -529,6 +572,11 @@ def test_get_reference_error(name, context):
                     'font_color': "#000000",
                 },
             },
+            'spaces': [
+                'short',
+                'normal',
+                'large',
+            ],
         },
     ),
 ])

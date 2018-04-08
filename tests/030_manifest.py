@@ -68,13 +68,22 @@ def test_manifest_load_fileobject(fixtures_settings):
 
     assert sorted(manifest.metas.get('references')) == sorted([
         'palette',
-        'text_color'
+        'text_color',
+        'spaces',
     ])
 
     assert manifest.palette == {
         'white': '#ffffff',
         'black': '#000000',
     }
+
+    assert manifest.spaces == [
+        'tiny',
+        'short',
+        'normal',
+        'large',
+        'wide',
+    ]
 
     assert manifest.text_color == {
         'black': {

@@ -25,3 +25,8 @@
     --keys: "#{floor-number-items($grid-cell-sizes)}";
     --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
 }
+
+.styleguide-reference-spaces{
+    --structure: "list";
+    --items: "#{to-string($spaces, $glue: ' ')}";
+}

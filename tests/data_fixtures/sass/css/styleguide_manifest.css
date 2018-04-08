@@ -19,3 +19,8 @@
   --keys: "5 25 33 75 100";
   --values: "5 25 33.3333 75 100";
 }
+
+.styleguide-reference-spaces {
+  --structure: "list";
+  --items: "tiny short normal large wide";
+}

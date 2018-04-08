@@ -1,5 +1,5 @@
 .styleguide-metas-references{
-    --names: "palette text_color";
+    --names: "palette text_color spaces";
 }
 
 .styleguide-reference-palette{
@@ -12,4 +12,9 @@
     --keys: "black white";
     --selectors: ".bg-black .bg-white";
     --values: "#000000 #ffffff";
+}
+
+.styleguide-reference-spaces {
+  --structure: "list";
+  --items: "tiny short normal large wide";
 }

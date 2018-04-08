@@ -296,6 +296,8 @@ class ManifestSerializer(object):
         if 'structure' in properties:
             if properties['structure'] == 'flat':
                 structure_mode = 'flat'
+            elif properties['structure'] == 'list':
+                structure_mode = 'list'
             else:
                 raise SerializerError("Invalide structure mode name '{}' for reference '{}'".format(structure_mode, name))
             del properties['structure']
@@ -307,6 +309,8 @@ class ManifestSerializer(object):
         # Perform serialize according to structure mode
         if structure_mode == 'flat':
             context = self.serialize_to_flat(name, properties)
+        elif structure_mode == 'list':
+            context = self.serialize_to_list(name, properties)
         else:
             # Default nested structure
             context = self.serialize_to_nested(name, properties)
