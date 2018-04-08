@@ -140,7 +140,7 @@ class ManifestSerializer(object):
             datas (dict): Datas to serialize.
 
         Returns:
-            dict: Serialized reference datas.
+            dict: Nested dictionnary of serialized reference datas.
        """
         keys = datas.get('keys', None)
 
@@ -183,10 +183,8 @@ class ManifestSerializer(object):
             datas (dict): Datas to serialize.
 
         Returns:
-            dict: Serialized reference datas.
+            dict: Flat dictionnay of serialized reference datas.
         """
-        context = {}
-
         keys = datas.get('keys', None)
         values = datas.get('values', None)
 
@@ -204,6 +202,30 @@ class ManifestSerializer(object):
             raise SerializerError("Length of keys ands values for item '{}' are differents".format(name))
 
         return dict(zip(keys, values))
+
+    def serialize_to_list(self, name, datas):
+        """
+        Serialize given datas to a list structure.
+
+        List structure is very simple and only require an ``items`` property
+        which is a string of values separated with an empty space. Every other
+        properties are ignored.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            list: List of serialized reference datas.
+        """
+        items = datas.get('items', None)
+
+        if not items:
+            raise SerializerError("Reference '{}' lacks of required 'items' property".format(name))
+        else:
+            items = items.split(" ")
+
+        return items
 
     def get_meta_references(self, datas):
         """

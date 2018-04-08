@@ -313,6 +313,51 @@ def test_serialize_to_flat_error(context):
         serializer.serialize_to_flat('foo', context)
 
 
+@pytest.mark.parametrize('context,attempted', [
+    (
+        {
+            'items': "black",
+        },
+        ['black'],
+    ),
+    (
+        {
+            'items': "black white",
+        },
+        ['black', 'white'],
+    ),
+    (
+        {
+            'items': "1 2 3 4 5 6 7 8 9 0",
+        },
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    ),
+])
+def test_serialize_to_list_success(context, attempted):
+    serializer = ManifestSerializer()
+
+    serialized = serializer.serialize_to_list('foo', context)
+
+    assert serialized == attempted
+
+
+@pytest.mark.parametrize('context', [
+    # Missing 'items'
+    {
+        'values': "#000000 #ffffff",
+    },
+    # Empty 'items'
+    {
+        'items': "",
+    },
+])
+def test_serialize_to_list_error(context):
+    serializer = ManifestSerializer()
+
+    with pytest.raises(SerializerError):
+        serializer.serialize_to_list('foo', context)
+
+
 @pytest.mark.parametrize('name,context,attempted', [
     # Nested mode with single value
     (
