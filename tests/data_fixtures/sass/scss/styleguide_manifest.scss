@@ -5,7 +5,7 @@
 @import "styleguide_helpers";
 
 .styleguide-metas-references{
-    --names: "palette schemes";
+    --names: "palette schemes grid_cell_sizes";
 }
 
 .styleguide-reference-palette{
@@ -18,4 +18,10 @@
     --keys: "#{get-names($schemes-colors)}";
     --selector: "#{get-names($schemes-colors, '.bg-')}";
     --value: "#{get-props($schemes-colors, 'background')}";
+}
+
+.styleguide-reference-grid_cell_sizes{
+    --flat: "true";
+    --keys: "#{floor-number-items($grid-cell-sizes)}";
+    --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
 }
