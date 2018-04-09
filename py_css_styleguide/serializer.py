@@ -320,6 +320,8 @@ class ManifestSerializer(object):
                 structure_mode = 'list'
             elif properties['structure'] == 'string':
                 structure_mode = 'string'
+            elif properties['structure'] == 'nested':
+                pass
             else:
                 raise SerializerError("Invalid structure mode name '{}' for reference '{}'".format(structure_mode, name))
             del properties['structure']
@@ -329,15 +331,13 @@ class ManifestSerializer(object):
             self.validate_variable_name(item)
 
         # Perform serialize according to structure mode
-        print("name:", name)
         if structure_mode == 'flat':
             context = self.serialize_to_flat(name, properties)
         elif structure_mode == 'list':
             context = self.serialize_to_list(name, properties)
         elif structure_mode == 'string':
             context = self.serialize_to_string(name, properties)
-        else:
-            # Default nested structure
+        elif structure_mode == 'nested':
             context = self.serialize_to_nested(name, properties)
 
         return context

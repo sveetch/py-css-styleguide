@@ -28,31 +28,20 @@ Reference rule is on charge to declare your CSS component settings or whatever y
 
 Every reference rule starts with ``styleguide-reference-`` followed by its name as defined in enabled reference names.
 
-Default serialization results in a nested structure but it can possibly be a flat structure, see serialization structure below.
+Available serialization structure are:
 
-Data serialization
-******************
+* Nested dictionnary (default);
+* Flat dictionnary;
+* List;
+* String;
 
-Values
-------
-
-Default serialization for a variable value is a list. They are defined like this: ::
-
-    "foo bar ping pong"
-
-As you can see each item is separated by a white space.
-
-If you only have an unique item this will be a simple string: ::
-
-    "foo"
-
-Structure
----------
+Serialization structures
+************************
 
 Nested
-......
+------
 
-This is the default structure serialization. It requires a ``--keys`` variable to define map keys to create where each other variable will be stored.
+This is the default serialization structure. It requires a ``--keys`` variable to define map keys to create where each other variable will be stored.
 
 Variables values are stored in their respective map key according to their order position, so order does matter when defining values in your variables. Also a variable that contains much or less values than the ``--keys`` values will raise an error, it must be the exact same length.
 
@@ -78,16 +67,20 @@ Will be serialized to this in JSON: ::
     }
 
 Flat
-....
+----
 
-An optional structure mode when you only have key/value pair to store, this is enabled when there is ``--flat`` variable containing string ``"true"``. In this mode there is two other variables: ``--keys`` and ``--values``. And they are both required.
+A serialization structure when you only have key/value pair to store.
+
+It is enabled when there is a variable ``--structure`` containing ``"flat"``.
+
+In this mode there is two other variables: ``--keys`` and ``--values``. And they are both required.
 
 Obviously ``--keys`` is for key names and ``--values`` for key values. All other variables are ignored.
 
 So for example, a reference like this: ::
 
     .styleguide-reference-dummy{
-        --flat: "true";
+        --structure: "true";
         --keys: "foo bar";
         --values: "#000000 #ffffff";
     }
@@ -99,3 +92,45 @@ Will be serialized to this in JSON: ::
         'bar': '#ffffff'
     }
 
+List
+----
+
+A structure that serialize to a list.
+
+It is enabled when there is a variable ``--structure`` containing ``"list"``.
+
+It requires a ``--items`` variable which value will be splitted on white space to a list items.
+
+So for example, a reference like this: ::
+
+    .styleguide-reference-dummy{
+        --structure: "list";
+        --items: "foo bar";
+    }
+
+Will be serialized to this in JSON: ::
+
+    [
+        'foo',
+        'bar'
+    ]
+
+String
+------
+
+A very basic structure to serialize a value as a simple string.
+
+It is enabled when there is a variable ``--structure`` containing ``"string"``.
+
+It requires a ``--value`` which value is returned.
+
+So for example, a reference like this: ::
+
+    .styleguide-reference-dummy{
+        --structure: "string";
+        --value: "my value";
+    }
+
+Will be serialized to this in JSON: ::
+
+    'my value'

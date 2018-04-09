@@ -34,8 +34,8 @@ Starting from this you should be able to use this in your application to build a
 
 Note than this sample use ``Manifest.to_json()`` for simplicity but it may be more useful to use object attributes to reach references rules.
 
-3. Don't write CSS manifest
-***************************
+3. Use Sass to build CSS manifest
+*********************************
 
 Everything before was to introduce you to manifest to know how they work. But this not really easy to manually write and maintain a CSS manifest.
 
