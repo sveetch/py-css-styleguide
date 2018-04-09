@@ -36,10 +36,10 @@ def test_validate_rule_name_error(name):
     "foo_bar",
     "f123",
 ])
-def test_validate_property_name_success(name):
+def test_validate_variable_name_success(name):
     serializer = ManifestSerializer()
 
-    serializer.validate_property_name(name)
+    serializer.validate_variable_name(name)
 
 
 @pytest.mark.parametrize('name', [
@@ -50,11 +50,11 @@ def test_validate_property_name_success(name):
     "1foo",
     "fooé",
 ])
-def test_validate_property_name_error(name):
+def test_validate_variable_name_error(name):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.validate_property_name(name)
+        serializer.validate_variable_name(name)
 
 
 def test_format_value_dontexists():
@@ -358,6 +358,52 @@ def test_serialize_to_list_error(context):
         serializer.serialize_to_list('foo', context)
 
 
+@pytest.mark.parametrize('context,attempted', [
+    (
+        {
+            'value': "ok",
+        },
+        "ok",
+    ),
+    (
+        {
+            'value': "black white",
+        },
+        "black white",
+    ),
+    # Some unicode
+    (
+        {
+            'value': "¿ pœp ?",
+        },
+        "¿ pœp ?",
+    ),
+])
+def test_serialize_to_string_success(context, attempted):
+    serializer = ManifestSerializer()
+
+    serialized = serializer.serialize_to_string('foo', context)
+
+    assert serialized == attempted
+
+
+@pytest.mark.parametrize('context', [
+    # Missing 'value'
+    {
+        'content': "nope",
+    },
+    # Empty 'value'
+    {
+        'value': "",
+    },
+])
+def test_serialize_to_string_error(context):
+    serializer = ManifestSerializer()
+
+    with pytest.raises(SerializerError):
+        serializer.serialize_to_string('foo', context)
+
+
 @pytest.mark.parametrize('name,context,attempted', [
     # Nested structure with single property
     (
@@ -434,6 +480,21 @@ def test_serialize_to_list_error(context):
             'black',
             'white',
         ],
+    ),
+    # String structure
+    (
+        'palette',
+        {
+            'styleguide-reference-palette': {
+                'structure': 'string',
+                'value': "ok",
+            },
+            'styleguide-reference-dummy': {
+                'keys': "foo",
+                'values': "bar",
+            },
+        },
+        "ok",
     ),
 ])
 def test_get_reference_success(name, context, attempted):
@@ -532,7 +593,7 @@ def test_get_reference_error(name, context):
     (
         {
             'styleguide-metas-references': {
-                'names': "palette schemes spaces",
+                'names': "palette schemes spaces version",
             },
             'styleguide-reference-palette': {
                 'structure': 'flat',
@@ -548,6 +609,10 @@ def test_get_reference_error(name, context):
             'styleguide-reference-spaces': {
                 'structure': 'list',
                 'items': "short normal large",
+            },
+            'styleguide-reference-version': {
+                'structure': 'string',
+                'value': "V42.0",
             },
         },
         {
@@ -577,6 +642,7 @@ def test_get_reference_error(name, context):
                 'normal',
                 'large',
             ],
+            'version': "V42.0",
         },
     ),
 ])
@@ -586,7 +652,7 @@ def test_get_references(context, attempted):
     enabled_references = serializer.get_meta_references(context)
     references = serializer.get_enabled_references(context, enabled_references)
 
-    assert references == attempted
+    assert attempted == references
 
 
 @pytest.mark.parametrize('context,attempted', [

@@ -1,5 +1,5 @@
 .styleguide-metas-references {
-  --names: "palette schemes grid_cell_sizes";
+  --names: "palette schemes grid_cell_sizes version";
 }
 
 .styleguide-reference-palette {
@@ -23,4 +23,9 @@
 .styleguide-reference-spaces {
   --structure: "list";
   --items: "tiny short normal large wide";
+}
+
+.styleguide-reference-version {
+  --structure: "string";
+  --value: "42.0";
 }

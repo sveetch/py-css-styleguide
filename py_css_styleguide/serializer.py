@@ -57,25 +57,25 @@ class ManifestSerializer(object):
 
         return True
 
-    def validate_property_name(self, name):
+    def validate_variable_name(self, name):
         """
-        Validate property name.
+        Validate variable name.
 
         Arguments:
             name (string): Property name.
 
         Returns:
-            bool: ``True`` if property name is valid.
+            bool: ``True`` if variable name is valid.
         """
         if not name:
-            raise SerializerError("Property name is empty".format(name))
+            raise SerializerError("Variable name is empty".format(name))
 
         if name[0] not in PROPERTY_ALLOWED_START:
-            raise SerializerError("Property name '{}' must starts with a letter".format(name))
+            raise SerializerError("Variable name '{}' must starts with a letter".format(name))
 
         for item in name:
             if item not in PROPERTY_ALLOWED_CHARS:
-                raise SerializerError("Invalid property name '{}': it must only contains letters, numbers and '_' character".format(name))
+                raise SerializerError("Invalid variable name '{}': it must only contains letters, numbers and '_' character".format(name))
 
         return True
 
@@ -84,7 +84,7 @@ class ManifestSerializer(object):
         Format value following its format declaration if given.
 
         Format declaration is defined using ``--NAME-format`` where ``NAME``
-        is the name related property to format value.
+        is the name related variable to format value.
 
         Actually supported format are:
 
@@ -132,7 +132,7 @@ class ManifestSerializer(object):
     def serialize_to_nested(self, name, datas):
         """
         Serialize given datas to a nested structure where each key create an
-        item and each other property is stored as a subitem with corresponding
+        item and each other variable is stored as a subitem with corresponding
         value (according to key index position).
 
         Arguments:
@@ -145,21 +145,21 @@ class ManifestSerializer(object):
         keys = datas.get('keys', None)
 
         if not keys:
-            raise SerializerError("Item '{}' lacks of required 'keys' property".format(name))
+            raise SerializerError("Nested reference '{}' lacks of required 'keys' variable or is empty".format(name))
         else:
             keys = keys.split(" ")
 
         # Initialize context dict with reference keys
         context = {k:{} for k in keys}
 
-        # Tidy each property value to its respective reference
+        # Tidy each variable value to its respective item
         for k,v in datas.items():
             # Ignore reserved internal keywords
             if k not in ('keys', 'structure'):
                 values = v.split(" ")
 
                 if len(values) != len(keys):
-                    raise SerializerError("Length of '{}' property values for item '{}' is different from keys length".format(k, name))
+                    raise SerializerError("Nested reference '{}' has different length for values of '{}' and 'keys'".format(name, k))
 
                 # Put each value to its respective key using position index.
                 for i, item in enumerate(values):
@@ -171,10 +171,10 @@ class ManifestSerializer(object):
     def serialize_to_flat(self, name, datas):
         """
         Serialize given datas to a flat structure ``KEY:VALUE`` where ``KEY``
-        comes from ``keys`` property and ``VALUE`` comes from ``values``
-        property.
+        comes from ``keys`` variable and ``VALUE`` comes from ``values``
+        variable.
 
-        This means both ``keys`` and ``values`` are required property to be
+        This means both ``keys`` and ``values`` are required variable to be
         correctly filled (each one is a string of item separated with an empty
         space). Both resulting list must be the same length.
 
@@ -189,17 +189,17 @@ class ManifestSerializer(object):
         values = datas.get('values', None)
 
         if not keys:
-            raise SerializerError("Item '{}' lacks of required 'keys' property".format(name))
+            raise SerializerError("Flat reference '{}' lacks of required 'keys' variable or is empty".format(name))
         else:
             keys = keys.split(" ")
 
         if not values:
-            raise SerializerError("Item '{}' lacks of required 'values' property".format(name))
+            raise SerializerError("Flat reference '{}' lacks of required 'values' variable or is empty".format(name))
         else:
             values = values.split(" ")
 
         if len(values) != len(keys):
-            raise SerializerError("Length of keys ands values for item '{}' are differents".format(name))
+            raise SerializerError("Flat reference have different length of 'keys' ands 'values' variable".format(name))
 
         return dict(zip(keys, values))
 
@@ -207,7 +207,7 @@ class ManifestSerializer(object):
         """
         Serialize given datas to a list structure.
 
-        List structure is very simple and only require an ``items`` property
+        List structure is very simple and only require a variable ``--items``
         which is a string of values separated with an empty space. Every other
         properties are ignored.
 
@@ -221,11 +221,31 @@ class ManifestSerializer(object):
         items = datas.get('items', None)
 
         if not items:
-            raise SerializerError("Reference '{}' lacks of required 'items' property".format(name))
+            raise SerializerError("List reference '{}' lacks of required 'items' variable or is empty".format(name))
         else:
             items = items.split(" ")
 
         return items
+
+    def serialize_to_string(self, name, datas):
+        """
+        Serialize given datas to a string.
+
+        Simply return the value from required variable``value``.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            string: Value.
+        """
+        value = datas.get('value', None)
+
+        if not value:
+            raise SerializerError("String reference '{}' lacks of required 'value' variable or is empty".format(name))
+
+        return value
 
     def get_meta_references(self, datas):
         """
@@ -233,7 +253,7 @@ class ManifestSerializer(object):
 
         This required declaration is readed from
         ``styleguide-metas-references`` rule that require a ``--names``
-        property. Format kind should not be defined since attempted value is
+        variable. Format kind should not be defined since attempted value is
         allways a list.
 
         Section name (and so Reference name also) must no contains special
@@ -272,8 +292,8 @@ class ManifestSerializer(object):
         A reference name starts with 'styleguide-reference-' followed by
         name for reference.
 
-        A reference can contains property ``structure`` setted to ``"flat"`` to
-        indicate reference must be serialized a simple pair keys/values.
+        A reference can contains variable ``--structure`` setted to ``"flat"``,
+        ``"list"`` or ``"string"`` to define serialization structure.
 
         Arguments:
             datas (dict): Data where to search for reference declaration. This
@@ -292,25 +312,30 @@ class ManifestSerializer(object):
 
         properties = datas.get(rule_name)
 
-        # Search for "structure" property
+        # Search for "structure" variable
         if 'structure' in properties:
             if properties['structure'] == 'flat':
                 structure_mode = 'flat'
             elif properties['structure'] == 'list':
                 structure_mode = 'list'
+            elif properties['structure'] == 'string':
+                structure_mode = 'string'
             else:
-                raise SerializerError("Invalide structure mode name '{}' for reference '{}'".format(structure_mode, name))
+                raise SerializerError("Invalid structure mode name '{}' for reference '{}'".format(structure_mode, name))
             del properties['structure']
 
-        # Validate property names
+        # Validate variable names
         for item in properties.keys():
-            self.validate_property_name(item)
+            self.validate_variable_name(item)
 
         # Perform serialize according to structure mode
+        print("name:", name)
         if structure_mode == 'flat':
             context = self.serialize_to_flat(name, properties)
         elif structure_mode == 'list':
             context = self.serialize_to_list(name, properties)
+        elif structure_mode == 'string':
+            context = self.serialize_to_string(name, properties)
         else:
             # Default nested structure
             context = self.serialize_to_nested(name, properties)

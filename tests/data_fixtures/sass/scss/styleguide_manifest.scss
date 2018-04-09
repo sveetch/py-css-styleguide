@@ -5,7 +5,7 @@
 @import "styleguide_helpers";
 
 .styleguide-metas-references{
-    --names: "palette schemes grid_cell_sizes";
+    --names: "palette schemes grid_cell_sizes version";
 }
 
 .styleguide-reference-palette{
@@ -29,4 +29,9 @@
 .styleguide-reference-spaces{
     --structure: "list";
     --items: "#{to-string($spaces, $glue: ' ')}";
+}
+
+.styleguide-reference-version{
+    --structure: "string";
+    --value: "#{$version}";
 }
