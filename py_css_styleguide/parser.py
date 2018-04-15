@@ -12,6 +12,8 @@ This flaw is tempered by the behavior of parser that ignores rules that
 don't start with the manifest prefix, so CSS manifest could contains some
 other syntax for non styleguide rules.
 """
+from collections import OrderedDict
+
 from tinycss2 import parse_stylesheet
 
 from py_css_styleguide.nomenclature import RULE_BASE_PREFIX
@@ -94,7 +96,7 @@ class TinycssSourceParser(object):
         Returns:
             dict: Retrieved rules.
         """
-        manifest = {}
+        manifest = OrderedDict()
 
         rules = parse_stylesheet(
             source,

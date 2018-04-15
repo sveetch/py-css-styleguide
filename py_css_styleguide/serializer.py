@@ -3,6 +3,8 @@ Serializer
 ==========
 
 """
+from collections import OrderedDict
+
 from py_css_styleguide.nomenclature import (
     RULE_META_REFERENCES,
     RULE_REFERENCE,
@@ -28,12 +30,12 @@ class ManifestSerializer(object):
         SerializerError: When there is invalid syntax in datas.
 
     Attributes:
-        _metas (dict): Buffer to store serialized metas from parsed source.
-            Default is an empty dict which reseted and filled from
-            ``serialize`` method.
+        _metas (collections.OrderedDict): Buffer to store serialized metas
+            from parsed source. Default is an empty dict which reseted and
+            filled from ``serialize`` method.
     """
     def __init__(self):
-        self._metas = {}
+        self._metas = OrderedDict()
 
     def validate_rule_name(self, name):
         """
@@ -301,11 +303,10 @@ class ManifestSerializer(object):
             name (string): Reference name to get and serialize.
 
         Returns:
-            dict: Serialized reference datas.
+            collections.OrderedDict: Serialized reference datas.
         """
         rule_name = '-'.join((RULE_REFERENCE, name))
         structure_mode = 'nested'
-        context = {}
 
         if rule_name not in datas:
             raise SerializerError("Unable to find enabled reference '{}'".format(name))
@@ -355,9 +356,9 @@ class ManifestSerializer(object):
             meta_references (list): List of enabled reference names.
 
         Returns:
-            dict: Serialized enabled references datas.
+            collections.OrderedDict: Serialized enabled references datas.
         """
-        references = {}
+        references = OrderedDict()
 
         for section in meta_references:
             references[section] = self.get_reference(datas, section)
@@ -366,14 +367,20 @@ class ManifestSerializer(object):
 
     def serialize(self, datas):
         """
-        Serialize datas to manifest structure
+        Serialize datas to manifest structure with metas and references.
+
+        Only references are returned, metas are assigned to attribute
+        ``ManifestSerializer._metas``.
 
         Arguments:
             datas (dict): Data where to search for reference declarations. This
                 is commonly the fully parsed manifest.
+
+        Returns:
+            collections.OrderedDict: Serialized enabled references datas.
         """
-        self._metas = {
+        self._metas = OrderedDict({
             'references': self.get_meta_references(datas),
-        }
+        })
 
         return self.get_enabled_references(datas, self._metas['references'])

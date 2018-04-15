@@ -125,6 +125,7 @@ def test_format_value_success(context, attempted):
 
 
 @pytest.mark.parametrize('context,attempted', [
+    # With a dummy ignored rule just for fun
     (
         {
             'styleguide-metas-references': {
@@ -136,6 +137,7 @@ def test_format_value_success(context, attempted):
         },
         ["palette"],
     ),
+    # Every enabled rules are returned
     (
         {
             'styleguide-metas-references': {
@@ -187,7 +189,8 @@ def test_get_meta_references_error(context):
 
 
 @pytest.mark.parametrize('context,attempted', [
-    # Nested mode with single property and 'structure' is an ignored keyword
+    # Nested mode with single property and ensure 'structure' is an ignored
+    # keyword
     (
         {
             'keys': "black white",
@@ -580,8 +583,8 @@ def test_get_reference_error(name, context):
         serializer.get_reference(context, name)
 
 
-@pytest.mark.parametrize('context,attempted', [
-    # Default dict mode for a reference
+@pytest.mark.parametrize('context,attempted,order', [
+    # Default nested structure for a reference
     (
         {
             'styleguide-metas-references': {
@@ -608,6 +611,33 @@ def test_get_reference_error(name, context):
                 },
             },
         },
+        ['palette'],
+    ),
+    # Reference order comes from explicitely enabled reference names order
+    (
+        {
+            'styleguide-metas-references': {
+                'names': "foo pika ping",
+            },
+            'styleguide-reference-ping': {
+                'structure': "string",
+                'value': "pong",
+            },
+            'styleguide-reference-pika': {
+                'structure': "string",
+                'value': "chu",
+            },
+            'styleguide-reference-foo': {
+                'structure': "string",
+                'value': "bar",
+            },
+        },
+        {
+            'foo': "bar",
+            'pika': "chu",
+            'ping': "pong",
+        },
+        ['foo', 'pika', 'ping'],
     ),
     # Every structure modes
     (
@@ -664,15 +694,17 @@ def test_get_reference_error(name, context):
             ],
             'version': "V42.0",
         },
+        ["palette", "schemes", "spaces", "version"],
     ),
 ])
-def test_get_references(context, attempted):
+def test_get_enabled_references(context, attempted, order):
     serializer = ManifestSerializer()
 
     enabled_references = serializer.get_meta_references(context)
     references = serializer.get_enabled_references(context, enabled_references)
 
     assert attempted == references
+    assert order == list(references.keys())
 
 
 @pytest.mark.parametrize('context,attempted', [
