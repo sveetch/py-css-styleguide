@@ -235,7 +235,7 @@ def test_serialize_to_nested_success(context, attempted):
     {
         'value': "#000000 #ffffff",
     },
-    # Length differences with keys
+    # Length difference with keys
     {
         'keys': "black white",
         'selectors': ".bg-black",
@@ -314,18 +314,28 @@ def test_serialize_to_flat_error(context):
 
 
 @pytest.mark.parametrize('context,attempted', [
+    # Single item list
     (
         {
             'items': "black",
         },
         ['black'],
     ),
+    # Empty list is ok
+    (
+        {
+            'items': "black",
+        },
+        ['black'],
+    ),
+    # Multiple list items
     (
         {
             'items': "black white",
         },
         ['black', 'white'],
     ),
+    # Many items
     (
         {
             'items': "1 2 3 4 5 6 7 8 9 0",
@@ -346,9 +356,10 @@ def test_serialize_to_list_success(context, attempted):
     {
         'values': "#000000 #ffffff",
     },
-    # Empty 'items'
+    # None value although it can occurs from parsed data because it happen
+    # only if 'items' is not defined
     {
-        'items': "",
+        'items': None,
     },
 ])
 def test_serialize_to_list_error(context):
@@ -359,12 +370,21 @@ def test_serialize_to_list_error(context):
 
 
 @pytest.mark.parametrize('context,attempted', [
+    # Basic string
     (
         {
             'value': "ok",
         },
         "ok",
     ),
+    # Empty string is ok
+    (
+        {
+            'value': "",
+        },
+        "",
+    ),
+    # Looks like a space separated list but it's a string
     (
         {
             'value': "black white",
@@ -392,9 +412,9 @@ def test_serialize_to_string_success(context, attempted):
     {
         'content': "nope",
     },
-    # Empty 'value'
+    # None value for when variable is not defined
     {
-        'value': "",
+        'value': None,
     },
 ])
 def test_serialize_to_string_error(context):

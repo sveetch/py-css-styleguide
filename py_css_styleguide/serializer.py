@@ -220,7 +220,7 @@ class ManifestSerializer(object):
         """
         items = datas.get('items', None)
 
-        if not items:
+        if items is None:
             raise SerializerError("List reference '{}' lacks of required 'items' variable or is empty".format(name))
         else:
             items = items.split(" ")
@@ -242,7 +242,7 @@ class ManifestSerializer(object):
         """
         value = datas.get('value', None)
 
-        if not value:
+        if value is None:
             raise SerializerError("String reference '{}' lacks of required 'value' variable or is empty".format(name))
 
         return value
