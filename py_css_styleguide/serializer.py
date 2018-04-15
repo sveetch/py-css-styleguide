@@ -152,7 +152,9 @@ class ManifestSerializer(object):
             keys = keys.split(" ")
 
         # Initialize context dict with reference keys
-        context = {k:{} for k in keys}
+        context = OrderedDict()
+        for k in keys:
+            context[k] = OrderedDict()
 
         # Tidy each variable value to its respective item
         for k,v in datas.items():
