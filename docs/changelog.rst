@@ -6,7 +6,8 @@ Changelog
 Version 0.3.0 - Unreleased
 --------------------------
 
-* ``list`` and ``string`` structures can be empty, close #3;
+* Changed ``list`` and ``string`` structures so they can be empty, close #3;
+* Fixed Sass helper function ``to-string`` for empty list, close #2;
 
 Version 0.2.0 - 2018/04/08
 --------------------------
