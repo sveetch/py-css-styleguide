@@ -65,7 +65,7 @@ class TinycssSourceParser(object):
         Returns:
             dict: Dictionnary of retrieved variables and properties.
         """
-        data = {}
+        data = OrderedDict()
 
         current_key = None
 
