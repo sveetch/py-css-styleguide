@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 0.3.0 - Unreleased
+Version 0.3.0 - 2018/04/19
 --------------------------
 
 * Added automatic enable references mode, close #1;
