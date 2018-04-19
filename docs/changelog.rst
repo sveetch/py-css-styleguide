@@ -10,6 +10,7 @@ Version 0.3.0 - Unreleased
 * Fixed Sass helper function ``to-string`` for empty list, close #2;
 * Changed ``list`` and ``string`` structures so they can be empty, close #3;
 * Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and serializer, close #4;
+* Fixed code quality issues with Flake8, close #5;
 
 Version 0.2.0 - 2018/04/08
 --------------------------

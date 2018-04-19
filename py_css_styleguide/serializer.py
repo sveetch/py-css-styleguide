@@ -51,11 +51,14 @@ class ManifestSerializer(object):
             raise SerializerError("Rule name is empty".format(name))
 
         if name[0] not in RULE_ALLOWED_START:
-            raise SerializerError("Rule name '{}' must starts with a letter".format(name))
+            msg = "Rule name '{}' must starts with a letter"
+            raise SerializerError(msg.format(name))
 
         for item in name:
             if item not in RULE_ALLOWED_CHARS:
-                raise SerializerError("Invalid rule name '{}': it must only contains letters, numbers and '_' character".format(name))
+                msg = ("Invalid rule name '{}': it must only contains "
+                       "letters, numbers and '_' character")
+                raise SerializerError(msg.format(name))
 
         return True
 
@@ -73,11 +76,14 @@ class ManifestSerializer(object):
             raise SerializerError("Variable name is empty".format(name))
 
         if name[0] not in PROPERTY_ALLOWED_START:
-            raise SerializerError("Variable name '{}' must starts with a letter".format(name))
+            msg = "Variable name '{}' must starts with a letter"
+            raise SerializerError(msg.format(name))
 
         for item in name:
             if item not in PROPERTY_ALLOWED_CHARS:
-                raise SerializerError("Invalid variable name '{}': it must only contains letters, numbers and '_' character".format(name))
+                msg = ("Invalid variable name '{}': it must only contains "
+                       "letters, numbers and '_' character")
+                raise SerializerError(msg.format(name))
 
         return True
 
@@ -118,13 +124,15 @@ class ManifestSerializer(object):
 
         value = data.get(name, None)
         if value is None:
-            raise SerializerError("Asked value for item '{}' does not exist".format(name))
+            msg = "Asked value for item '{}' does not exist"
+            raise SerializerError(msg.format(name))
 
         if not format_kind:
             format_kind = default
 
         if format_kind not in ('string', 'list'):
-            raise SerializerError("Format declaration '{}' for '{}' is not supported".format(name, format_kind))
+            msg = "Format declaration '{}' for '{}' is not supported"
+            raise SerializerError(msg.format(name, format_kind))
 
         if format_kind == 'string':
             return value
@@ -147,7 +155,9 @@ class ManifestSerializer(object):
         keys = datas.get('keys', None)
 
         if not keys:
-            raise SerializerError("Nested reference '{}' lacks of required 'keys' variable or is empty".format(name))
+            msg = ("Nested reference '{}' lacks of required 'keys' variable "
+                   "or is empty")
+            raise SerializerError(msg.format(name))
         else:
             keys = keys.split(" ")
 
@@ -157,13 +167,15 @@ class ManifestSerializer(object):
             context[k] = OrderedDict()
 
         # Tidy each variable value to its respective item
-        for k,v in datas.items():
+        for k, v in datas.items():
             # Ignore reserved internal keywords
             if k not in ('keys', 'structure'):
                 values = v.split(" ")
 
                 if len(values) != len(keys):
-                    raise SerializerError("Nested reference '{}' has different length for values of '{}' and 'keys'".format(name, k))
+                    msg = ("Nested reference '{}' has different length for "
+                           "values of '{}' and 'keys'")
+                    raise SerializerError(msg.format(name, k))
 
                 # Put each value to its respective key using position index.
                 for i, item in enumerate(values):
@@ -193,17 +205,23 @@ class ManifestSerializer(object):
         values = datas.get('values', None)
 
         if not keys:
-            raise SerializerError("Flat reference '{}' lacks of required 'keys' variable or is empty".format(name))
+            msg = ("Flat reference '{}' lacks of required 'keys' variable or "
+                   "is empty")
+            raise SerializerError(msg.format(name))
         else:
             keys = keys.split(" ")
 
         if not values:
-            raise SerializerError("Flat reference '{}' lacks of required 'values' variable or is empty".format(name))
+            msg = ("Flat reference '{}' lacks of required 'values' variable "
+                   "or is empty")
+            raise SerializerError(msg.format(name))
         else:
             values = values.split(" ")
 
         if len(values) != len(keys):
-            raise SerializerError("Flat reference have different length of 'keys' ands 'values' variable".format(name))
+            msg = ("Flat reference have different length of 'keys' ands "
+                   "'values' variable")
+            raise SerializerError(msg.format(name))
 
         return dict(zip(keys, values))
 
@@ -225,7 +243,9 @@ class ManifestSerializer(object):
         items = datas.get('items', None)
 
         if items is None:
-            raise SerializerError("List reference '{}' lacks of required 'items' variable or is empty".format(name))
+            msg = ("List reference '{}' lacks of required 'items' variable "
+                   "or is empty")
+            raise SerializerError(msg.format(name))
         else:
             items = items.split(" ")
 
@@ -247,7 +267,9 @@ class ManifestSerializer(object):
         value = datas.get('value', None)
 
         if value is None:
-            raise SerializerError("String reference '{}' lacks of required 'value' variable or is empty".format(name))
+            msg = ("String reference '{}' lacks of required 'value' variable "
+                   "or is empty")
+            raise SerializerError(msg.format(name))
 
         return value
 
@@ -282,14 +304,17 @@ class ManifestSerializer(object):
         rule = datas.get(RULE_META_REFERENCES, {})
 
         if not rule:
-            raise SerializerError("Manifest lacks of '.{}' or is empty".format(RULE_META_REFERENCES))
+            msg = "Manifest lacks of '.{}' or is empty"
+            raise SerializerError(msg.format(RULE_META_REFERENCES))
         else:
             if rule.get('names', None):
                 names = rule.get('names').split(" ")
             elif rule.get('auto', None):
                 names = self.get_available_references(datas)
             else:
-                raise SerializerError("'.{}' either require '--names' or '--auto' variable to be defined".format(RULE_META_REFERENCES))
+                msg = ("'.{}' either require '--names' or '--auto' variable "
+                       "to be defined")
+                raise SerializerError(msg.format(RULE_META_REFERENCES))
 
         for item in names:
             self.validate_rule_name(item)
@@ -322,7 +347,8 @@ class ManifestSerializer(object):
         structure_mode = 'nested'
 
         if rule_name not in datas:
-            raise SerializerError("Unable to find enabled reference '{}'".format(name))
+            msg = "Unable to find enabled reference '{}'"
+            raise SerializerError(msg.format(name))
 
         properties = datas.get(rule_name)
 
@@ -337,7 +363,8 @@ class ManifestSerializer(object):
             elif properties['structure'] == 'nested':
                 pass
             else:
-                raise SerializerError("Invalid structure mode name '{}' for reference '{}'".format(structure_mode, name))
+                msg = "Invalid structure mode name '{}' for reference '{}'"
+                raise SerializerError(msg.format(structure_mode, name))
             del properties['structure']
 
         # Validate variable names
@@ -374,9 +401,8 @@ class ManifestSerializer(object):
         """
         names = []
 
-        for k,v in datas.items():
+        for k, v in datas.items():
             if k.startswith(RULE_REFERENCE):
-                print(k)
                 names.append(k[len(RULE_REFERENCE)+1:])
 
         return names
@@ -399,7 +425,6 @@ class ManifestSerializer(object):
         references = OrderedDict()
 
         for section in meta_references:
-            print(section)
             references[section] = self.get_reference(datas, section)
 
         return references
