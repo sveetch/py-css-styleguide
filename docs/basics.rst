@@ -17,9 +17,33 @@ It's worth to notice than parser should be able to read CSS property (without th
 styleguide-metas-references
 ---------------------------
 
-Contains a variable ``--names`` to list enabled reference names.
+Contains either a variable ``--names`` or a variable ``-auto`` to enable
+references. If both of these variables are defined ``--names`` is used.
 
-A reference name must be made of letters, numbers and ``_`` character. No unicode or other special character.
+Manually
+    Using ``--names`` which define a list of names to enable, every
+    other non enabled rule will be ignored.
+
+    Reference name must not contains special character nor ``-`` so they still
+    be valid variable name for almost any languages. For word separator inside
+    name, use ``_``.
+
+    ::
+
+        --names: "reference1 reference2";
+
+    Which will enable ``styleguide-reference-foo`` and
+    ``styleguide-reference-bar`` references. If enabled reference name does
+    not exist as a CSS rule, it will raises an error.
+Automatic
+    Using ``--auto`` variable every reference rules will be enabled.
+    The value of this variable is not important since it is not empty.
+
+    ::
+
+        --auto: "true";
+
+    Which will enable every CSS rule starting with ``styleguide-reference-``.
 
 Reference rules
 ***************

@@ -285,7 +285,7 @@ class ManifestSerializer(object):
             Using ``--names`` which define a list of names to enable, every
             other non enabled rule will be ignored.
 
-            Section name (and so Reference name also) must no contains special
+            Section name (and so Reference name also) must not contains special
             character nor ``-`` so they still be valid variable name for almost
             any languages. For word separator inside name, use ``_``.
         Automatic
