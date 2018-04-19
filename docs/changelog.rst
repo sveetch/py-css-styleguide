@@ -6,9 +6,10 @@ Changelog
 Version 0.3.0 - Unreleased
 --------------------------
 
-* Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and serializer, close #4;
-* Changed ``list`` and ``string`` structures so they can be empty, close #3;
+* Added automatic enable references mode, close #1;
 * Fixed Sass helper function ``to-string`` for empty list, close #2;
+* Changed ``list`` and ``string`` structures so they can be empty, close #3;
+* Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and serializer, close #4;
 
 Version 0.2.0 - 2018/04/08
 --------------------------

@@ -27,7 +27,7 @@ class ManifestSerializer(object):
     Serialize parsed CSS to data suitable to Manifest
 
     Raises:
-        SerializerError: When there is invalid syntax in datas.
+        SerializerError: When there is an invalid syntax in datas.
 
     Attributes:
         _metas (collections.OrderedDict): Buffer to store serialized metas
@@ -256,13 +256,21 @@ class ManifestSerializer(object):
         Get manifest enabled references declaration
 
         This required declaration is readed from
-        ``styleguide-metas-references`` rule that require a ``--names``
-        variable. Format kind should not be defined since attempted value is
-        allways a list.
+        ``styleguide-metas-references`` rule that require either a ``--names``
+        or ``--auto`` variable, each one define the mode to enable reference:
 
-        Section name (and so Reference name also) must no contains special
-        character nor ``-`` so they still be valid variable name for almost
-        any languages. For word separator inside name, use ``_``.
+        Manually
+            Using ``--names`` which define a list of names to enable, every
+            other non enabled rule will be ignored.
+
+            Section name (and so Reference name also) must no contains special
+            character nor ``-`` so they still be valid variable name for almost
+            any languages. For word separator inside name, use ``_``.
+        Automatic
+            Using ``--auto`` variable every reference rules will be enabled.
+            The value of this variable is not important since it is not empty.
+
+        If both of these variables are defined, the manual enable mode is used.
 
         Arguments:
             datas (dict): Data where to search for meta references declaration.
@@ -275,10 +283,13 @@ class ManifestSerializer(object):
 
         if not rule:
             raise SerializerError("Manifest lacks of '.{}' or is empty".format(RULE_META_REFERENCES))
-        elif not rule.get('names', None):
-            raise SerializerError("'.{}' lacks of '--names' variable or is empty".format(RULE_META_REFERENCES))
-
-        names = self.format_value(rule, 'names')
+        else:
+            if rule.get('names', None):
+                names = rule.get('names').split(" ")
+            elif rule.get('auto', None):
+                names = self.get_available_references(datas)
+            else:
+                raise SerializerError("'.{}' either require '--names' or '--auto' variable to be defined".format(RULE_META_REFERENCES))
 
         for item in names:
             self.validate_rule_name(item)
@@ -345,6 +356,31 @@ class ManifestSerializer(object):
 
         return context
 
+    def get_available_references(self, datas):
+        """
+        Get available manifest reference names.
+
+        Every rules starting with prefix from ``nomenclature.RULE_REFERENCE``
+        are available references.
+
+        Only name validation is performed on these references.
+
+        Arguments:
+            datas (dict): Data where to search for reference declarations.
+
+        Returns:
+            list: List of every available reference names. This is the real
+                name unprefixed.
+        """
+        names = []
+
+        for k,v in datas.items():
+            if k.startswith(RULE_REFERENCE):
+                print(k)
+                names.append(k[len(RULE_REFERENCE)+1:])
+
+        return names
+
     def get_enabled_references(self, datas, meta_references):
         """
         Get enabled manifest references declarations.
@@ -363,6 +399,7 @@ class ManifestSerializer(object):
         references = OrderedDict()
 
         for section in meta_references:
+            print(section)
             references[section] = self.get_reference(datas, section)
 
         return references

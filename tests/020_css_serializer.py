@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Some test define manifest datas with an OrderedDict when they assert some
+value against a list. A simple dict can be used when there is no assertion
+about ordered sequences.
+"""
+from collections import OrderedDict
+
 import pytest
 
 from py_css_styleguide.parser import TinycssSourceParser
@@ -125,6 +132,45 @@ def test_format_value_success(context, attempted):
 
 
 @pytest.mark.parametrize('context,attempted', [
+    (
+        {
+            'styleguide-metas-references': {
+                'names': "palette",
+            },
+            'styleguide-reference-foo': {
+                'content': "bar",
+            },
+        },
+        ["foo"],
+    ),
+    # Enforce the right item order to match returned list order
+    (
+        OrderedDict((
+            ('styleguide-reference-foo', {
+                'content': "bar",
+            }),
+            ('styleguide-reference-pika', {
+                'content': "chu",
+            }),
+            ('dummy', {
+                'names': "yip",
+            }),
+            ('styleguide-reference-ping', {
+                'content': "pong",
+            }),
+        )),
+        ["foo", "pika", "ping"],
+    ),
+])
+def test_get_available_references(context, attempted):
+    serializer = ManifestSerializer()
+
+    reference_names = serializer.get_available_references(context)
+
+    assert reference_names == attempted
+
+
+@pytest.mark.parametrize('context,attempted', [
     # With a dummy ignored rule just for fun
     (
         {
@@ -146,6 +192,30 @@ def test_format_value_success(context, attempted):
         },
         ["palette", "schemes", "foo", "bar"],
     ),
+    # Automatically enable every references but no reference defined
+    (
+        {
+            'styleguide-metas-references': {
+                'auto': "true",
+            }
+        },
+        [],
+    ),
+    # Automatically enable every references with some references defined
+    (
+        OrderedDict((
+            ('styleguide-metas-references', {
+                'auto': "true",
+            }),
+            ('styleguide-reference-foo', {
+                'content': "dummy",
+            }),
+            ('styleguide-reference-bar', {
+                'content': "dummy",
+            }),
+        )),
+        ['foo', 'bar'],
+    ),
 ])
 def test_get_meta_references_success(context, attempted):
     serializer = ManifestSerializer()
@@ -162,16 +232,16 @@ def test_get_meta_references_success(context, attempted):
             'names': "palette",
         }
     },
-    # Missing names property
+    # Missing names or auto property
     {
         'styleguide-metas-references': {
             'content': "palette",
         }
     },
-    # Invalid name
+    # Invalid name (from '-' character)
     {
         'styleguide-metas-references': {
-            'content': "foo-bar",
+            'names': "foo-bar",
         }
     },
     # Empty list
@@ -615,23 +685,23 @@ def test_get_reference_error(name, context):
     ),
     # Reference order comes from explicitely enabled reference names order
     (
-        {
-            'styleguide-metas-references': {
+        OrderedDict((
+            ('styleguide-metas-references', {
                 'names': "foo pika ping",
-            },
-            'styleguide-reference-ping': {
+            }),
+            ('styleguide-reference-ping', {
                 'structure': "string",
                 'value': "pong",
-            },
-            'styleguide-reference-pika': {
+            }),
+            ('styleguide-reference-pika', {
                 'structure': "string",
                 'value': "chu",
-            },
-            'styleguide-reference-foo': {
+            }),
+            ('styleguide-reference-foo', {
                 'structure': "string",
                 'value': "bar",
-            },
-        },
+            }),
+        )),
         {
             'foo': "bar",
             'pika': "chu",
@@ -639,32 +709,32 @@ def test_get_reference_error(name, context):
         },
         ['foo', 'pika', 'ping'],
     ),
-    # Every structure modes
+    # Every structure modes with automatic enabling
     (
-        {
-            'styleguide-metas-references': {
-                'names': "palette schemes spaces version",
-            },
-            'styleguide-reference-palette': {
+        OrderedDict((
+            ('styleguide-metas-references', {
+                'auto': "true",
+            }),
+            ('styleguide-reference-palette', {
                 'structure': 'flat',
                 'keys': "black white",
                 'values': "#000000 #ffffff",
-            },
-            'styleguide-reference-schemes': {
+            }),
+            ('styleguide-reference-schemes', {
                 'keys': "black white gray25",
                 'background': "#000000 #ffffff #404040",
                 'font_color': "#ffffff #000000 #ffffff",
                 'selector': ".black .white .gray25",
-            },
-            'styleguide-reference-spaces': {
+            }),
+            ('styleguide-reference-spaces', {
                 'structure': 'list',
                 'items': "short normal large",
-            },
-            'styleguide-reference-version': {
+            }),
+            ('styleguide-reference-version', {
                 'structure': 'string',
                 'value': "V42.0",
-            },
-        },
+            }),
+        )),
         {
             'palette': {
                 'black': "#000000",
