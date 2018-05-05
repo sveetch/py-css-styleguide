@@ -1,2 +1,2 @@
 """CSS Manifest driven styleguide for your project"""
-__version__ = '0.3.0'
+__version__ = '0.4.0'

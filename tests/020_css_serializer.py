@@ -321,47 +321,64 @@ def test_serialize_to_nested_error(context):
         serializer.serialize_to_nested('foo', context)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,attempted,order', [
     (
-        {
-            'keys': "black white",
-            'values': "#000000 #ffffff",
-        },
-        {
-            'black': "#000000",
-            'white': "#ffffff",
-        },
+        OrderedDict((
+            ('keys', "black white"),
+            ('values', "#000000 #ffffff"),
+        )),
+        OrderedDict((
+            ('black', "#000000"),
+            ('white', "#ffffff"),
+        )),
+        ['black', 'white'],
     ),
     (
-        {
-            'keys': "black white red",
-            'values': "#000000 #ffffff #ff0000",
-        },
-        {
-            'black': "#000000",
-            'white': "#ffffff",
-            'red': "#ff0000",
-        },
+        OrderedDict((
+            ('keys', "black white red"),
+            ('values', "#000000 #ffffff #ff0000"),
+        )),
+        OrderedDict((
+            ('black', "#000000"),
+            ('white', "#ffffff"),
+            ('red', "#ff0000"),
+        )),
+        ['black', 'white', 'red'],
+    ),
+    (
+        OrderedDict((
+            ('keys', "cyan black white red"),
+            ('values', "#48999b #000000 #ffffff #ff0000"),
+        )),
+        OrderedDict((
+            ('cyan', "#48999b"),
+            ('black', "#000000"),
+            ('white', "#ffffff"),
+            ('red', "#ff0000"),
+        )),
+        ['cyan', 'black', 'white', 'red'],
     ),
     # keys/values only in flat mode, everything else is ignored
     (
-        {
-            'keys': "black white",
-            'values': "#000000 #ffffff",
-            'dummy': 'whatever',
-        },
-        {
-            'black': "#000000",
-            'white': "#ffffff",
-        },
+        OrderedDict((
+            ('keys', "black white"),
+            ('values', "#000000 #ffffff"),
+            ('dummy', 'whatever'),
+        )),
+        OrderedDict((
+            ('black', "#000000"),
+            ('white', "#ffffff"),
+        )),
+        ['black', 'white'],
     ),
 ])
-def test_serialize_to_flat_success(context, attempted):
+def test_serialize_to_flat_success(context, attempted, order):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_flat('foo', context)
 
     assert serialized == attempted
+    assert order == list(serialized.keys())
 
 
 @pytest.mark.parametrize('context', [

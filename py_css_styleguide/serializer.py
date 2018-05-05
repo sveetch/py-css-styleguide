@@ -223,7 +223,7 @@ class ManifestSerializer(object):
                    "'values' variable")
             raise SerializerError(msg.format(name))
 
-        return dict(zip(keys, values))
+        return OrderedDict(zip(keys, values))
 
     def serialize_to_list(self, name, datas):
         """
