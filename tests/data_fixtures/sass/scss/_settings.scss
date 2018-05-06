@@ -21,6 +21,13 @@ $schemes-colors: (
     ),
 );
 
+// Some background gradients
+// ---------
+$gradients: (
+    yellow-to-blue-linear: linear-gradient(#f69d3c, #3f87a6),
+    yellow-to-blue-radial: radial-gradient(#f69d3c, #3f87a6 50px),
+);
+
 // Grid cell sizes
 // ---------
 $grid-cell-sizes: 5 25 33.3333 75 100;

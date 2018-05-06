@@ -14,6 +14,11 @@
   --value: "#000000 #ffffff";
 }
 
+.styleguide-reference-gradients {
+  --structure: "json";
+  --object: '["linear-gradient(#f69d3c, #3f87a6)", "radial-gradient(#f69d3c, #3f87a6 50px)"]';
+}
+
 .styleguide-reference-grid_cell_sizes {
   --structure: "flat";
   --keys: "5 25 33 75 100";

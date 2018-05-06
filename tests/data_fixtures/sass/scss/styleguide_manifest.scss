@@ -20,6 +20,11 @@
     --value: "#{get-props($schemes-colors, 'background')}";
 }
 
+.styleguide-reference-gradients{
+    --structure: "json";
+    --object: '["#{to-string(map-values($gradients), $glue: '", "')}"]';
+}
+
 .styleguide-reference-grid_cell_sizes{
     --structure: "flat";
     --keys: "#{floor-number-items($grid-cell-sizes)}";

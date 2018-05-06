@@ -163,7 +163,7 @@ Will be serialized to this in JSON: ::
 JSON
 ----
 
-When every other structures does not fit to your needs, JSON structure is the way to go.
+When every other structures does not fit to your needs, JSON structure is the way to go but be aware that this is not easy to build complex JSON object from Sass.
 
 It is enabled when there is a variable ``--structure`` containing ``"json"``.
 
