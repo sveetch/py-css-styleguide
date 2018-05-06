@@ -259,6 +259,101 @@ def test_get_meta_references_error(context):
 
 
 @pytest.mark.parametrize('context,attempted', [
+    # Empty list
+    (
+        {
+            'object': '[]',
+        },
+        [],
+    ),
+    # Empty dict
+    (
+        {
+            'object': '{}',
+        },
+        {},
+    ),
+    # Simple list and encoding
+    (
+        {
+            'object': '["foo", "téléphone"]',
+        },
+        ['foo', 'téléphone'],
+    ),
+    # Simple dict
+    (
+        {
+            'object': '{"foo": "ping", "bar": "pong"}',
+        },
+        {
+            "foo": "ping",
+            "bar": "pong"
+        },
+    ),
+    # Nested dict
+    (
+        {
+            'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
+        },
+        {
+            "foo": "bar",
+            "plop": {
+                "ping": "pang",
+                "pong": "pung"
+            }
+        },
+    ),
+    # Various type in a dict
+    (
+        {
+            'object': ("""{"foo": "bar", "life": 42, "moo": true,"""
+                       """"plop": ["ping", "pong"]}"""),
+        },
+        {
+            "foo": "bar",
+            "life": 42,
+            "moo": True,
+            "plop": [
+                "ping",
+                "pong"
+            ]
+        },
+    ),
+])
+def test_serialize_to_json_success(context, attempted):
+    serializer = ManifestSerializer()
+
+    serialized = serializer.serialize_to_json('foo', context)
+
+    assert serialized == attempted
+
+
+@pytest.mark.parametrize('context', [
+    # Missing 'object'
+    {
+        'value': "#000000 #ffffff",
+    },
+    # Empty object
+    {
+        'object': '',
+    },
+    # Single quote encoding issue
+    {
+        'object': "['foo']",
+    },
+    # Syntax error
+    {
+        'object': '["foo"',
+    },
+])
+def test_serialize_to_json_error(context):
+    serializer = ManifestSerializer()
+
+    with pytest.raises(SerializerError):
+        serializer.serialize_to_json('foo', context)
+
+
+@pytest.mark.parametrize('context,attempted', [
     # Nested mode with single property and ensure 'structure' is an ignored
     # keyword
     (
@@ -515,6 +610,20 @@ def test_serialize_to_string_error(context):
 
 
 @pytest.mark.parametrize('name,context,attempted', [
+    # JSON object with a list
+    (
+        'palette',
+        {
+            'styleguide-reference-palette': {
+                'structure': 'json',
+                'object': '["foo", "bar"]',
+            },
+        },
+        [
+            'foo',
+            'bar'
+        ],
+    ),
     # Nested structure with single property
     (
         'palette',

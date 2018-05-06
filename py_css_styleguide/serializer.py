@@ -3,6 +3,8 @@ Serializer
 ==========
 
 """
+import json
+
 from collections import OrderedDict
 
 from py_css_styleguide.nomenclature import (
@@ -138,6 +140,31 @@ class ManifestSerializer(object):
             return value
 
         return value.split(" ")
+
+    def serialize_to_json(self, name, datas):
+        """
+        Serialize given datas to any object from assumed JSON string.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            object: Object depending from JSON content.
+        """
+        data_object = datas.get('object', None)
+        print(data_object)
+        if data_object is None:
+            msg = ("JSON reference '{}' lacks of required 'object' variable")
+            raise SerializerError(msg.format(name))
+
+        try:
+            content = json.loads(data_object, object_pairs_hook=OrderedDict)
+        except json.JSONDecodeError as e:
+            msg = "JSON reference '{}' raised error from JSON decoder: {}"
+            raise SerializerError(msg.format(name, e))
+        else:
+            return content
 
     def serialize_to_nested(self, name, datas):
         """
@@ -360,6 +387,8 @@ class ManifestSerializer(object):
                 structure_mode = 'list'
             elif properties['structure'] == 'string':
                 structure_mode = 'string'
+            elif properties['structure'] == 'json':
+                structure_mode = 'json'
             elif properties['structure'] == 'nested':
                 pass
             else:
@@ -380,6 +409,8 @@ class ManifestSerializer(object):
             context = self.serialize_to_string(name, properties)
         elif structure_mode == 'nested':
             context = self.serialize_to_nested(name, properties)
+        elif structure_mode == 'json':
+            context = self.serialize_to_json(name, properties)
 
         return context
 

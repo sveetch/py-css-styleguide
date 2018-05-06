@@ -55,6 +55,7 @@ Every reference rule starts with ``styleguide-reference-`` followed by its name 
 Available serialization structure are:
 
 * Nested dictionnary (default);
+* JSON;
 * Flat dictionnary;
 * List;
 * String;
@@ -158,3 +159,30 @@ So for example, a reference like this: ::
 Will be serialized to this in JSON: ::
 
     'my value'
+
+JSON
+----
+
+When every other structures does not fit to your needs, JSON structure is the way to go.
+
+It is enabled when there is a variable ``--structure`` containing ``"json"``.
+
+It requires a ``--object`` which contains a string of a valid JSON object.
+
+Remember than array item names and string values must be double quoted, single quotes usage for them is invalid in JSON.
+
+This serializer use a hook to preserve dict item orders but this is only guaranteed since Python 3.6.
+
+So for example, a reference like this: ::
+
+    .styleguide-reference-dummy{
+        --structure: "json";
+        --value: '["my value", "foo"]';
+    }
+
+Will be serialized to this in JSON: ::
+
+    [
+        'my value',
+        'foo'
+    ]
