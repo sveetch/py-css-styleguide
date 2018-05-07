@@ -7,7 +7,9 @@ Version 0.4.0 - Unreleased
 --------------------------
 
 * Enforce order on flat structure, close #6;
-* Added JSON structure, close #7;
+* Added ``splitter`` property for ``flat``,  ``nested`` and ``list`` structure to be able to use either white space separator or JSON list on values, close #7;
+* Added JSON structure;
+* Removed unused method ``ManifestSerializer.format_value``;
 
 Version 0.3.0 - 2018/04/19
 --------------------------

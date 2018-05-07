@@ -35,7 +35,11 @@ class ManifestSerializer(object):
         _metas (collections.OrderedDict): Buffer to store serialized metas
             from parsed source. Default is an empty dict which reseted and
             filled from ``serialize`` method.
+        _DEFAULT_SPLITTER (string): Default value splitter used for some
+            structure kinds.
     """
+    _DEFAULT_SPLITTER = 'white-space'
+
     def __init__(self):
         self._metas = OrderedDict()
 
@@ -89,57 +93,45 @@ class ManifestSerializer(object):
 
         return True
 
-    def format_value(self, data, name, default="list"):
+    def value_splitter(self, reference, prop, value, mode):
         """
-        Format value following its format declaration if given.
+        Split a string into a list items.
 
-        Format declaration is defined using ``--NAME-format`` where ``NAME``
-        is the name related variable to format value.
+        Default behavior is to split on white spaces.
 
-        Actually supported format are:
-
-        * string;
-        * list where each element is separated by an empty space;
-
-        ``list`` is allways the default format.
-
-        Value is not getted from a safe get, if it does not exist it raises an
-        exception.
-
-        It is assumed that asked value is allways a string.
 
         Arguments:
-            data (dict): Data where to search for property value and optional
-                format definition.
-            name (string): Property name to search for. Will also be joined to
-                ``-format`` to search for format declaration.
+            reference (string): Reference name used when raising possible
+                error.
+            prop (string): Property name used when raising possible error.
+            value (string): Property value to split.
+            mode (string): Splitter mode. Default should come from
+                ``ManifestSerializer._DEFAULT_SPLITTER``.
 
-        Keyword arguments:
-            default (string): Default format to use when not defined for
-                search property.
+                Available splitter are:
+
+                * ``white-space``: Simply split a string on white spaces;
+                * ``json-list``: Assume the string is a JSON list to parse;
 
         Returns:
-            Variable type following triggered format. Can be either a string
-            or a list.
+            list:
         """
-        format_kind = data.get('{}-format'.format(name), default)
+        items = []
 
-        value = data.get(name, None)
-        if value is None:
-            msg = "Asked value for item '{}' does not exist"
-            raise SerializerError(msg.format(name))
+        if mode == 'json-list':
+            try:
+                items = json.loads(value)
+            except json.JSONDecodeError as e:
+                print(value)
+                msg = ("Reference '{ref}' raised JSON decoder error when "
+                       "splitting values from '{prop}': {err}'")
+                raise SerializerError(msg.format(ref=reference, prop=prop,
+                                                 err=e))
+        else:
+            if len(value) > 0:
+                items = value.split(" ")
 
-        if not format_kind:
-            format_kind = default
-
-        if format_kind not in ('string', 'list'):
-            msg = "Format declaration '{}' for '{}' is not supported"
-            raise SerializerError(msg.format(name, format_kind))
-
-        if format_kind == 'string':
-            return value
-
-        return value.split(" ")
+        return items
 
     def serialize_to_json(self, name, datas):
         """
@@ -153,7 +145,7 @@ class ManifestSerializer(object):
             object: Object depending from JSON content.
         """
         data_object = datas.get('object', None)
-        print(data_object)
+
         if data_object is None:
             msg = ("JSON reference '{}' lacks of required 'object' variable")
             raise SerializerError(msg.format(name))
@@ -180,13 +172,14 @@ class ManifestSerializer(object):
             dict: Nested dictionnary of serialized reference datas.
        """
         keys = datas.get('keys', None)
+        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
 
         if not keys:
             msg = ("Nested reference '{}' lacks of required 'keys' variable "
                    "or is empty")
             raise SerializerError(msg.format(name))
         else:
-            keys = keys.split(" ")
+            keys = self.value_splitter(name, 'keys', keys, mode=splitter)
 
         # Initialize context dict with reference keys
         context = OrderedDict()
@@ -196,8 +189,8 @@ class ManifestSerializer(object):
         # Tidy each variable value to its respective item
         for k, v in datas.items():
             # Ignore reserved internal keywords
-            if k not in ('keys', 'structure'):
-                values = v.split(" ")
+            if k not in ('keys', 'structure', 'splitter'):
+                values = self.value_splitter(name, 'values', v, mode=splitter)
 
                 if len(values) != len(keys):
                     msg = ("Nested reference '{}' has different length for "
@@ -230,20 +223,21 @@ class ManifestSerializer(object):
         """
         keys = datas.get('keys', None)
         values = datas.get('values', None)
+        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
 
         if not keys:
             msg = ("Flat reference '{}' lacks of required 'keys' variable or "
                    "is empty")
             raise SerializerError(msg.format(name))
         else:
-            keys = keys.split(" ")
+            keys = self.value_splitter(name, 'keys', keys, mode=splitter)
 
         if not values:
             msg = ("Flat reference '{}' lacks of required 'values' variable "
                    "or is empty")
             raise SerializerError(msg.format(name))
         else:
-            values = values.split(" ")
+            values = self.value_splitter(name, 'values', values, mode=splitter)
 
         if len(values) != len(keys):
             msg = ("Flat reference have different length of 'keys' ands "
@@ -268,13 +262,14 @@ class ManifestSerializer(object):
             list: List of serialized reference datas.
         """
         items = datas.get('items', None)
+        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
 
         if items is None:
             msg = ("List reference '{}' lacks of required 'items' variable "
                    "or is empty")
             raise SerializerError(msg.format(name))
         else:
-            items = items.split(" ")
+            items = self.value_splitter(name, 'items', items, mode=splitter)
 
         return items
 

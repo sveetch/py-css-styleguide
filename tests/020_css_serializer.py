@@ -64,71 +64,79 @@ def test_validate_variable_name_error(name):
         serializer.validate_variable_name(name)
 
 
-def test_format_value_dontexists():
-    """
-    Check error about unexisting required value to format
-    """
-    serializer = ManifestSerializer()
-
-    data = {}
-
-    with pytest.raises(SerializerError):
-        serializer.format_value(data, 'nope')
-
-
-def test_format_value_unsupported():
-    """
-    Check error about unsupported format name
-    """
-    serializer = ManifestSerializer()
-
-    data = {
-        'ping': 'pong',
-        'ping-format': "nope",
-    }
-
-    with pytest.raises(SerializerError):
-        serializer.format_value(data, 'nope')
-
-
-@pytest.mark.parametrize('context,attempted', [
-    # Default coerce to a list
+@pytest.mark.parametrize('value,mode,attempted', [
+    # White space separator
     (
-        {
-            'names': "palette",
-        },
-        ["palette"],
+        "",
+        "white-space",
+        [],
     ),
-    # Formerly asked a string
     (
-        {
-            'names': "palette",
-            'names-format': "string",
-        },
-        "palette",
+        "foo",
+        "white-space",
+        ["foo"],
     ),
-    # Formerly asked a list
     (
-        {
-            'names': "palette",
-            'names-format': "list",
-        },
-        ["palette"],
+        "foo bar",
+        "white-space",
+        ["foo", "bar"],
     ),
-    # Multiple items
     (
-        {
-            'names': "palette schemes foo bar",
-        },
-        ["palette", "schemes", "foo", "bar"],
+        "foo bar téléphone maison",
+        "white-space",
+        ["foo", "bar", "téléphone", "maison"],
+    ),
+    (
+        "foo bar téléphone-maison",
+        "white-space",
+        ["foo", "bar", "téléphone-maison"],
+    ),
+    # JSON list parsing
+    (
+        "[]",
+        "json-list",
+        [],
+    ),
+    (
+        '["foo"]',
+        "json-list",
+        ["foo"],
+    ),
+    (
+        '["foo\'", "bar"]',
+        "json-list",
+        ["foo'", "bar"],
+    ),
+    (
+        '["foo", "ping pong", "bar", "téléphone"]',
+        "json-list",
+        ["foo", "ping pong", "bar", "téléphone"],
     ),
 ])
-def test_format_value_success(context, attempted):
+def test_value_splitter_success(value, mode, attempted):
     serializer = ManifestSerializer()
 
-    data = serializer.format_value(context, 'names')
+    data = serializer.value_splitter('ref', 'prop', value, mode)
 
     assert data == attempted
+
+
+@pytest.mark.parametrize('value,mode', [
+    # Invalid JSON syntax
+    (
+        "[",
+        "json-list",
+    ),
+    (
+        "['nope']",
+        "json-list",
+    ),
+])
+def test_value_splitter_error(value, mode):
+    serializer = ManifestSerializer()
+
+    with pytest.raises(SerializerError):
+        serializer.value_splitter('ref', 'prop', value, mode)
 
 
 @pytest.mark.parametrize('context,attempted', [
@@ -389,6 +397,23 @@ def test_serialize_to_json_error(context):
             },
         },
     ),
+    # With JSON list splitter
+    (
+        {
+            'keys': '["black", "white"]',
+            'value': '["#000000", "#ffffff"]',
+            "structure": "whatever",
+            "splitter": "json-list",
+        },
+        {
+            'black': {
+                'value': "#000000",
+            },
+            'white': {
+                'value': "#ffffff",
+            },
+        },
+    ),
 ])
 def test_serialize_to_nested_success(context, attempted):
     serializer = ManifestSerializer()
@@ -466,6 +491,19 @@ def test_serialize_to_nested_error(context):
         )),
         ['black', 'white'],
     ),
+    # With JSON list splitter
+    (
+        OrderedDict((
+            ('splitter', 'json-list'),
+            ('keys', '["black", "white"]'),
+            ('values', '["#000000", "#ffffff"]'),
+        )),
+        OrderedDict((
+            ('black', "#000000"),
+            ('white', "#ffffff"),
+        )),
+        ['black', 'white'],
+    ),
 ])
 def test_serialize_to_flat_success(context, attempted, order):
     serializer = ManifestSerializer()
@@ -509,9 +547,9 @@ def test_serialize_to_flat_error(context):
     # Empty list is ok
     (
         {
-            'items': "black",
+            'items': "",
         },
-        ['black'],
+        [],
     ),
     # Multiple list items
     (
@@ -526,6 +564,14 @@ def test_serialize_to_flat_error(context):
             'items': "1 2 3 4 5 6 7 8 9 0",
         },
         ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    ),
+    # With JSON list splitter
+    (
+        {
+            'splitter': "json-list",
+            'items': '["black", "white"]',
+        },
+        ['black', 'white'],
     ),
 ])
 def test_serialize_to_list_success(context, attempted):
@@ -835,7 +881,7 @@ def test_get_reference_error(name, context):
         },
         ['foo', 'pika', 'ping'],
     ),
-    # Every structure modes with automatic enabling
+    # Every structure modes and splitter with automatic enabling
     (
         OrderedDict((
             ('styleguide-metas-references', {
@@ -859,6 +905,16 @@ def test_get_reference_error(name, context):
             ('styleguide-reference-version', {
                 'structure': 'string',
                 'value': "V42.0",
+            }),
+            ('styleguide-reference-jsonstruct', {
+                'structure': 'json',
+                'object': '{"foo": "bar", "ping": "pong"}',
+            }),
+            ('styleguide-reference-flatjson', {
+                'structure': 'flat',
+                'splitter': 'json-list',
+                'keys': '["black", "white"]',
+                'values': '["#000000", "#ffffff"]',
             }),
         )),
         {
@@ -889,8 +945,16 @@ def test_get_reference_error(name, context):
                 'large',
             ],
             'version': "V42.0",
+            'jsonstruct': {
+                'foo': "bar",
+                'ping': "pong",
+            },
+            'flatjson': {
+                'black': "#000000",
+                'white': "#ffffff",
+            },
         },
-        ["palette", "schemes", "spaces", "version"],
+        ["palette", "schemes", "spaces", "version", "jsonstruct", "flatjson"],
     ),
 ])
 def test_get_enabled_references(context, attempted, order):
