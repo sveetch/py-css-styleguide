@@ -5,7 +5,7 @@
 @import "styleguide_helpers";
 
 .styleguide-metas-references{
-    --names: "palette schemes gradients grid_cell_sizes version";
+    --names: "palette schemes borders gradients grid_cell_sizes version";
 }
 
 .styleguide-reference-palette{
@@ -15,9 +15,18 @@
 }
 
 .styleguide-reference-schemes {
-    --keys: "#{get-names($schemes-colors)}";
-    --selector: "#{get-names($schemes-colors, '.bg-')}";
-    --value: "#{get-props($schemes-colors, 'background')}";
+    --splitter: "json-list";
+    --keys: '#{get-names-to-json($schemes-colors)}';
+    --selector: '#{get-names-to-json($schemes-colors, '.bg-')}';
+    --background: '#{get-props-to-json($schemes-colors, 'background')}';
+    --font_color: '#{get-props-to-json($schemes-colors, 'font-color')}';
+}
+
+.styleguide-reference-borders {
+    --keys: "#{get-names($borders)}";
+    --size: "#{get-props($borders, 'size')}";
+    --style: "#{get-props($borders, 'style')}";
+    --color: "#{get-props($borders, 'color')}";
 }
 
 .styleguide-reference-gradients{

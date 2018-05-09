@@ -1,11 +1,13 @@
 $black: #000000;
 $white: #ffffff;
+$grey: #404040;
 
 // Palette
 // ---------
 $palette: (
     black: $black,
     white: $white,
+    grey: $grey,
 );
 
 // Schemes colors
@@ -15,9 +17,35 @@ $schemes-colors: (
         background: $black,
         font-color: $white,
     ),
+    grey: (
+        background: $grey,
+        font-color: $white,
+    ),
     white: (
         background: $white,
         font-color: $black,
+    ),
+    grey-gradient: (
+        background: linear-gradient($white, $white 85%, $grey),
+        font-color: $black,
+    ),
+);
+
+$borders: (
+    thin: (
+        size: rem-calc(1px),
+        style: solid,
+        color: white,
+    ),
+    normal: (
+        size: rem-calc(3px),
+        style: solid,
+        color: white,
+    ),
+    bold: (
+        size: rem-calc(5px),
+        style: solid,
+        color: black,
     ),
 );
 

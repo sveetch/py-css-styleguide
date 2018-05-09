@@ -9,6 +9,7 @@ Version 0.4.0 - Unreleased
 * Enforce order on flat structure, close #6;
 * Added ``splitter`` property for ``flat``,  ``nested`` and ``list`` structure to be able to use either white space separator or JSON list on values, close #7;
 * Added JSON structure;
+* Added new Sass helpers to build JSON list from Sass lists, map key names, values and properties;
 * Removed unused method ``ManifestSerializer.format_value``;
 
 Version 0.3.0 - 2018/04/19

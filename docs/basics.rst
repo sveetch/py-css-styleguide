@@ -186,3 +186,58 @@ Will be serialized to this in JSON: ::
         'my value',
         'foo'
     ]
+
+
+Values items separator
+**********************
+
+Some serialization structures split their values in a list items to fit them to their Python structure, they are:
+
+* ``nested``;
+* ``flat``;
+* ``list``;
+
+Split on white spaces
+---------------------
+
+Default behavior is to use a simple white space separator such as: ::
+
+    "foo bar ping pong"
+
+Is turned to a Python list: ::
+
+    ["foo", "bar", "ping", "pong"]
+
+Since it is default behavior, you don't need to declare anything to enable this mode, but if you want to explicitely declare it you just have to add variable ``--splitter`` with value ``"white-space"``: ::
+
+    .styleguide-reference-dummy{
+        --structure: "list";
+        --splitter: "white-space";
+        --items: "foo bar";
+    }
+
+This is the easiest and more human readable way to define value items.
+
+
+JSON list
+---------
+
+The white space separator may not fit to every cases particularly when you have value items that contains spaces.
+
+For such cases you have possibility to declare your item values as JSON list such as: ::
+
+    '["foo", "bar", "ping pong"]'
+
+Is turned to a Python list: ::
+
+    ["foo", "bar", "ping pong"]
+
+You can enable this mode by using variable ``--splitter`` with value ``"json-list"``: ::
+
+    .styleguide-reference-dummy{
+        --structure: "list";
+        --splitter: "json-list";
+        --items: '["foo", "bar", "ping pong"]';
+    }
+
+Be aware that you may encounter JSON decoder issues for invalid JSON syntax. The most common issue is the single quote usage around string, this invalid in JSON, every string is allways double quoted.

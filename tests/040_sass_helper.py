@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+import json
 import os
 import shutil
 
@@ -13,6 +14,82 @@ from py_css_styleguide.model import Manifest
 
 
 def test_boussole_compile(fixtures_settings, temp_builds_dir):
+    """
+    Testing everything, this implies Sass helpers correctly generate CSS,
+    builded CSS is the same than stored one in data fixtures and
+    manifest is correctly serialized to attempt datas.
+    """
+    attempted_serialization = {
+        'styleguide_manifest.css': {
+            "metas": {
+                "references": [
+                    "palette",
+                    "schemes",
+                    "borders",
+                    "gradients",
+                    "grid_cell_sizes",
+                    "version"
+                ]
+            },
+            "gradients": [
+                "linear-gradient(#f69d3c, #3f87a6)",
+                "radial-gradient(#f69d3c, #3f87a6 50px)"
+            ],
+            "borders": {
+                "thin": {
+                    "size": "rem-calc(1px)",
+                    "style": "solid",
+                    "color": "white"
+                },
+                "normal": {
+                    "size": "rem-calc(3px)",
+                    "style": "solid",
+                    "color": "white"
+                },
+                "bold": {
+                    "size": "rem-calc(5px)",
+                    "style": "solid",
+                    "color": "black"
+                }
+            },
+            "grid_cell_sizes": {
+                "5": "5",
+                "25": "25",
+                "33": "33.3333",
+                "75": "75",
+                "100": "100"
+            },
+            "version": "42.0",
+            "palette": {
+                "black": "#000000",
+                "white": "#ffffff",
+                "grey": "#404040"
+            },
+            "schemes": {
+                "black": {
+                    "selector": ".bg-black",
+                    "background": "#000000",
+                    "font_color": "#ffffff"
+                },
+                "grey": {
+                    "selector": ".bg-grey",
+                    "background": "#404040",
+                    "font_color": "#ffffff"
+                },
+                "white": {
+                    "selector": ".bg-white",
+                    "background": "#ffffff",
+                    "font_color": "#000000"
+                },
+                "grey-gradient": {
+                    "selector": ".bg-grey-gradient",
+                    "background": "linear-gradient(#ffffff, #ffffff 85%, #404040)",
+                    "font_color": "#000000"
+                }
+            }
+        },
+    }
+
     basepath = temp_builds_dir.join('sass_helper_boussole_compile')
     basedir = basepath.strpath
 
@@ -54,6 +131,14 @@ def test_boussole_compile(fixtures_settings, temp_builds_dir):
             print(u"Compile error with: {}".format(src))
             print(message)
         else:
+            datas_keyname = os.path.basename(dst)
+
             with io.open(dst, 'r') as fp:
                 compiled_content = fp.read()
             assert attempted_css_content == compiled_content
+
+            manifest = Manifest()
+            manifest.load(compiled_content)
+            dump = json.loads(manifest.to_json())
+
+            assert attempted_serialization[datas_keyname] == dump

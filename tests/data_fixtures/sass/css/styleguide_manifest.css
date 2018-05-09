@@ -1,17 +1,26 @@
 .styleguide-metas-references {
-  --names: "palette schemes gradients grid_cell_sizes version";
+  --names: "palette schemes borders gradients grid_cell_sizes version";
 }
 
 .styleguide-reference-palette {
   --structure: "flat";
-  --keys: "black white";
-  --values: "#000000 #ffffff";
+  --keys: "black white grey";
+  --values: "#000000 #ffffff #404040";
 }
 
 .styleguide-reference-schemes {
-  --keys: "black white";
-  --selector: ".bg-black .bg-white";
-  --value: "#000000 #ffffff";
+  --splitter: "json-list";
+  --keys: '["black", "grey", "white", "grey-gradient"]';
+  --selector: '[".bg-black", ".bg-grey", ".bg-white", ".bg-grey-gradient"]';
+  --background: '["#000000", "#404040", "#ffffff", "linear-gradient(#ffffff, #ffffff 85%, #404040)"]';
+  --font_color: '["#ffffff", "#ffffff", "#000000", "#000000"]';
+}
+
+.styleguide-reference-borders {
+  --keys: "thin normal bold";
+  --size: "rem-calc(1px) rem-calc(3px) rem-calc(5px)";
+  --style: "solid solid solid";
+  --color: "white white black";
 }
 
 .styleguide-reference-gradients {
