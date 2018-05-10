@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 0.4.0 - Unreleased
+Version 0.4.0 - 2018/05/09
 --------------------------
 
 * Enforce order on flat structure, close #6;
