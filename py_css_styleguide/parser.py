@@ -72,9 +72,11 @@ class TinycssSourceParser(object):
         for token in rule.content:
             # Assume first identity token is the property name
             if token.type == 'ident':
-                # Ignore starting '-' from css variables
+                # Ignore starting dashes from CSS variables
                 name = token.value
-                if name.startswith('-'):
+                if name.startswith('--'):
+                    name = name[2:]
+                elif name.startswith('-'):
                     name = name[1:]
 
                 current_key = name

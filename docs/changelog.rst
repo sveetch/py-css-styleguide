@@ -3,6 +3,13 @@
 Changelog
 =========
 
+Version 0.5.0 - 2019/05/05
+--------------------------
+
+* Pinned ``tinycss2`` version to ``>=1.0.2``
+* Updated parser so double dashes for CSS variable are correctly supported now, close #8;
+* Rewrite package to use setup.cfg and virtualenv (instead of Python-venv);
+
 Version 0.4.0 - 2018/05/09
 --------------------------
 

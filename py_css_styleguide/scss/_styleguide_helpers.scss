@@ -1,3 +1,5 @@
+/* Helper functions from py-css-styleguide==0.5.0 */
+
 ///
 /// Convert a list to a string
 /// Copied from https://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
@@ -39,12 +41,6 @@
 ///
 /// @arg {List} $list [null]
 ///   A list.
-///
-/// @arg {String} $glue ['']
-///   A string used to join elements.
-///
-/// @arg {Bool} $is-nested [false]
-///   A pointer used when function does call itself.
 ///
 @function list-to-json($list) {
     $glue: '", "';
