@@ -3,6 +3,12 @@
 Changelog
 =========
 
+Development - Unreleased
+------------------------
+
+* Added some Sass functions to escape a value from quotes;
+* Enabled quote escape on ``get-props-to-json`` and ``get-values-to-json`` functions to avoid invalid JSON, close #9;
+
 Version 0.5.0 - 2019/05/05
 --------------------------
 
