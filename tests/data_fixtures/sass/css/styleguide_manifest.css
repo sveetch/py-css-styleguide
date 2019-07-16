@@ -11,10 +11,10 @@
 
 .styleguide-reference-schemes {
   --splitter: "json-list";
-  --keys: '["black", "grey", "white", "grey-gradient"]';
-  --selector: '[".bg-black", ".bg-grey", ".bg-white", ".bg-grey-gradient"]';
-  --background: '["#000000", "#404040", "#ffffff", "linear-gradient(#ffffff, #ffffff 85%, #404040)"]';
-  --font_color: '["#ffffff", "#ffffff", "#000000", "#000000"]';
+  --keys: '["black", "grey", "white", "grey-gradient", "with-image"]';
+  --selector: '[".bg-black", ".bg-grey", ".bg-white", ".bg-grey-gradient", ".bg-with-image"]';
+  --background: '["#000000", "#404040", "#ffffff", "linear-gradient(#ffffff, #ffffff 85%, #404040)", "url(\u0022foo/bar.png\u0022)"]';
+  --font_color: '["#ffffff", "#ffffff", "#000000", "#000000", "#000000"]';
 }
 
 .styleguide-reference-borders {

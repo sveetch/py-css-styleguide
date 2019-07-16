@@ -29,6 +29,10 @@ $schemes-colors: (
         background: linear-gradient($white, $white 85%, $grey),
         font-color: $black,
     ),
+    with-image: (
+        background: url("foo/bar.png"),
+        font-color: $black,
+    ),
 );
 
 $borders: (

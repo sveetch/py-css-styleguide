@@ -1,5 +1,50 @@
 /* Helper functions from py-css-styleguide==0.5.0 */
 
+/// Replace every occurences of a character with a substition string.
+/// Useful to strip some characters.
+///
+/// @arg {String} $string [null]
+///     A string to parse, this must be a real string type.
+///
+/// @arg {String} $search [null]
+///     Character to replace.
+///
+/// @arg {String} $replace ['']
+///     String which will replace searched character.
+///
+/// @return {String} - Modified string following given arguments.
+///
+@function _strip-token($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + _strip-token(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+/// Enforce safe string with escaping simple and double quote
+///
+/// @arg {String} $string [null]
+///     A string to parse, `#{}` is used on given value so it always enforce
+///     given value will be a real string type. (So you may give it a list or
+///     map or whatever).
+///
+/// @arg {Bool} $apply [true]
+///   If false, will return the given string unmodified.
+///
+/// @return {String} - Escaped string if $apply is enabled.
+///
+@function _safe-string($string, $apply: true) {
+  @if $apply {
+    $value: #{$string};
+    @return _strip-token(_strip-token($value, '"', $replace: '\\u0022'), "'", $replace: '\\u0027');
+  }
+
+  @return $string;
+}
+
 ///
 /// Convert a list to a string
 /// Copied from https://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
@@ -112,10 +157,15 @@
 /// @arg {String} $prefix ['']
 ///   A string to preprend to each item.
 ///
-@function get-values-to-json($map, $prefix: "") {
+/// @arg {Bool} $safe-string [true]
+///   If true, every item value are escaped from single and double quotes. This
+///   is often required to avoid invalid JSON with values which contain quotes.
+///
+@function get-values-to-json($map, $prefix: "", $safe-string: true) {
     $values: ();
     @each $name in map-values($map) {
-        $values: append($values, $prefix+$name);
+        $val: _safe-string($name, $apply: $safe-string);
+        $values: append($values, $prefix+$val);
     }
     @return list-to-json($values);
 }
@@ -153,10 +203,15 @@
 /// @arg {String} $prefix ['']
 ///   A string to preprend to each item.
 ///
-@function get-props-to-json($map, $property, $prefix: "") {
+/// @arg {Bool} $safe-string [true]
+///   If true, every item value are escaped from single and double quotes. This
+///   is often required to avoid invalid JSON with values which contain quotes.
+///
+@function get-props-to-json($map, $property, $prefix: "", $safe-string: true) {
     $values: ();
     @each $name, $scheme in $map {
-        $values: append($values, $prefix+map-get($scheme, $property));
+        $val: _safe-string(map-get($scheme, $property), $apply: $safe-string);
+        $values: append($values, $prefix+$val);
     }
     @return list-to-json($values);
 }

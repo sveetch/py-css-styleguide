@@ -85,6 +85,11 @@ def test_boussole_compile(fixtures_settings, temp_builds_dir):
                     "selector": ".bg-grey-gradient",
                     "background": "linear-gradient(#ffffff, #ffffff 85%, #404040)",
                     "font_color": "#000000"
+                },
+                "with-image": {
+                    "selector": ".bg-with-image",
+                    "background": "url(u0022foo/bar.pngu0022)",
+                    "font_color": "#000000"
                 }
             }
         },
