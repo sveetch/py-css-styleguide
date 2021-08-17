@@ -105,7 +105,7 @@ Obviously ``--keys`` is for key names and ``--values`` for key values. All other
 So for example, a reference like this: ::
 
     .styleguide-reference-dummy{
-        --structure: "true";
+        --structure: "flat";
         --keys: "foo bar";
         --values: "#000000 #ffffff";
     }
