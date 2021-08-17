@@ -4,8 +4,6 @@ import json
 import os
 import shutil
 
-import pytest
-
 from boussole.project import ProjectBase
 from boussole.finder import ScssFinder
 from boussole.compiler import SassCompileHelper

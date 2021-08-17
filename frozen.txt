@@ -1,0 +1,13 @@
+# Frozen requirement versions from '0.6.0rc1' installation
+boussole==2.0.0
+factory-boy==3.2.0
+flake8==3.9.2
+freezegun==1.1.0
+livereload==2.6.3
+pyquery==1.4.3
+pytest==6.2.4
+pytest-django==4.4.0
+Sphinx==4.1.2
+sphinx-rtd-theme==0.5.2
+tinycss2==1.1.0
+twine==3.4.2

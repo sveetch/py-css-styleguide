@@ -1,10 +1,11 @@
 # Minimal makefile for Sphinx documentation
 #
+VENV_PATH=../.venv
 
-# You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = PyCssStyleguide
+# You can set these variables from the command line, and also
+# from the environment for the first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= $(VENV_PATH)/bin/sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
 
@@ -13,9 +14,6 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
-
-livehtml:
-	sphinx-autobuild --host 0.0.0.0 --port 8002 -b html $(SPHINXOPTS) $(SOURCEDIR) $(BUILDDIR)/html
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

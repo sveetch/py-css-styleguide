@@ -28,7 +28,9 @@ class FixturesSettingsTestMixin(object):
 
 @pytest.fixture(scope="module")
 def fixtures_settings():
-    """Initialize and return settings (mostly paths) for fixtures (scope at module level)"""
+    """
+    Initialize and return settings (mostly paths) for fixtures (scope at module level)
+    """
     return FixturesSettingsTestMixin()
 
 

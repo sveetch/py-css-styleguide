@@ -8,7 +8,6 @@ from collections import OrderedDict
 
 import pytest
 
-from py_css_styleguide.parser import TinycssSourceParser
 from py_css_styleguide.serializer import SerializerError, ManifestSerializer
 
 

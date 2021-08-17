@@ -2,7 +2,6 @@
 import io
 import json
 import os
-import pytest
 
 from py_css_styleguide.model import Manifest
 
@@ -29,7 +28,7 @@ def test_manifest_load_string():
     manifest = Manifest()
     manifest.load(source)
 
-    assert manifest._path == None
+    assert manifest._path is None
 
     assert sorted(manifest.metas.get('references')) == sorted([
         'palette',

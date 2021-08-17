@@ -54,7 +54,7 @@ class ManifestSerializer(object):
             bool: ``True`` if rule name is valid.
         """
         if not name:
-            raise SerializerError("Rule name is empty".format(name))
+            raise SerializerError("Rule name is empty")
 
         if name[0] not in RULE_ALLOWED_START:
             msg = "Rule name '{}' must starts with a letter"
@@ -79,7 +79,7 @@ class ManifestSerializer(object):
             bool: ``True`` if variable name is valid.
         """
         if not name:
-            raise SerializerError("Variable name is empty".format(name))
+            raise SerializerError("Variable name is empty")
 
         if name[0] not in PROPERTY_ALLOWED_START:
             msg = "Variable name '{}' must starts with a letter"

@@ -25,7 +25,10 @@ from py_css_styleguide.parser import TinycssSourceParser
     ),
     # Multiple rules
     (
-        '.styleguide-foo{ content: "yep"; quote: "pika" } .styleguide-bar{content: "hola"}',
+        (
+            '.styleguide-foo{ content: "yep"; quote: "pika" } '
+            '.styleguide-bar{content: "hola"}'
+        ),
         {
             "styleguide-bar": {
                 "content": "hola"
