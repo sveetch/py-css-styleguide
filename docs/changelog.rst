@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 0.6.0 - Unreleased
+Version 0.6.0 - 2021/08/19
 --------------------------
 
 * Fix documentation typo issue, close #13;
