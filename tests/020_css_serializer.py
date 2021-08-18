@@ -208,11 +208,12 @@ def test_get_available_references(context, expected):
         },
         [],
     ),
-    # Automatically enable every references with some references defined
+    # Automatically enable every references and explicitely ignore some ones
     (
         OrderedDict((
             ('styleguide-metas-references', {
                 'auto': "true",
+                'excludes': "bar pong",
             }),
             ('styleguide-reference-foo', {
                 'content': "dummy",
@@ -220,8 +221,14 @@ def test_get_available_references(context, expected):
             ('styleguide-reference-bar', {
                 'content': "dummy",
             }),
+            ('styleguide-reference-ping', {
+                'content': "dummy",
+            }),
+            ('styleguide-reference-pong', {
+                'content': "dummy",
+            }),
         )),
-        ['foo', 'bar'],
+        ['foo', 'ping'],
     ),
 ])
 def test_get_meta_references_success(context, expected):

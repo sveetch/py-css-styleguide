@@ -1,0 +1,81 @@
+{
+    "metas": {
+        "references": [
+            "palette",
+            "schemes",
+            "borders",
+            "gradients",
+            "grid_cell_sizes",
+            "spaces",
+            "version"
+        ]
+    },
+    "gradients": [
+        "linear-gradient(#f69d3c, #3f87a6)",
+        "radial-gradient(#f69d3c, #3f87a6 50px)"
+    ],
+    "borders": {
+        "thin": {
+            "size": "rem-calc(1px)",
+            "style": "solid",
+            "color": "white"
+        },
+        "normal": {
+            "size": "rem-calc(3px)",
+            "style": "solid",
+            "color": "white"
+        },
+        "bold": {
+            "size": "rem-calc(5px)",
+            "style": "solid",
+            "color": "black"
+        }
+    },
+    "grid_cell_sizes": {
+        "5": "5",
+        "25": "25",
+        "33": "33.3333",
+        "75": "75",
+        "100": "100"
+    },
+    "version": "42.0",
+    "palette": {
+        "black": "#000000",
+        "white": "#ffffff",
+        "grey": "#404040"
+    },
+    "schemes": {
+        "black": {
+            "selector": ".bg-black",
+            "background": "#000000",
+            "font_color": "#ffffff"
+        },
+        "grey": {
+            "selector": ".bg-grey",
+            "background": "#404040",
+            "font_color": "#ffffff"
+        },
+        "white": {
+            "selector": ".bg-white",
+            "background": "#ffffff",
+            "font_color": "#000000"
+        },
+        "grey-gradient": {
+            "selector": ".bg-grey-gradient",
+            "background": "linear-gradient(#ffffff, #ffffff 85%, #404040)",
+            "font_color": "#000000"
+        },
+        "with-image": {
+            "selector": ".bg-with-image",
+            "background": "url(u0022foo/bar.pngu0022)",
+            "font_color": "#000000"
+        }
+    },
+    "spaces": [
+        "tiny",
+        "short",
+        "normal",
+        "large",
+        "wide"
+    ]
+}

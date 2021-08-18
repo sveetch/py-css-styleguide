@@ -1,4 +1,4 @@
-# Frozen requirement versions from '0.6.0rc1' installation
+# Frozen requirement versions from '0.6.0rc2' installation
 boussole==2.0.0
 factory-boy==3.2.0
 flake8==3.9.2

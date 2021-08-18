@@ -8,6 +8,11 @@ Version 0.6.0 - Unreleased
 
 * Fix documentation typo issue, close #13;
 * Add ``Manifest.to_dict()`` and make ``Manifest.to_json()`` using it, close #14;
+* Add property option ``--excludes`` in meta reference rule to ignore some explicitely
+  defined reference names in automatic mode, close #10;
+* Update Package structure to use more modern configurations;
+* Drop support for Python 3.5;
+* Add support for Python from 3.6 to 3.8;
 
 Version 0.5.1 - 2019/07/16
 --------------------------

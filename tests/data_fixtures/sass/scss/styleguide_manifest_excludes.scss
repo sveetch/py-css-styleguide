@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+@import "settings";
+
+@import "styleguide_helpers";
+
+.styleguide-metas-references{
+    --auto: "true";
+    --excludes: "schemes borders gradients grid_cell_sizes spaces version";
+}
+
+.styleguide-reference-palette{
+    --structure: "flat";
+    --keys: "#{get-names($palette)}";
+    --values: "#{get-values($palette)}";
+}
+
+.styleguide-reference-schemes {
+    --splitter: "json-list";
+    --keys: '#{get-names-to-json($schemes-colors)}';
+    --selector: '#{get-names-to-json($schemes-colors, '.bg-')}';
+    --background: '#{get-props-to-json($schemes-colors, 'background')}';
+    --font_color: '#{get-props-to-json($schemes-colors, 'font-color')}';
+}
+
+.styleguide-reference-borders {
+    --keys: "#{get-names($borders)}";
+    --size: "#{get-props($borders, 'size')}";
+    --style: "#{get-props($borders, 'style')}";
+    --color: "#{get-props($borders, 'color')}";
+}
+
+.styleguide-reference-gradients{
+    --structure: "json";
+    --object: '["#{to-string(map-values($gradients), $glue: '", "')}"]';
+}
+
+.styleguide-reference-grid_cell_sizes{
+    --structure: "flat";
+    --keys: "#{floor-number-items($grid-cell-sizes)}";
+    --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
+}
+
+.styleguide-reference-spaces{
+    --structure: "list";
+    --items: "#{to-string($spaces, $glue: ' ')}";
+}
+
+.styleguide-reference-version{
+    --structure: "string";
+    --value: "#{$version}";
+}

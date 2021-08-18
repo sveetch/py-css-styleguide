@@ -122,7 +122,6 @@ class ManifestSerializer(object):
             try:
                 items = json.loads(value)
             except json.JSONDecodeError as e:
-                print(value)
                 msg = ("Reference '{ref}' raised JSON decoder error when "
                        "splitting values from '{prop}': {err}'")
                 raise SerializerError(msg.format(ref=reference, prop=prop,
@@ -312,9 +311,13 @@ class ManifestSerializer(object):
             any languages. For word separator inside name, use ``_``.
         Automatic
             Using ``--auto`` variable every reference rules will be enabled.
-            The value of this variable is not important since it is not empty.
+            The value of this variable is not important as long as it is not empty.
 
-        If both of these variables are defined, the manual enable mode is used.
+            In this mode, another variable is watched for, it is ``excludes`` which is a
+            list of reference names to ignore.
+
+        If both of these variables are defined, only the manual enable mode "--names" is
+        used.
 
         Arguments:
             datas (dict): Data where to search for meta references declaration.
@@ -325,14 +328,23 @@ class ManifestSerializer(object):
         """
         rule = datas.get(RULE_META_REFERENCES, {})
 
+        # There is no meta reference rule
         if not rule:
             msg = "Manifest lacks of '.{}' or is empty"
             raise SerializerError(msg.format(RULE_META_REFERENCES))
         else:
+            # For explicitely allowed reference names
             if rule.get('names', None):
                 names = rule.get('names').split(" ")
+            # For automatic reference names storing
             elif rule.get('auto', None):
                 names = self.get_available_references(datas)
+                # Filter out references explicitely named in possible "excludes"
+                # property.
+                if rule.get('excludes', None):
+                    excludes = rule.get('excludes').split(" ")
+                    names = [item for item in names if item not in excludes]
+            # Meta reference rule lacks of required properties
             else:
                 msg = ("'.{}' either require '--names' or '--auto' variable "
                        "to be defined")

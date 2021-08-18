@@ -1,0 +1,14 @@
+{
+    "metas": {
+        "references": [
+            "palette",
+            "version"
+        ]
+    },
+    "version": "42.0",
+    "palette": {
+        "black": "#000000",
+        "white": "#ffffff",
+        "grey": "#404040"
+    }
+}

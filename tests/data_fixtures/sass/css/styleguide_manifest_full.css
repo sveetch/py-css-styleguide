@@ -1,6 +1,6 @@
-/* Helper functions from py-css-styleguide==0.5.1 */
+/* Helper functions from py-css-styleguide==0.6.0 */
 .styleguide-metas-references {
-  --names: "palette schemes borders gradients grid_cell_sizes version";
+  --auto: "true";
 }
 
 .styleguide-reference-palette {

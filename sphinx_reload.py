@@ -19,7 +19,7 @@ from livereload import Server, shell
 
 server = Server()
 
-# Watch root documents (not recursive)
+# Watch source documents (not recursive)
 server.watch(
     'docs/*.rst',
     shell(
@@ -27,10 +27,15 @@ server.watch(
         cwd='docs'
     )
 )
-
-# Watch API documents
 server.watch(
     'docs/api/*.rst',
+    shell(
+        'make html',
+        cwd='docs'
+    )
+)
+server.watch(
+    'docs/usage/*.rst',
     shell(
         'make html',
         cwd='docs'

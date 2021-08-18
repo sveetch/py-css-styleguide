@@ -45,7 +45,7 @@ User’s Guide
 
    install.rst
    basics.rst
-   usage.rst
+   usage/index.rst
 
 Developer’s Guide
 *****************

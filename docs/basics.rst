@@ -37,13 +37,22 @@ Manually
     not exist as a CSS rule, it will raises an error.
 Automatic
     Using ``--auto`` variable every reference rules will be enabled.
-    The value of this variable is not important since it is not empty.
+    The value of this variable is not important as long as it is not empty.
 
     ::
 
         --auto: "true";
 
     Which will enable every CSS rule starting with ``styleguide-reference-``.
+
+    In this mode, another variable is watched for, it is ``excludes`` which is a list
+    of reference names to ignore: ::
+
+        --auto: "true";
+        --excludes: "reference2 reference3";
+
+    This would ignore ``reference2`` and ``reference3`` but will allow every other
+    references.
 
 Reference rules
 ***************
