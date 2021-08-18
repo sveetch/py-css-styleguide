@@ -107,6 +107,21 @@ class Manifest(object):
         self._rule_attrs.remove(name)
         delattr(self, name)
 
+    def to_dict(self):
+        """
+        Serialize metas and reference attributes to a dictionnary.
+
+        Returns:
+            dict: Data dictionnary.
+        """
+        agregate = {
+            'metas': self.metas,
+        }
+
+        agregate.update({k: getattr(self, k) for k in self._rule_attrs})
+
+        return agregate
+
     def to_json(self, indent=4):
         """
         Serialize metas and reference attributes to a JSON string.
@@ -117,10 +132,4 @@ class Manifest(object):
         Returns:
             string: JSON datas.
         """
-        agregate = {
-            'metas': self.metas,
-        }
-
-        agregate.update({k: getattr(self, k) for k in self._rule_attrs})
-
-        return json.dumps(agregate, indent=indent)
+        return json.dumps(self.to_dict(), indent=indent)

@@ -120,7 +120,7 @@ def test_manifest_to_json():
 
     dump = json.loads(manifest.to_json())
 
-    attempted = {
+    expected = {
         'metas': {
             'references': [
                 'palette',
@@ -143,4 +143,57 @@ def test_manifest_to_json():
         },
     }
 
-    assert dump == attempted
+    assert dump == expected
+
+
+def test_manifest_to_dict():
+    """
+    TODO
+    """
+    source = (
+        '.styleguide-metas-references{\n'
+        '    --names: "palette text_color";\n'
+        '}\n'
+        '\n'
+        '.styleguide-reference-palette{\n'
+        '    --structure: "flat";\n'
+        '    --keys: "black white";\n'
+        '    --values: "#000000 #ffffff";\n'
+        '}\n'
+        '\n'
+        '.styleguide-reference-text_color{\n'
+        '    --keys: "black white";\n'
+        '    --selectors: ".bg-black .bg-white";\n'
+        '    --values: "#000000 #ffffff";\n'
+        '}'
+    )
+
+    manifest = Manifest()
+    manifest.load(source)
+
+    dump = manifest.to_dict()
+
+    expected = {
+        'metas': {
+            'references': [
+                'palette',
+                'text_color',
+            ],
+        },
+        'palette': {
+            'white': '#ffffff',
+            'black': '#000000',
+        },
+        'text_color': {
+            'black': {
+                'selectors': ".bg-black",
+                'values': "#000000",
+            },
+            'white': {
+                'values': "#ffffff",
+                'selectors': ".bg-white",
+            },
+        },
+    }
+
+    assert dump == expected

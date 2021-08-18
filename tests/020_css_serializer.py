@@ -63,7 +63,7 @@ def test_validate_variable_name_error(name):
         serializer.validate_variable_name(name)
 
 
-@pytest.mark.parametrize('value,mode,attempted', [
+@pytest.mark.parametrize('value,mode,expected', [
     # White space separator
     (
         "",
@@ -112,12 +112,12 @@ def test_validate_variable_name_error(name):
         ["foo", "ping pong", "bar", "téléphone"],
     ),
 ])
-def test_value_splitter_success(value, mode, attempted):
+def test_value_splitter_success(value, mode, expected):
     serializer = ManifestSerializer()
 
     data = serializer.value_splitter('ref', 'prop', value, mode)
 
-    assert data == attempted
+    assert data == expected
 
 
 @pytest.mark.parametrize('value,mode', [
@@ -138,7 +138,7 @@ def test_value_splitter_error(value, mode):
         serializer.value_splitter('ref', 'prop', value, mode)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     (
         {
             'styleguide-metas-references': {
@@ -169,15 +169,15 @@ def test_value_splitter_error(value, mode):
         ["foo", "pika", "ping"],
     ),
 ])
-def test_get_available_references(context, attempted):
+def test_get_available_references(context, expected):
     serializer = ManifestSerializer()
 
     reference_names = serializer.get_available_references(context)
 
-    assert reference_names == attempted
+    assert reference_names == expected
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # With a dummy ignored rule just for fun
     (
         {
@@ -224,12 +224,12 @@ def test_get_available_references(context, attempted):
         ['foo', 'bar'],
     ),
 ])
-def test_get_meta_references_success(context, attempted):
+def test_get_meta_references_success(context, expected):
     serializer = ManifestSerializer()
 
     reference_names = serializer.get_meta_references(context)
 
-    assert reference_names == attempted
+    assert reference_names == expected
 
 
 @pytest.mark.parametrize('context', [
@@ -265,7 +265,7 @@ def test_get_meta_references_error(context):
         serializer.get_meta_references(context)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # Empty list
     (
         {
@@ -327,12 +327,12 @@ def test_get_meta_references_error(context):
         },
     ),
 ])
-def test_serialize_to_json_success(context, attempted):
+def test_serialize_to_json_success(context, expected):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_json('foo', context)
 
-    assert serialized == attempted
+    assert serialized == expected
 
 
 @pytest.mark.parametrize('context', [
@@ -360,7 +360,7 @@ def test_serialize_to_json_error(context):
         serializer.serialize_to_json('foo', context)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # Nested mode with single property and ensure 'structure' is an ignored
     # keyword
     (
@@ -414,12 +414,12 @@ def test_serialize_to_json_error(context):
         },
     ),
 ])
-def test_serialize_to_nested_success(context, attempted):
+def test_serialize_to_nested_success(context, expected):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_nested('foo', context)
 
-    assert serialized == attempted
+    assert serialized == expected
 
 
 @pytest.mark.parametrize('context', [
@@ -440,7 +440,7 @@ def test_serialize_to_nested_error(context):
         serializer.serialize_to_nested('foo', context)
 
 
-@pytest.mark.parametrize('context,attempted,order', [
+@pytest.mark.parametrize('context,expected,order', [
     (
         OrderedDict((
             ('keys', "black white"),
@@ -504,12 +504,12 @@ def test_serialize_to_nested_error(context):
         ['black', 'white'],
     ),
 ])
-def test_serialize_to_flat_success(context, attempted, order):
+def test_serialize_to_flat_success(context, expected, order):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_flat('foo', context)
 
-    assert serialized == attempted
+    assert serialized == expected
     assert order == list(serialized.keys())
 
 
@@ -535,7 +535,7 @@ def test_serialize_to_flat_error(context):
         serializer.serialize_to_flat('foo', context)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # Single item list
     (
         {
@@ -573,12 +573,12 @@ def test_serialize_to_flat_error(context):
         ['black', 'white'],
     ),
 ])
-def test_serialize_to_list_success(context, attempted):
+def test_serialize_to_list_success(context, expected):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_list('foo', context)
 
-    assert serialized == attempted
+    assert serialized == expected
 
 
 @pytest.mark.parametrize('context', [
@@ -599,7 +599,7 @@ def test_serialize_to_list_error(context):
         serializer.serialize_to_list('foo', context)
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # Basic string
     (
         {
@@ -629,12 +629,12 @@ def test_serialize_to_list_error(context):
         "¿ pœp ?",
     ),
 ])
-def test_serialize_to_string_success(context, attempted):
+def test_serialize_to_string_success(context, expected):
     serializer = ManifestSerializer()
 
     serialized = serializer.serialize_to_string('foo', context)
 
-    assert serialized == attempted
+    assert serialized == expected
 
 
 @pytest.mark.parametrize('context', [
@@ -654,7 +654,7 @@ def test_serialize_to_string_error(context):
         serializer.serialize_to_string('foo', context)
 
 
-@pytest.mark.parametrize('name,context,attempted', [
+@pytest.mark.parametrize('name,context,expected', [
     # JSON object with a list
     (
         'palette',
@@ -761,12 +761,12 @@ def test_serialize_to_string_error(context):
         "ok",
     ),
 ])
-def test_get_reference_success(name, context, attempted):
+def test_get_reference_success(name, context, expected):
     serializer = ManifestSerializer()
 
     reference = serializer.get_reference(context, name)
 
-    assert reference == attempted
+    assert reference == expected
 
 
 @pytest.mark.parametrize('name,context', [
@@ -824,7 +824,7 @@ def test_get_reference_error(name, context):
         serializer.get_reference(context, name)
 
 
-@pytest.mark.parametrize('context,attempted,order', [
+@pytest.mark.parametrize('context,expected,order', [
     # Default nested structure for a reference
     (
         {
@@ -956,17 +956,17 @@ def test_get_reference_error(name, context):
         ["palette", "schemes", "spaces", "version", "jsonstruct", "flatjson"],
     ),
 ])
-def test_get_enabled_references(context, attempted, order):
+def test_get_enabled_references(context, expected, order):
     serializer = ManifestSerializer()
 
     enabled_references = serializer.get_meta_references(context)
     references = serializer.get_enabled_references(context, enabled_references)
 
-    assert attempted == references
+    assert expected == references
     assert order == list(references.keys())
 
 
-@pytest.mark.parametrize('context,attempted', [
+@pytest.mark.parametrize('context,expected', [
     # Basic test to check serialize() glue method is ok
     (
         {
@@ -990,9 +990,9 @@ def test_get_enabled_references(context, attempted, order):
         },
     ),
 ])
-def test_serialize(context, attempted):
+def test_serialize(context, expected):
     serializer = ManifestSerializer()
 
     references = serializer.serialize(context)
 
-    assert references == attempted
+    assert references == expected

@@ -15,9 +15,9 @@ def test_boussole_compile(fixtures_settings, temp_builds_dir):
     """
     Testing everything, this implies Sass helpers correctly generate CSS,
     builded CSS is the same than stored one in data fixtures and
-    manifest is correctly serialized to attempt datas.
+    manifest is correctly serialized to expected datas.
     """
-    attempted_serialization = {
+    expected_serialization = {
         'styleguide_manifest.css': {
             "metas": {
                 "references": [
@@ -104,15 +104,15 @@ def test_boussole_compile(fixtures_settings, temp_builds_dir):
     # Copy Sass sources to compile from template
     shutil.copytree(template_sassdir, test_sassdir)
 
-    # Get attempted CSS content from file in fixture
-    attempted_css_filepath = os.path.join(
+    # Get expected CSS content from file in fixture
+    expected_css_filepath = os.path.join(
         fixtures_settings.fixtures_path,
         "sass",
         "css",
         "styleguide_manifest.css"
     )
-    with io.open(attempted_css_filepath, 'r') as fp:
-        attempted_css_content = fp.read()
+    with io.open(expected_css_filepath, 'r') as fp:
+        expected_css_content = fp.read()
 
     # Load boussole settings
     project = ProjectBase(backend_name="json")
@@ -138,10 +138,10 @@ def test_boussole_compile(fixtures_settings, temp_builds_dir):
 
             with io.open(dst, 'r') as fp:
                 compiled_content = fp.read()
-            assert attempted_css_content == compiled_content
+            assert expected_css_content == compiled_content
 
             manifest = Manifest()
             manifest.load(compiled_content)
             dump = json.loads(manifest.to_json())
 
-            assert attempted_serialization[datas_keyname] == dump
+            assert expected_serialization[datas_keyname] == dump

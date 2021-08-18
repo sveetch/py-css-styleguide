@@ -4,7 +4,7 @@ import pytest
 from py_css_styleguide.parser import TinycssSourceParser
 
 
-@pytest.mark.parametrize('source,attempted', [
+@pytest.mark.parametrize('source,expected', [
     # Basic single line
     (
         '.styleguide-foo{content: "yep"}',
@@ -62,8 +62,11 @@ from py_css_styleguide.parser import TinycssSourceParser
         },
     ),
 ])
-def test_source_parse(source, attempted):
+def test_source_parse(source, expected):
+    """
+    Ensure TinyCSS parsing is still as expected.
+    """
     parser = TinycssSourceParser()
     rules = parser.parse(source)
 
-    assert rules == attempted
+    assert rules == expected

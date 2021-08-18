@@ -6,7 +6,8 @@ Changelog
 Version 0.6.0 - Unreleased
 --------------------------
 
-TODO
+* Fix documentation typo issue, close #13;
+* Add ``Manifest.to_dict()`` and make ``Manifest.to_json()`` using it, close #14;
 
 Version 0.5.1 - 2019/07/16
 --------------------------
