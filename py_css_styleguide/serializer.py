@@ -26,7 +26,7 @@ class SerializerError(Exception):
 
 class ManifestSerializer(object):
     """
-    Serialize parsed CSS to data suitable to Manifest
+    Serialize parsed CSS to data suitable to Manifest.
 
     Raises:
         SerializerError: When there is an invalid syntax in datas.
@@ -38,7 +38,7 @@ class ManifestSerializer(object):
         _DEFAULT_SPLITTER (string): Default value splitter used for some
             structure kinds.
     """
-    _DEFAULT_SPLITTER = 'white-space'
+    _DEFAULT_SPLITTER = "white-space"
 
     def __init__(self):
         self._metas = OrderedDict()
@@ -118,7 +118,7 @@ class ManifestSerializer(object):
         """
         items = []
 
-        if mode == 'json-list':
+        if mode == "json-list":
             try:
                 items = json.loads(value)
             except json.JSONDecodeError as e:
@@ -143,7 +143,7 @@ class ManifestSerializer(object):
         Returns:
             object: Object depending from JSON content.
         """
-        data_object = datas.get('object', None)
+        data_object = datas.get("object", None)
 
         if data_object is None:
             msg = ("JSON reference '{}' lacks of required 'object' variable")
@@ -170,7 +170,7 @@ class ManifestSerializer(object):
         Returns:
             dict: Nested dictionnary of serialized reference datas.
        """
-        keys = datas.get('keys', None)
+        keys = datas.get("keys", None)
         splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
 
         if not keys:
@@ -188,8 +188,8 @@ class ManifestSerializer(object):
         # Tidy each variable value to its respective item
         for k, v in datas.items():
             # Ignore reserved internal keywords
-            if k not in ('keys', 'structure', 'splitter'):
-                values = self.value_splitter(name, 'values', v, mode=splitter)
+            if k not in ("keys", "structure", "splitter"):
+                values = self.value_splitter(name, "values", v, mode=splitter)
 
                 if len(values) != len(keys):
                     msg = ("Nested reference '{}' has different length for "
@@ -220,16 +220,16 @@ class ManifestSerializer(object):
         Returns:
             dict: Flat dictionnay of serialized reference datas.
         """
-        keys = datas.get('keys', None)
-        values = datas.get('values', None)
-        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
+        keys = datas.get("keys", None)
+        values = datas.get("values", None)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if not keys:
             msg = ("Flat reference '{}' lacks of required 'keys' variable or "
                    "is empty")
             raise SerializerError(msg.format(name))
         else:
-            keys = self.value_splitter(name, 'keys', keys, mode=splitter)
+            keys = self.value_splitter(name, "keys", keys, mode=splitter)
 
         if not values:
             msg = ("Flat reference '{}' lacks of required 'values' variable "
@@ -260,15 +260,15 @@ class ManifestSerializer(object):
         Returns:
             list: List of serialized reference datas.
         """
-        items = datas.get('items', None)
-        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
+        items = datas.get("items", None)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if items is None:
             msg = ("List reference '{}' lacks of required 'items' variable "
                    "or is empty")
             raise SerializerError(msg.format(name))
         else:
-            items = self.value_splitter(name, 'items', items, mode=splitter)
+            items = self.value_splitter(name, "items", items, mode=splitter)
 
         return items
 
@@ -285,7 +285,7 @@ class ManifestSerializer(object):
         Returns:
             string: Value.
         """
-        value = datas.get('value', None)
+        value = datas.get("value", None)
 
         if value is None:
             msg = ("String reference '{}' lacks of required 'value' variable "
@@ -334,15 +334,15 @@ class ManifestSerializer(object):
             raise SerializerError(msg.format(RULE_META_REFERENCES))
         else:
             # For explicitely allowed reference names
-            if rule.get('names', None):
-                names = rule.get('names').split(" ")
+            if rule.get("names", None):
+                names = rule.get("names").split(" ")
             # For automatic reference names storing
-            elif rule.get('auto', None):
+            elif rule.get("auto", None):
                 names = self.get_available_references(datas)
                 # Filter out references explicitely named in possible "excludes"
                 # property.
-                if rule.get('excludes', None):
-                    excludes = rule.get('excludes').split(" ")
+                if rule.get("excludes", None):
+                    excludes = rule.get("excludes").split(" ")
                     names = [item for item in names if item not in excludes]
             # Meta reference rule lacks of required properties
             else:
@@ -377,8 +377,8 @@ class ManifestSerializer(object):
         Returns:
             collections.OrderedDict: Serialized reference datas.
         """
-        rule_name = '-'.join((RULE_REFERENCE, name))
-        structure_mode = 'nested'
+        rule_name = "-".join((RULE_REFERENCE, name))
+        structure_mode = "nested"
 
         if rule_name not in datas:
             msg = "Unable to find enabled reference '{}'"
@@ -387,36 +387,36 @@ class ManifestSerializer(object):
         properties = datas.get(rule_name)
 
         # Search for "structure" variable
-        if 'structure' in properties:
-            if properties['structure'] == 'flat':
-                structure_mode = 'flat'
-            elif properties['structure'] == 'list':
-                structure_mode = 'list'
-            elif properties['structure'] == 'string':
-                structure_mode = 'string'
-            elif properties['structure'] == 'json':
-                structure_mode = 'json'
-            elif properties['structure'] == 'nested':
+        if "structure" in properties:
+            if properties["structure"] == "flat":
+                structure_mode = "flat"
+            elif properties["structure"] == "list":
+                structure_mode = "list"
+            elif properties["structure"] == "string":
+                structure_mode = "string"
+            elif properties["structure"] == "json":
+                structure_mode = "json"
+            elif properties["structure"] == "nested":
                 pass
             else:
                 msg = "Invalid structure mode name '{}' for reference '{}'"
                 raise SerializerError(msg.format(structure_mode, name))
-            del properties['structure']
+            del properties["structure"]
 
         # Validate variable names
         for item in properties.keys():
             self.validate_variable_name(item)
 
         # Perform serialize according to structure mode
-        if structure_mode == 'flat':
+        if structure_mode == "flat":
             context = self.serialize_to_flat(name, properties)
-        elif structure_mode == 'list':
+        elif structure_mode == "list":
             context = self.serialize_to_list(name, properties)
-        elif structure_mode == 'string':
+        elif structure_mode == "string":
             context = self.serialize_to_string(name, properties)
-        elif structure_mode == 'nested':
+        elif structure_mode == "nested":
             context = self.serialize_to_nested(name, properties)
-        elif structure_mode == 'json':
+        elif structure_mode == "json":
             context = self.serialize_to_json(name, properties)
 
         return context
@@ -482,7 +482,7 @@ class ManifestSerializer(object):
             collections.OrderedDict: Serialized enabled references datas.
         """
         self._metas = OrderedDict({
-            'references': self.get_meta_references(datas),
+            "references": self.get_meta_references(datas),
         })
 
-        return self.get_enabled_references(datas, self._metas['references'])
+        return self.get_enabled_references(datas, self._metas["references"])

@@ -7,6 +7,10 @@ from py_css_styleguide.model import Manifest
 
 
 def test_manifest_load_string():
+    """
+    Manifest.load() should load correctly manifest from given string of a CSS
+    manifest.
+    """
     source = (
         '.styleguide-metas-references{\n'
         '    --names: "palette text_color";\n'
@@ -30,29 +34,33 @@ def test_manifest_load_string():
 
     assert manifest._path is None
 
-    assert sorted(manifest.metas.get('references')) == sorted([
-        'palette',
-        'text_color'
+    assert sorted(manifest.metas.get("references")) == sorted([
+        "palette",
+        "text_color"
     ])
 
     assert manifest.palette == {
-        'white': '#ffffff',
-        'black': '#000000',
+        "white": "#ffffff",
+        "black": "#000000",
     }
 
     assert manifest.text_color == {
-        'black': {
-            'selectors': ".bg-black",
-            'values': "#000000",
+        "black": {
+            "selectors": ".bg-black",
+            "values": "#000000",
         },
-        'white': {
-            'values': "#ffffff",
-            'selectors': ".bg-white",
+        "white": {
+            "values": "#ffffff",
+            "selectors": ".bg-white",
         },
     }
 
 
 def test_manifest_load_fileobject(fixtures_settings):
+    """
+    Manifest.load() should load correctly manifest from given fileobject of a CSS
+    manifest file.
+    """
     source_filepath = os.path.join(
         fixtures_settings.fixtures_path,
         "manifest_sample.css"
@@ -60,43 +68,46 @@ def test_manifest_load_fileobject(fixtures_settings):
 
     manifest = Manifest()
 
-    with io.open(source_filepath, 'r') as fp:
+    with io.open(source_filepath, "r") as fp:
         manifest.load(fp)
 
     assert manifest._path == source_filepath
 
-    assert sorted(manifest.metas.get('references')) == sorted([
-        'palette',
-        'text_color',
-        'spaces',
+    assert sorted(manifest.metas.get("references")) == sorted([
+        "palette",
+        "text_color",
+        "spaces",
     ])
 
     assert manifest.palette == {
-        'white': '#ffffff',
-        'black': '#000000',
+        "white": "#ffffff",
+        "black": "#000000",
     }
 
     assert manifest.spaces == [
-        'tiny',
-        'short',
-        'normal',
-        'large',
-        'wide',
+        "tiny",
+        "short",
+        "normal",
+        "large",
+        "wide",
     ]
 
     assert manifest.text_color == {
-        'black': {
-            'selectors': ".bg-black",
-            'values': "#000000",
+        "black": {
+            "selectors": ".bg-black",
+            "values": "#000000",
         },
-        'white': {
-            'values': "#ffffff",
-            'selectors': ".bg-white",
+        "white": {
+            "values": "#ffffff",
+            "selectors": ".bg-white",
         },
     }
 
 
 def test_manifest_to_json():
+    """
+    Manifest.to_json() should dump a JSON of serialized dict from 'Manifest.to_dict()'
+    """
     source = (
         '.styleguide-metas-references{\n'
         '    --names: "palette text_color";\n'
@@ -121,24 +132,24 @@ def test_manifest_to_json():
     dump = json.loads(manifest.to_json())
 
     expected = {
-        'metas': {
-            'references': [
-                'palette',
-                'text_color',
+        "metas": {
+            "references": [
+                "palette",
+                "text_color",
             ],
         },
-        'palette': {
-            'white': '#ffffff',
-            'black': '#000000',
+        "palette": {
+            "white": "#ffffff",
+            "black": "#000000",
         },
-        'text_color': {
-            'black': {
-                'selectors': ".bg-black",
-                'values': "#000000",
+        "text_color": {
+            "black": {
+                "selectors": ".bg-black",
+                "values": "#000000",
             },
-            'white': {
-                'values': "#ffffff",
-                'selectors': ".bg-white",
+            "white": {
+                "values": "#ffffff",
+                "selectors": ".bg-white",
             },
         },
     }
@@ -148,7 +159,7 @@ def test_manifest_to_json():
 
 def test_manifest_to_dict():
     """
-    TODO
+    Manifest.to_dict() should dump a dictionnary of references with its metas.
     """
     source = (
         '.styleguide-metas-references{\n'
@@ -174,26 +185,69 @@ def test_manifest_to_dict():
     dump = manifest.to_dict()
 
     expected = {
-        'metas': {
-            'references': [
-                'palette',
-                'text_color',
+        "metas": {
+            "references": [
+                "palette",
+                "text_color",
             ],
         },
-        'palette': {
-            'white': '#ffffff',
-            'black': '#000000',
+        "palette": {
+            "white": "#ffffff",
+            "black": "#000000",
         },
-        'text_color': {
-            'black': {
-                'selectors': ".bg-black",
-                'values': "#000000",
+        "text_color": {
+            "black": {
+                "selectors": ".bg-black",
+                "values": "#000000",
             },
-            'white': {
-                'values': "#ffffff",
-                'selectors': ".bg-white",
+            "white": {
+                "values": "#ffffff",
+                "selectors": ".bg-white",
             },
         },
     }
 
     assert dump == expected
+
+
+def test_manifest_from_dict():
+    """
+    Manifest.from_dict() should receive a dict of datas to load as manifest object
+    attributes correctly.
+    """
+    source = {
+        "metas": {
+            "references": [
+                "palette",
+                "text_color",
+            ],
+        },
+        "palette": {
+            "white": "#ffffff",
+            "black": "#000000",
+        },
+        "text_color": {
+            "black": {
+                "selectors": ".bg-black",
+                "values": "#000000",
+            },
+            "white": {
+                "values": "#ffffff",
+                "selectors": ".bg-white",
+            },
+        },
+    }
+
+    manifest = Manifest()
+    manifest.from_dict(source)
+
+    assert manifest.metas["references"] == ["palette", "text_color"]
+
+    assert manifest.palette["white"] == "#ffffff"
+
+    assert manifest.text_color["black"] == {
+        "selectors": ".bg-black",
+        "values": "#000000",
+    }
+
+    assert manifest.to_dict() == source

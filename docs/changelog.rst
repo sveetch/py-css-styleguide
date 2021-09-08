@@ -3,6 +3,18 @@
 Changelog
 =========
 
+
+Version 0.7.0 - Unreleased
+--------------------------
+
+* Rename some model methods:
+    * ``set_rule`` to ``_set_rule``;
+    * ``remove_rule`` to ``_remove_rule``;
+* Implement model method ``from_dict`` to enable loading manifest directly from a
+  dictionnary in the same format than ``to_dict`` so it can be used from a JSON dump
+  made by ``to_json`` (after have been deserialized).
+
+
 Version 0.6.0 - 2021/08/19
 --------------------------
 
@@ -14,11 +26,13 @@ Version 0.6.0 - 2021/08/19
 * Drop support for Python 3.5;
 * Add support for Python from 3.6 to 3.8;
 
+
 Version 0.5.1 - 2019/07/16
 --------------------------
 
 * Added some Sass functions to escape a value from quotes;
 * Enabled quote escape on ``get-props-to-json`` and ``get-values-to-json`` functions to avoid invalid JSON, close #9;
+
 
 Version 0.5.0 - 2019/05/05
 --------------------------
@@ -26,6 +40,7 @@ Version 0.5.0 - 2019/05/05
 * Pinned ``tinycss2`` version to ``>=1.0.2``
 * Updated parser so double dashes for CSS variable are correctly supported now, close #8;
 * Rewrite package to use setup.cfg and virtualenv (instead of Python-venv);
+
 
 Version 0.4.0 - 2018/05/09
 --------------------------
@@ -36,6 +51,7 @@ Version 0.4.0 - 2018/05/09
 * Added new Sass helpers to build JSON list from Sass lists, map key names, values and properties;
 * Removed unused method ``ManifestSerializer.format_value``;
 
+
 Version 0.3.0 - 2018/04/19
 --------------------------
 
@@ -45,6 +61,7 @@ Version 0.3.0 - 2018/04/19
 * Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and serializer, close #4;
 * Fixed code quality issues with Flake8, close #5;
 
+
 Version 0.2.0 - 2018/04/08
 --------------------------
 
@@ -53,6 +70,7 @@ Version 0.2.0 - 2018/04/08
 * Added new structure mode ``list``;
 * Added new structure mode ``string``;
 
+
 Version 0.1.0 - 2018/04/07
 --------------------------
 
@@ -60,11 +78,13 @@ Version 0.1.0 - 2018/04/07
 * Changed ``Manifest.load()`` so it also accepts a file-like object;
 * Added test for Sass mixin helper using Boussole;
 
+
 Version 0.0.2 - 2018/04/04
 --------------------------
 
 * Added ``to_json`` method to Manifest model;
 * Fixed some code quality issues;
+
 
 Version 0.0.1 - 2018/04/02
 --------------------------

@@ -13,11 +13,12 @@ import json
 
 from py_css_styleguide.parser import TinycssSourceParser
 from py_css_styleguide.serializer import ManifestSerializer
+from .nomenclature import RULE_META
 
 
 class Manifest(object):
     """
-    Manifest model
+    Manifest model.
 
     During load process, every rule is stored as object attribute so you can
     reach them directly.
@@ -29,7 +30,9 @@ class Manifest(object):
             is not something you would need to reach commonly.
         _rule_attrs (list): List of registered reference rules. You may use
             it in iteration to find available reference attribute names.
-        metas (dict): Dictionnary of every metas returned by serializer.
+        metas (dict): Dictionnary of every meta datas from manifest. Either filled by
+            serializer (with ``load`` method) or dump content (with ``from_dict``
+            method).
     """
     def __init__(self):
         self._path = None
@@ -82,11 +85,11 @@ class Manifest(object):
 
         # Set every enabled rule as object attribute
         for k, v in references.items():
-            self.set_rule(k, v)
+            self._set_rule(k, v)
 
         return self._datas
 
-    def set_rule(self, name, properties):
+    def _set_rule(self, name, properties):
         """
         Set a rules as object attribute.
 
@@ -94,17 +97,25 @@ class Manifest(object):
             name (string): Rule name to set as attribute name.
             properties (dict): Dictionnary of properties.
         """
-        self._rule_attrs.append(name)
+        # Reference name to internal index
+        if name not in self._rule_attrs:
+            self._rule_attrs.append(name)
+
+        # Set rule as object attribute
         setattr(self, name, properties)
 
-    def remove_rule(self, name):
+    def _remove_rule(self, name):
         """
         Remove a rule from attributes.
 
         Arguments:
-            name (string): Rule name to remove.
+            name (string): Rule name to remove. The rule name must have been correctly
+                registered through ``_set_rule``.
         """
+        # Drop name from internal index
         self._rule_attrs.remove(name)
+
+        # Drop attribute
         delattr(self, name)
 
     def to_dict(self):
@@ -115,7 +126,7 @@ class Manifest(object):
             dict: Data dictionnary.
         """
         agregate = {
-            'metas': self.metas,
+            "metas": self.metas,
         }
 
         agregate.update({k: getattr(self, k) for k in self._rule_attrs})
@@ -133,3 +144,21 @@ class Manifest(object):
             string: JSON datas.
         """
         return json.dumps(self.to_dict(), indent=indent)
+
+    def from_dict(self, data):
+        """
+        Load given data as manifest attributes.
+
+        Alike ``load`` method this initialize the manifest object with references (and
+        metas) but without to parse CSS, only from a dictionnary.
+
+        Arguments:
+            data (dict): A dictionnary of datas to load. This dictionnary have to be
+                in the same format and structure than the one returned by ``to_dict``
+                method.
+        """
+        self.metas = data["metas"]
+
+        for name, properties in data.items():
+            if name != RULE_META:
+                self._set_rule(name, properties)
