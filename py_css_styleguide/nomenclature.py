@@ -24,6 +24,7 @@ There is some reserved name:
 """
 from string import ascii_letters, digits
 
+
 RULE_BASE_PREFIX = "styleguide"
 
 RULE_META = "metas"

@@ -16,7 +16,7 @@ from collections import OrderedDict
 
 from tinycss2 import parse_stylesheet
 
-from py_css_styleguide.nomenclature import RULE_BASE_PREFIX
+from .nomenclature import RULE_BASE_PREFIX
 
 
 class TinycssSourceParser(object):

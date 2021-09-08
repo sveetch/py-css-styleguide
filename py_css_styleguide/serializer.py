@@ -7,7 +7,7 @@ import json
 
 from collections import OrderedDict
 
-from py_css_styleguide.nomenclature import (
+from .nomenclature import (
     RULE_META_REFERENCES,
     RULE_REFERENCE,
     RULE_ALLOWED_START,

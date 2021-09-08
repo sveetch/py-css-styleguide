@@ -27,7 +27,7 @@ help:
 	@echo
 	@echo "  flake               -- to launch Flake8 checking"
 	@echo "  test                -- to launch base test suite using Pytest"
-	@echo "  quality             -- to launch Flake8 checking and every tests suites"
+	@echo "  quality             -- to launch Flake8 checking, tests suites, documentation building, freeze dependencies and check release"
 	@echo
 	@echo "  check-release       -- to check package release before uploading it to PyPi"
 	@echo "  release             -- to release package for latest version on PyPi (once release has been pushed to repository)"

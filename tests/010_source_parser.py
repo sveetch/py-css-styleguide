@@ -64,7 +64,7 @@ from py_css_styleguide.parser import TinycssSourceParser
 ])
 def test_source_parse(source, expected):
     """
-    Ensure TinyCSS parsing is still as expected.
+    Ensure TinyCSS parsing is still working as expected.
     """
     parser = TinycssSourceParser()
     rules = parser.parse(source)

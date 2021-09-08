@@ -11,8 +11,8 @@ stored in ``Manifest.metas`` attribute.
 """
 import json
 
-from py_css_styleguide.parser import TinycssSourceParser
-from py_css_styleguide.serializer import ManifestSerializer
+from .parser import TinycssSourceParser
+from .serializer import ManifestSerializer
 from .nomenclature import RULE_META
 
 
