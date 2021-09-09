@@ -126,7 +126,7 @@ class Manifest(object):
             dict: Data dictionnary.
         """
         agregate = {
-            "metas": self.metas,
+            RULE_META: self.metas,
         }
 
         agregate.update({k: getattr(self, k) for k in self._rule_attrs})
@@ -157,7 +157,7 @@ class Manifest(object):
                 in the same format and structure than the one returned by ``to_dict``
                 method.
         """
-        self.metas = data["metas"]
+        self.metas = data[RULE_META]
 
         for name, properties in data.items():
             if name != RULE_META:

@@ -4,7 +4,7 @@ Changelog
 =========
 
 
-Version 0.7.0 - Unreleased
+Version 0.7.0 - 2021/09/09
 --------------------------
 
 * Rename some model methods:
@@ -14,6 +14,7 @@ Version 0.7.0 - Unreleased
   dictionnary in the same format than ``to_dict`` so it can be used from a JSON dump
   made by ``to_json`` (after have been deserialized).
 * Add more manifest reference validations;
+* Add ``exceptions`` module for application exceptions;
 
 
 Version 0.6.0 - 2021/08/19
