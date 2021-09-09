@@ -13,6 +13,7 @@ Version 0.7.0 - Unreleased
 * Implement model method ``from_dict`` to enable loading manifest directly from a
   dictionnary in the same format than ``to_dict`` so it can be used from a JSON dump
   made by ``to_json`` (after have been deserialized).
+* Add more manifest reference validations;
 
 
 Version 0.6.0 - 2021/08/19

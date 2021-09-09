@@ -10,18 +10,11 @@ from collections import OrderedDict
 from .nomenclature import (
     RULE_META_REFERENCES,
     RULE_REFERENCE,
-    RULE_ALLOWED_START,
-    RULE_ALLOWED_CHARS,
-    PROPERTY_ALLOWED_START,
-    PROPERTY_ALLOWED_CHARS,
+    is_valid_rule,
+    is_valid_property,
 )
 
-
-class SerializerError(Exception):
-    """
-    Exception to raise when there is a syntax issue during serialization.
-    """
-    pass
+from .exceptions import SerializerError
 
 
 class ManifestSerializer(object):
@@ -29,7 +22,7 @@ class ManifestSerializer(object):
     Serialize parsed CSS to data suitable to Manifest.
 
     Raises:
-        SerializerError: When there is an invalid syntax in datas.
+        SerializerError: When there is an invalid syntax in parsed manifest.
 
     Attributes:
         _metas (collections.OrderedDict): Buffer to store serialized metas
@@ -42,56 +35,6 @@ class ManifestSerializer(object):
 
     def __init__(self):
         self._metas = OrderedDict()
-
-    def validate_rule_name(self, name):
-        """
-        Validate rule name.
-
-        Arguments:
-            name (string): Rule name.
-
-        Returns:
-            bool: ``True`` if rule name is valid.
-        """
-        if not name:
-            raise SerializerError("Rule name is empty")
-
-        if name[0] not in RULE_ALLOWED_START:
-            msg = "Rule name '{}' must starts with a letter"
-            raise SerializerError(msg.format(name))
-
-        for item in name:
-            if item not in RULE_ALLOWED_CHARS:
-                msg = ("Invalid rule name '{}': it must only contains "
-                       "letters, numbers and '_' character")
-                raise SerializerError(msg.format(name))
-
-        return True
-
-    def validate_variable_name(self, name):
-        """
-        Validate variable name.
-
-        Arguments:
-            name (string): Property name.
-
-        Returns:
-            bool: ``True`` if variable name is valid.
-        """
-        if not name:
-            raise SerializerError("Variable name is empty")
-
-        if name[0] not in PROPERTY_ALLOWED_START:
-            msg = "Variable name '{}' must starts with a letter"
-            raise SerializerError(msg.format(name))
-
-        for item in name:
-            if item not in PROPERTY_ALLOWED_CHARS:
-                msg = ("Invalid variable name '{}': it must only contains "
-                       "letters, numbers and '_' character")
-                raise SerializerError(msg.format(name))
-
-        return True
 
     def value_splitter(self, reference, prop, value, mode):
         """
@@ -351,7 +294,7 @@ class ManifestSerializer(object):
                 raise SerializerError(msg.format(RULE_META_REFERENCES))
 
         for item in names:
-            self.validate_rule_name(item)
+            is_valid_rule(item)
 
         return names
 
@@ -405,7 +348,7 @@ class ManifestSerializer(object):
 
         # Validate variable names
         for item in properties.keys():
-            self.validate_variable_name(item)
+            is_valid_property(item)
 
         # Perform serialize according to structure mode
         if structure_mode == "flat":

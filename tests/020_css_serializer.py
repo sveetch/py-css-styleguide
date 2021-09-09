@@ -8,59 +8,8 @@ from collections import OrderedDict
 
 import pytest
 
-from py_css_styleguide.serializer import SerializerError, ManifestSerializer
-
-
-@pytest.mark.parametrize('name', [
-    "palette",
-    "foo_bar",
-    "f123",
-])
-def test_validate_rule_name_success(name):
-    serializer = ManifestSerializer()
-
-    serializer.validate_rule_name(name)
-
-
-@pytest.mark.parametrize('name', [
-    "",
-    "foo-bar",
-    "foo-bar",
-    "foo bar",
-    "1foo",
-    "fooé",
-])
-def test_validate_rule_name_error(name):
-    serializer = ManifestSerializer()
-
-    with pytest.raises(SerializerError):
-        serializer.validate_rule_name(name)
-
-
-@pytest.mark.parametrize('name', [
-    "palette",
-    "foo_bar",
-    "f123",
-])
-def test_validate_variable_name_success(name):
-    serializer = ManifestSerializer()
-
-    serializer.validate_variable_name(name)
-
-
-@pytest.mark.parametrize('name', [
-    "",
-    "foo-bar",
-    "foo-bar",
-    "foo bar",
-    "1foo",
-    "fooé",
-])
-def test_validate_variable_name_error(name):
-    serializer = ManifestSerializer()
-
-    with pytest.raises(SerializerError):
-        serializer.validate_variable_name(name)
+from py_css_styleguide.exceptions import SerializerError, StyleguideValidationError
+from py_css_styleguide.serializer import ManifestSerializer
 
 
 @pytest.mark.parametrize('value,mode,expected', [
@@ -239,36 +188,48 @@ def test_get_meta_references_success(context, expected):
     assert reference_names == expected
 
 
-@pytest.mark.parametrize('context', [
+@pytest.mark.parametrize('context, expected', [
     # Missing references meta
-    {
-        'styleguide-metas-foo': {
-            'names': "palette",
-        }
-    },
+    (
+        {
+            'styleguide-metas-foo': {
+                'names': "palette",
+            }
+        },
+        SerializerError,
+    ),
     # Missing names or auto property
-    {
-        'styleguide-metas-references': {
-            'content': "palette",
-        }
-    },
+    (
+        {
+            'styleguide-metas-references': {
+                'content': "palette",
+            }
+        },
+        SerializerError,
+    ),
     # Invalid name (from '-' character)
-    {
-        'styleguide-metas-references': {
-            'names': "foo-bar",
-        }
-    },
+    (
+        {
+            'styleguide-metas-references': {
+                'names': "foo-bar",
+            }
+        },
+        StyleguideValidationError,
+    ),
     # Empty list
-    {
-        'styleguide-metas-references': {
-            'names': "",
-        }
-    },
+    (
+        {
+            'styleguide-metas-references': {
+                'names': "",
+            }
+        },
+        SerializerError,
+    ),
 ])
-def test_get_meta_references_error(context):
+def test_get_meta_references_error(context, expected):
     serializer = ManifestSerializer()
 
-    with pytest.raises(SerializerError):
+    with pytest.raises(expected):
         serializer.get_meta_references(context)
 
 
@@ -776,7 +737,7 @@ def test_get_reference_success(name, context, expected):
     assert reference == expected
 
 
-@pytest.mark.parametrize('name,context', [
+@pytest.mark.parametrize('name,context,expected', [
     # Missing reference with single rule
     (
         'palette',
@@ -786,6 +747,7 @@ def test_get_reference_success(name, context, expected):
                 'value': "#000000 #ffffff",
             },
         },
+        SerializerError,
     ),
     # Invalid property name
     (
@@ -797,6 +759,7 @@ def test_get_reference_success(name, context, expected):
                 'value': "#000000 #ffffff",
             },
         },
+        StyleguideValidationError,
     ),
     # Invalid structure mode name
     (
@@ -808,6 +771,7 @@ def test_get_reference_success(name, context, expected):
                 'values': "#000000 #ffffff",
             },
         },
+        SerializerError,
     ),
     # Missing required reference from enabled references
     (
@@ -822,12 +786,13 @@ def test_get_reference_success(name, context, expected):
                 'value': "#000000 #ffffff",
             },
         },
+        SerializerError,
     ),
 ])
-def test_get_reference_error(name, context):
+def test_get_reference_error(name, context, expected):
     serializer = ManifestSerializer()
 
-    with pytest.raises(SerializerError):
+    with pytest.raises(expected):
         serializer.get_reference(context, name)
 
 

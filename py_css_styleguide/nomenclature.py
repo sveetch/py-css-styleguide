@@ -5,8 +5,8 @@ Nomenclature
 * A rule name starts with a prefix from ``RULE_BASE_PREFIX``;
 * Rule prefix is followed from its type that can be either:
 
-  * ``RULE_META``;
-  * ``reference``;
+  * The ``RULE_META`` value;
+  * ``reference`` string;
 
 * Then rule name ends with its component name;
 * Rule name parts are separated with ``-``.
@@ -24,6 +24,8 @@ There is some reserved name:
 """
 from string import ascii_letters, digits
 
+from .exceptions import StyleguideValidationError
+
 
 RULE_BASE_PREFIX = "styleguide"
 
@@ -39,9 +41,11 @@ RULE_ALLOWED_CHARS = ascii_letters + digits + "_"
 PROPERTY_ALLOWED_START = ascii_letters
 PROPERTY_ALLOWED_CHARS = ascii_letters + digits + "_"
 
-# Not validated, just here for mention
+# Rule and property names can not start with following string
 # TODO: It should be validated indeed
 FORBIDDEN_PREFIX = "_"
+
+# Rule name can not be one of the following string
 RESERVED_RULE_NAMES = (
     "styleguide",
     "load",
@@ -55,3 +59,77 @@ RESERVED_RULE_NAMES = (
 RESERVED_PROPERTY_NAMES = (
     "structure",
 )
+
+
+def is_reserved_rule(name):
+    """
+    Validate name against ``RESERVED_RULE_NAMES``.
+    """
+    return (name in RESERVED_RULE_NAMES)
+
+
+def is_reserved_property(name):
+    """
+    Validate name against ``RESERVED_PROPERTY_NAMES``.
+    """
+    return (name in RESERVED_PROPERTY_NAMES)
+
+
+def is_valid_rule(name):
+    """
+    Validate rule name.
+
+    Arguments:
+        name (string): Rule name.
+
+    Returns:
+        bool: ``True`` if rule name is valid.
+    """
+    if not name:
+        raise StyleguideValidationError("Rule name is empty")
+
+    if is_reserved_rule(name):
+        msg = "Rule name '{}' is reserved, you can not use it for a rule"
+        raise StyleguideValidationError(msg.format(name))
+
+    if name[0] not in RULE_ALLOWED_START:
+        msg = "Rule name '{}' must starts with a letter"
+        raise StyleguideValidationError(msg.format(name))
+
+    for item in name:
+        if item not in RULE_ALLOWED_CHARS:
+            msg = ("Invalid rule name '{}': it must only contains "
+                    "letters, numbers and '_' character")
+            raise StyleguideValidationError(msg.format(name))
+
+    return True
+
+
+def is_valid_property(name):
+    """
+    Validate property name.
+
+    Arguments:
+        name (string): Property name.
+
+    Returns:
+        bool: ``True`` if variable name is valid.
+    """
+    if not name:
+        raise StyleguideValidationError("Variable name is empty")
+
+    if is_reserved_property(name):
+        msg = "Variable name '{}' is reserved, you can not use it for a variable"
+        raise StyleguideValidationError(msg.format(name))
+
+    if name[0] not in PROPERTY_ALLOWED_START:
+        msg = "Variable name '{}' must starts with a letter"
+        raise StyleguideValidationError(msg.format(name))
+
+    for item in name:
+        if item not in PROPERTY_ALLOWED_CHARS:
+            msg = ("Invalid variable name '{}': it must only contains "
+                    "letters, numbers and '_' character")
+            raise StyleguideValidationError(msg.format(name))
+
+    return True
