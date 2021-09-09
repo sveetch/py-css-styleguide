@@ -21,39 +21,46 @@ server = Server()
 
 # Watch source documents (not recursive)
 server.watch(
-    'docs/*.rst',
+    "docs/*.rst",
     shell(
-        'make html',
-        cwd='docs'
+        "make html",
+        cwd="docs"
     )
 )
 server.watch(
-    'docs/api/*.rst',
+    "docs/api/*.rst",
     shell(
-        'make html',
-        cwd='docs'
+        "make html",
+        cwd="docs"
     )
 )
 server.watch(
-    'docs/usage/*.rst',
+    "docs/usage/*.rst",
     shell(
-        'make html',
-        cwd='docs'
+        "make html",
+        cwd="docs"
     )
 )
 
-# Watch root modules for autodoc review
+# Watch modules for autodoc review
 server.watch(
-    'py_css_styleguide/*/**.py',
+    "py_css_styleguide/*.py",
     shell(
-        'make html',
-        cwd='docs'
+        "make html",
+        cwd="docs"
+    )
+)
+server.watch(
+    "py_css_styleguide/*/**.py",
+    shell(
+        "make html",
+        cwd="docs"
     )
 )
 
 # Serve the builded documentation
 server.serve(
-    root='docs/_build/html',
+    root="docs/_build/html",
     port=8002,
     host="0.0.0.0",
 )

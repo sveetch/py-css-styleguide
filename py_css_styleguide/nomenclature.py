@@ -2,6 +2,8 @@
 Nomenclature
 ============
 
+This is the nomenclature about manifest references names (rules and properties).
+
 * A rule name starts with a prefix from ``RULE_BASE_PREFIX``;
 * Rule prefix is followed from its type that can be either:
 
@@ -41,11 +43,14 @@ RULE_ALLOWED_CHARS = ascii_letters + digits + "_"
 PROPERTY_ALLOWED_START = ascii_letters
 PROPERTY_ALLOWED_CHARS = ascii_letters + digits + "_"
 
-# Rule and property names can not start with following string
-# TODO: It should be validated indeed
-FORBIDDEN_PREFIX = "_"
+FORBIDDEN_PREFIXES = (
+    "_",
+    "-",
+)
+"""
+Rule and property names can not start with following strings
+"""
 
-# Rule name can not be one of the following string
 RESERVED_RULE_NAMES = (
     "styleguide",
     "load",
@@ -54,16 +59,27 @@ RESERVED_RULE_NAMES = (
     "from_dict",
     "metas",
 )
+"""
+Rule name can not be one of the following string
+"""
 
-# Not validated, just here for mention
 RESERVED_PROPERTY_NAMES = (
     "structure",
 )
+"""
+Property (variable) name can not be one of the following string
+"""
 
 
 def is_reserved_rule(name):
     """
     Validate name against ``RESERVED_RULE_NAMES``.
+
+    Arguments:
+        name (string): Rule name.
+
+    Returns:
+        bool: ``True`` if name match a reserved name.
     """
     return (name in RESERVED_RULE_NAMES)
 
@@ -71,6 +87,12 @@ def is_reserved_rule(name):
 def is_reserved_property(name):
     """
     Validate name against ``RESERVED_PROPERTY_NAMES``.
+
+    Arguments:
+        name (string): Property name.
+
+    Returns:
+        bool: ``True`` if name match a reserved name.
     """
     return (name in RESERVED_PROPERTY_NAMES)
 
@@ -92,14 +114,20 @@ def is_valid_rule(name):
         msg = "Rule name '{}' is reserved, you can not use it for a rule"
         raise StyleguideValidationError(msg.format(name))
 
+    if name.startswith(FORBIDDEN_PREFIXES):
+        msg = "Rule name '{}' cannot starts with special characters"
+        raise StyleguideValidationError(msg.format(name))
+
     if name[0] not in RULE_ALLOWED_START:
         msg = "Rule name '{}' must starts with a letter"
         raise StyleguideValidationError(msg.format(name))
 
     for item in name:
         if item not in RULE_ALLOWED_CHARS:
-            msg = ("Invalid rule name '{}': it must only contains "
-                    "letters, numbers and '_' character")
+            msg = (
+                "Invalid rule name '{}': it must only contains "
+                "letters, numbers and '_' character"
+            )
             raise StyleguideValidationError(msg.format(name))
 
     return True
@@ -122,14 +150,20 @@ def is_valid_property(name):
         msg = "Variable name '{}' is reserved, you can not use it for a variable"
         raise StyleguideValidationError(msg.format(name))
 
+    if name.startswith(FORBIDDEN_PREFIXES):
+        msg = "Variable name '{}' cannot starts with special characters"
+        raise StyleguideValidationError(msg.format(name))
+
     if name[0] not in PROPERTY_ALLOWED_START:
         msg = "Variable name '{}' must starts with a letter"
         raise StyleguideValidationError(msg.format(name))
 
     for item in name:
         if item not in PROPERTY_ALLOWED_CHARS:
-            msg = ("Invalid variable name '{}': it must only contains "
-                    "letters, numbers and '_' character")
+            msg = (
+                "Invalid variable name '{}': it must only contains "
+                "letters, numbers and '_' character"
+            )
             raise StyleguideValidationError(msg.format(name))
 
     return True

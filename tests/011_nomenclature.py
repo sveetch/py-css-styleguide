@@ -55,6 +55,8 @@ def test_nomenclature_is_valid_rule_success(name):
 
 @pytest.mark.parametrize('name', [
     "",
+    "_foo",
+    "-foo",
     "foo-bar",
     "foo-bar",
     "foo bar",
@@ -78,6 +80,8 @@ def test_nomenclature_is_valid_property_success(name):
 
 @pytest.mark.parametrize('name', [
     "",
+    "_foo",
+    "-foo",
     "foo-bar",
     "foo-bar",
     "foo bar",
