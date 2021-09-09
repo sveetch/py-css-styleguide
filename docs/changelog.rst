@@ -8,8 +8,10 @@ Version 0.7.0 - 2021/09/09
 --------------------------
 
 * Rename some model methods:
+
     * ``set_rule`` to ``_set_rule``;
     * ``remove_rule`` to ``_remove_rule``;
+
 * Implement model method ``from_dict`` to enable loading manifest directly from a
   dictionnary in the same format than ``to_dict`` so it can be used from a JSON dump
   made by ``to_json`` (after have been deserialized).
