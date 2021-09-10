@@ -1,0 +1,20 @@
+.styleguide-metas-references{
+    --names: "palette text_color spaces";
+}
+
+.styleguide-reference-palette{
+    --structure: "flat";
+    --keys: "black white";
+    --values: "#000000 #ffffff";
+}
+
+.styleguide-reference-text_color{
+    --keys: "black white";
+    --selectors: ".bg-black .bg-white";
+    --values: "#000000 #ffffff";
+}
+
+.styleguide-reference-spaces {
+  --structure: "list";
+  --items: "tiny short normal large wide";
+}

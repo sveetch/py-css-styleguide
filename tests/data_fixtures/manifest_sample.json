@@ -1,0 +1,30 @@
+{
+    "metas": {
+        "references": [
+            "palette",
+            "text_color",
+            "spaces"
+        ]
+    },
+    "palette": {
+        "black": "#000000",
+        "white": "#ffffff"
+    },
+    "text_color": {
+        "black": {
+            "selectors": ".bg-black",
+            "values": "#000000"
+        },
+        "white": {
+            "selectors": ".bg-white",
+            "values": "#ffffff"
+        }
+    },
+    "spaces": [
+        "tiny",
+        "short",
+        "normal",
+        "large",
+        "wide"
+    ]
+}

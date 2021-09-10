@@ -18,7 +18,7 @@ from py_css_styleguide.model import Manifest
     "styleguide_manifest_excludes",
     "styleguide_manifest_names",
 ])
-def test_boussole_compile_auto(fixtures_settings, temp_builds_dir, manifest_name):
+def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
     """
     Testing everything:
 
@@ -28,7 +28,7 @@ def test_boussole_compile_auto(fixtures_settings, temp_builds_dir, manifest_name
     """
     manifest_css = manifest_name + ".css"
     manifest_json = os.path.join(
-        fixtures_settings.fixtures_path,
+        tests_settings.fixtures_path,
         'json',
         manifest_name + ".json",
     )
@@ -42,7 +42,7 @@ def test_boussole_compile_auto(fixtures_settings, temp_builds_dir, manifest_name
     )
     basedir = basepath.strpath
 
-    template_sassdir = os.path.join(fixtures_settings.fixtures_path, 'sass')
+    template_sassdir = os.path.join(tests_settings.fixtures_path, 'sass')
 
     test_sassdir = os.path.join(basedir, 'sass')
     test_config_filepath = os.path.join(test_sassdir, 'settings.json')
@@ -52,7 +52,7 @@ def test_boussole_compile_auto(fixtures_settings, temp_builds_dir, manifest_name
 
     # Get expected CSS content from file in fixture
     expected_css_filepath = os.path.join(
-        fixtures_settings.fixtures_path,
+        tests_settings.fixtures_path,
         "sass",
         "css",
         manifest_css

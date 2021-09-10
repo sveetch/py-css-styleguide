@@ -56,13 +56,13 @@ def test_manifest_load_string():
     }
 
 
-def test_manifest_load_fileobject(fixtures_settings):
+def test_manifest_load_fileobject(tests_settings):
     """
     Manifest.load() should load correctly manifest from given fileobject of a CSS
     manifest file.
     """
     source_filepath = os.path.join(
-        fixtures_settings.fixtures_path,
+        tests_settings.fixtures_path,
         "manifest_sample.css"
     )
 
