@@ -1,4 +1,4 @@
-# Frozen requirement versions from '0.8.0rc2' installation
+# Frozen requirement versions from '0.8.0' installation
 boussole==2.0.0
 Django==3.1.13
 factory-boy==3.2.0

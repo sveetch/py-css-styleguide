@@ -4,6 +4,12 @@ Changelog
 =========
 
 
+Version 0.8.1 - 2021/09/12
+--------------------------
+
+Just a minor release to fix package Readme which was different from documentation.
+
+
 Version 0.8.0 - 2021/09/12
 --------------------------
 
