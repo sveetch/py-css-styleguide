@@ -3,8 +3,8 @@
 Automatic with name exclusions
 ==============================
 
-This is the simplest way to use, you will let the serializer automatically describe
-every reference rules existing within the CSS manifest.
+This way is still in "automatic describing all references" but you are able to exclude
+some references.
 
 Write a Sass file that will use the helpers and settings to build a CSS manifest:
 

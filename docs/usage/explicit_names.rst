@@ -3,8 +3,9 @@
 Explicit reference names
 ========================
 
-This is the simplest way to use, you will let the serializer automatically describe
-every reference rules existing within the CSS manifest.
+With this way, we don't use automatic desciption and explicitely define every
+references we retain for description, obviously you will have to maintain correctly
+the name list to ensure they exists in references.
 
 Write a Sass file that will use the helpers and settings to build a CSS manifest:
 
