@@ -4,7 +4,7 @@ Changelog
 =========
 
 
-Version 0.8.0 - Unreleased
+Version 0.8.0 - 2021/09/12
 --------------------------
 
 * Add a Django view mixin ``StyleguideMixin`` to include in a view to use a manifest;

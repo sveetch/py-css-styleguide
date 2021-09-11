@@ -25,8 +25,8 @@ class StyleguideMixin:
         Validate path or resolve static filepath if needed.
 
         Arguments:
-            path (string): Either an absolute path or a relative path to an enabled static
-                directory.
+            path (string): Either an absolute path or a relative path to an enabled
+                static directory.
 
         Returns:
             string: Resolved path if success, else return None.
