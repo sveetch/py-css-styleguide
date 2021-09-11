@@ -10,20 +10,30 @@ PyCssStyleguide
 
 A Python library to build a styleguide from a CSS manifest file.
 
-It is way of building a styleguide without to write declarations inside CSS comments in your stylesheets.
+Goal
+****
 
-You build a manifest in a dedicated CSS file and it will be parsed and serialized so you can use it in your code or templates to build a styleguide.
+Many styleguide builders stand on comments in Sass or CSS sources. This is very verbose
+in sources and sometime requires you to maintain every variables values when you change
+them in sources.
 
-Why a dedicated CSS file for a manifest ? Because it can be automatically writed from your Sass sources. Obviously it would only work if your design is driven by variables like with *Foundation for Site* or *Bootstrap*.
+In our modern era we mostly build CSS from Sass or Less sources with
+variables/settings. This library encourages you to describe and structure your variables
+in a manifest which will be compiled to a dedicated CSS file.
 
-Manifest syntax rules are writed so the CSS file is still a valid CSS, mostly using CSS3 variables.
+Manifest syntax rules are valid CSS (mostly using CSS3 variables).
 
-This library provides:
+Then the CSS manifest is parsed to return a Python object with all your descriptions so
+you can use them to build your styleguide in code or a template.
 
-* An API to load a CSS manifest and return it has structured datas;
-* A Sass source with some mixin helpers to help you to write CSS manifest from your Sass sources;
+Features
+********
 
-This library doesn't provide template or application to build the styleguide page, it's up to you to integrate it in your project.
+* A Sass source with some mixin helpers to help you to write CSS manifest from your
+  Sass sources;
+* An interface to load a CSS manifest and return it as dictionnary of datas;
+* Django mixin and view to load manifest from your project or application (this library
+  does not require Django, so you may use it in another way);
 
 Links
 *****

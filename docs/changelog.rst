@@ -4,6 +4,18 @@ Changelog
 =========
 
 
+Version 0.8.0 - Unreleased
+--------------------------
+
+* Add a Django view mixin ``StyleguideMixin`` to include in a view to use a manifest;
+* Add a basic Django view ``StyleguideViewMixin`` based on ``TemplateView`` and
+  ``StyleguideMixin``;
+* Add a very basic Django project needed for testing;
+* Add Django as a development environment requirement but the package is still not
+  dependent from Django in default environment;
+* Updated documentation;
+
+
 Version 0.7.0 - 2021/09/09
 --------------------------
 
@@ -35,7 +47,8 @@ Version 0.5.1 - 2019/07/16
 --------------------------
 
 * Added some Sass functions to escape a value from quotes;
-* Enabled quote escape on ``get-props-to-json`` and ``get-values-to-json`` functions to avoid invalid JSON, close #9;
+* Enabled quote escape on ``get-props-to-json`` and ``get-values-to-json`` functions to
+  avoid invalid JSON, close #9;
 
 
 Version 0.5.0 - 2019/05/05
@@ -50,9 +63,11 @@ Version 0.4.0 - 2018/05/09
 --------------------------
 
 * Enforce order on flat structure, close #6;
-* Added ``splitter`` property for ``flat``,  ``nested`` and ``list`` structure to be able to use either white space separator or JSON list on values, close #7;
+* Added ``splitter`` property for ``flat``,  ``nested`` and ``list`` structure to be
+  able to use either white space separator or JSON list on values, close #7;
 * Added JSON structure;
-* Added new Sass helpers to build JSON list from Sass lists, map key names, values and properties;
+* Added new Sass helpers to build JSON list from Sass lists, map key names, values and
+  properties;
 * Removed unused method ``ManifestSerializer.format_value``;
 
 
@@ -62,7 +77,8 @@ Version 0.3.0 - 2018/04/19
 * Added automatic enable references mode, close #1;
 * Fixed Sass helper function ``to-string`` for empty list, close #2;
 * Changed ``list`` and ``string`` structures so they can be empty, close #3;
-* Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and serializer, close #4;
+* Internally use ``collection.OrderedDict`` instead of simple dictionnary in parser and
+  serializer, close #4;
 * Fixed code quality issues with Flake8, close #5;
 
 

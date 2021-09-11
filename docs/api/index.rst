@@ -8,6 +8,8 @@ get structured datas.
 Commonly you just have to load your CSS file from ``model.Manifest.load()``
 method and it will parse it to get manifest structured datas.
 
+See *Manifest object* for more details.
+
 Modules
 *******
 
@@ -18,3 +20,4 @@ Modules
    parser.rst
    serializer.rst
    model.rst
+   django.rst

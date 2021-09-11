@@ -31,7 +31,7 @@ def test_resolve_css_filepath_unexisting_relative_path(tests_settings):
     mixin = StyleguideMixin()
     resolved_path = mixin.resolve_css_filepath(manifest_css_filepath)
 
-    assert resolved_path == None
+    assert resolved_path is None
 
 
 def test_resolve_css_filepath_existing_absolute_path(tests_settings):
@@ -59,60 +59,155 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
     mixin = StyleguideMixin()
     resolved_path = mixin.resolve_css_filepath(manifest_css_filepath)
 
-    assert resolved_path == None
+    assert resolved_path is None
 
 
-def test_mixin_dev_css_fail():
+@pytest.mark.parametrize("css_filepath,kwargs,status,error,metas,save_exists", [
+    # CSS failing and no JSON available
+    (
+        "nope.css",
+        {
+            "json_filepath": None,
+            "save_dump": False,
+            "development_mode": True,
+        },
+        "failed",
+        "Unable to find CSS manifest from: nope.css",
+        {},
+        None,
+    ),
+    # Both CSS and JSON are file not found
+    (
+        "nope.css",
+        {
+            "json_filepath": "nope.json",
+            "save_dump": False,
+            "development_mode": True,
+        },
+        "failed",
+        "Unable to find JSON manifest from: {json_filepath}",
+        {},
+        None,
+    ),
+    # CSS failing and invalid JSON
+    (
+        "nope.css",
+        {
+            "json_filepath": "{FIXTURES}/manifest_invalid.json",
+            "save_dump": False,
+            "development_mode": True,
+        },
+        "failed",
+        "Invalid JSON manifest: Expecting ',' delimiter: line 5 column 13 (char 75)",
+        {},
+        None,
+    ),
+    # CSS failing and fallback to JSON succeed
+    (
+        "nope.css",
+        {
+            "json_filepath": "{FIXTURES}/manifest_sample.json",
+            "save_dump": True,
+            "development_mode": True,
+        },
+        "dump",
+        "Unable to find CSS manifest from: nope.css",
+        {"references": ["palette", "text_color", "spaces"]},
+        True,
+    ),
+    # CSS failing then using existing JSON dump
+    (
+        "nope.css",
+        {
+            "json_filepath": "{FIXTURES}/manifest_sample.json",
+            "save_dump": True,
+            "development_mode": True,
+        },
+        "dump",
+        "Unable to find CSS manifest from: nope.css",
+        {"references": ["palette", "text_color", "spaces"]},
+        None,
+    ),
+    # CSS succeed then write dump
+    (
+        "{FIXTURES}/manifest_sample.css",
+        {
+            "json_filepath": "manifest_sample.json",
+            "save_dump": True,
+            "development_mode": True,
+        },
+        "live",
+        None,
+        {"references": ["palette", "text_color", "spaces"]},
+        True,
+    ),
+    # No development mode, directly try to read JSON
+    (
+        "{FIXTURES}/manifest_sample.css",
+        {
+            "json_filepath": "{FIXTURES}/manifest_sample.json",
+            "save_dump": True,
+            "development_mode": False,
+        },
+        "dump",
+        None,
+        {"references": ["palette", "text_color", "spaces"]},
+        True,
+    ),
+    # No development mode, both CSS and JSON failing
+    (
+        "nope.css",
+        {
+            "json_filepath": "nope.json",
+            "save_dump": False,
+            "development_mode": False,
+        },
+        "failed",
+        "Unable to find JSON manifest from: {json_filepath}",
+        {},
+        False,
+    ),
+])
+def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepath,
+                            kwargs, status, error, metas, save_exists):
     """
-    Mixin in development mode and is unable to find CSS file, should turn in "failed"
-    status and have an error message stored.
-    """
-    manifest_css_filepath = "nope.css"
-    manifest_json_filepath = "nope.json"
-
-    mixin = StyleguideMixin()
-    manifest = mixin.get_manifest(
-        manifest_css_filepath,
-        manifest_json_filepath,
-        save_dump=False,
-        development_mode=True,
-    )
-
-    assert manifest.loading_error == "Unable to find CSS manifest from: nope.css"
-    assert manifest.status == "failed"
-
-
-def test_mixin_dev_css_succeed(caplog, tests_settings, temp_builds_dir):
-    """
-    Mixin in development mode and is able to find CSS file, it should write to JSON
-    dump, turn to "live" status and no error message stored.
+    "get_manifest" behavior should be correct with given options.
     """
     caplog.set_level(logging.DEBUG, logger="py-css-styleguide")
 
-    # Create test temporary directory where to save JSON dump
-    basedir = temp_builds_dir.join("mixin_dev_css_succeed").strpath
-    os.makedirs(basedir)
+    # Augment given path to absolute depending settings var
+    css_filepath = tests_settings.format(css_filepath)
 
-    manifest_css_filepath = os.path.join(
-        tests_settings.fixtures_path, "manifest_sample.css"
-    )
+    if kwargs.get("json_filepath"):
+        # Assume filepath is prefix with settings variable to format
+        if kwargs["json_filepath"].startswith("{"):
+            kwargs["json_filepath"] = tests_settings.format(kwargs["json_filepath"])
+        # Else put JSON dump in temporary directory
+        else:
+            kwargs["json_filepath"] = temp_builds_dir.join(
+                kwargs["json_filepath"]
+            ).strpath
 
-    manifest_json_filepath = os.path.join(
-        basedir, "manifest_sample.json"
-    )
+    # Error message is formatted with possible variables (since we cannot
+    # always know full paths from parametrize)
+    if error:
+        error = tests_settings.format(error, extra={
+            "css_filepath": css_filepath,
+            "json_filepath": kwargs.get("json_filepath"),
+        })
 
+    # Use mixin to get and load manifest
     mixin = StyleguideMixin()
     manifest = mixin.get_manifest(
-        manifest_css_filepath,
-        manifest_json_filepath,
-        save_dump=True,
-        development_mode=True,
+        css_filepath,
+        **kwargs,
     )
 
-    print(caplog.record_tuples)
+    assert manifest.loading_error == error
 
-    assert manifest.loading_error == None
+    assert manifest.status == status
 
-    assert manifest.status == "live"
+    assert manifest.metas == metas
 
-    assert os.path.exists(manifest_json_filepath) == True
+    if save_exists is not None:
+        assert os.path.exists(kwargs["json_filepath"]) == save_exists

@@ -68,7 +68,7 @@ class ApplicationTestSettings:
             self.fixtures_dir
         )
 
-    def format(self, content):
+    def format(self, content, extra={}):
         """
         Format given string to include some values related to this application.
 
@@ -78,22 +78,28 @@ class ApplicationTestSettings:
         Returns:
             str: Given string formatted with possible values.
         """
-        return content.format(
-            HOMEDIR=os.path.expanduser("~"),
-            PACKAGE=self.package_path,
-            APPLICATION=self.application_path,
-            TESTS=self.tests_path,
-            FIXTURES=self.fixtures_path,
-            VERSION=djangoapp_sample.__version__,
-        )
+        variables = {
+            "HOMEDIR": os.path.expanduser("~"),
+            "PACKAGE": self.package_path,
+            "APPLICATION": self.application_path,
+            "TESTS": self.tests_path,
+            "FIXTURES": self.fixtures_path,
+            "SANDBOX": self.sandbox_path,
+            "STATICS": self.statics_path,
+            "VERSION": py_css_styleguide.__version__,
+        }
+        if extra:
+            variables.update(extra)
+
+        return content.format(**variables)
 
 
-@pytest.fixture(scope="session")
-def temp_builds_dir(tmpdir_factory):
+@pytest.fixture(scope="function")
+def temp_builds_dir(tmpdir):
     """
     Prepare a temporary build directory
     """
-    fn = tmpdir_factory.mktemp("py_css_styleguide-tests")
+    fn = tmpdir.mkdir("py_css_styleguide-tests")
     return fn
 
 

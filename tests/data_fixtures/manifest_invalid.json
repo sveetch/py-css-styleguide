@@ -1,0 +1,9 @@
+{
+    "metas": {
+        "references": [
+            "palette"
+            "text_color"
+            "spaces"
+        ]
+    }
+}

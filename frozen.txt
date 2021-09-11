@@ -1,10 +1,9 @@
-# Frozen requirement versions from '0.7.0rc3' installation
+# Frozen requirement versions from '0.8.0rc2' installation
 boussole==2.0.0
+Django==3.1.13
 factory-boy==3.2.0
 flake8==3.9.2
-freezegun==1.1.0
 livereload==2.6.3
-pyquery==1.4.3
 pytest==6.2.4
 pytest-django==4.4.0
 Sphinx==4.1.2

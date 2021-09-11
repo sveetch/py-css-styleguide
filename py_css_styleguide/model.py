@@ -1,8 +1,8 @@
 """
-Model
-=====
+Manifest object
+===============
 
-The model manifest contains structured datas of parsed and serialized
+The manifest object contains structured datas of parsed and serialized
 CSS manifest.
 
 Each reference rule is stored in as object attribute and every metas rules are
@@ -18,7 +18,7 @@ from .nomenclature import RULE_META
 
 class Manifest(object):
     """
-    Manifest model.
+    Manifest object.
 
     During load process, every rule is stored as object attribute so you can
     reach them directly.
