@@ -4,6 +4,16 @@ Changelog
 =========
 
 
+Version 0.8.2 - 2021/09/12
+--------------------------
+
+* Fix a critical error with CSS manifest relative path to static directory;
+* Add "created" item in manifest metas to include datetime of serialization;
+* Fix Makefile for correct order of ``freeze-dependencies`` in ``quality`` action
+  (freezing requirement must be done before check-release to ensure local package have
+  been updated, else the frozen requirements may have a version delay);
+
+
 Version 0.8.1 - 2021/09/12
 --------------------------
 

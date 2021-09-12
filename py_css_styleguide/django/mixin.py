@@ -72,7 +72,7 @@ class StyleguideMixin:
 
         if resolved_path:
             # Open and parse CSS
-            with open(path, "r") as fp:
+            with open(resolved_path, "r") as fp:
                 manifest.load(fp)
 
             # Save JSON manifest dump if required

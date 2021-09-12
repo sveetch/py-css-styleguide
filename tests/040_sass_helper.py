@@ -6,6 +6,8 @@ import shutil
 
 import pytest
 
+from freezegun import freeze_time
+
 from boussole.project import ProjectBase
 from boussole.finder import ScssFinder
 from boussole.compiler import SassCompileHelper
@@ -13,6 +15,7 @@ from boussole.compiler import SassCompileHelper
 from py_css_styleguide.model import Manifest
 
 
+@freeze_time("2012-10-15 10:00:00")
 @pytest.mark.parametrize('manifest_name', [
     "styleguide_manifest_full",
     "styleguide_manifest_excludes",

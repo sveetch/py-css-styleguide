@@ -138,7 +138,7 @@ check-release: build-package
 .PHONY: check-release
 
 
-quality: flake docs freeze-dependencies check-release
+quality: flake docs check-release freeze-dependencies
 	@echo ""
 	@echo "♥ ♥ Everything should be fine ♥ ♥"
 	@echo ""

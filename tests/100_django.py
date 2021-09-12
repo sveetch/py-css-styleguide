@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+
 import pytest
+
+from freezegun import freeze_time
 
 from py_css_styleguide.django.mixin import StyleguideMixin
 
@@ -62,7 +65,8 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
     assert resolved_path is None
 
 
-@pytest.mark.parametrize("css_filepath,kwargs,status,error,metas,save_exists", [
+@freeze_time("2012-10-15 10:00:00")
+@pytest.mark.parametrize("css_filepath,kwargs,status,error,references,save_exists", [
     # CSS failing and no JSON available
     (
         "nope.css",
@@ -73,7 +77,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "failed",
         "Unable to find CSS manifest from: nope.css",
-        {},
+        None,
         None,
     ),
     # Both CSS and JSON are file not found
@@ -86,7 +90,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "failed",
         "Unable to find JSON manifest from: {json_filepath}",
-        {},
+        None,
         None,
     ),
     # CSS failing and invalid JSON
@@ -99,7 +103,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "failed",
         "Invalid JSON manifest: Expecting ',' delimiter: line 5 column 13 (char 75)",
-        {},
+        None,
         None,
     ),
     # CSS failing and fallback to JSON succeed
@@ -112,7 +116,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "dump",
         "Unable to find CSS manifest from: nope.css",
-        {"references": ["palette", "text_color", "spaces"]},
+        ["palette", "text_color", "spaces"],
         True,
     ),
     # CSS failing then using existing JSON dump
@@ -125,10 +129,23 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "dump",
         "Unable to find CSS manifest from: nope.css",
-        {"references": ["palette", "text_color", "spaces"]},
+        ["palette", "text_color", "spaces"],
         None,
     ),
-    # CSS succeed then write dump
+    # CSS succeed with relative path to static dirs
+    (
+        "manifest_sample.css",
+        {
+            "json_filepath": "nope.json",
+            "save_dump": False,
+            "development_mode": True,
+        },
+        "live",
+        None,
+        ["palette", "text_color", "spaces"],
+        False,
+    ),
+    # CSS succeed with absolute path then write dump
     (
         "{FIXTURES}/manifest_sample.css",
         {
@@ -138,7 +155,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "live",
         None,
-        {"references": ["palette", "text_color", "spaces"]},
+        ["palette", "text_color", "spaces"],
         True,
     ),
     # No development mode, directly try to read JSON
@@ -151,7 +168,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "dump",
         None,
-        {"references": ["palette", "text_color", "spaces"]},
+        ["palette", "text_color", "spaces"],
         True,
     ),
     # No development mode, both CSS and JSON failing
@@ -164,14 +181,14 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         },
         "failed",
         "Unable to find JSON manifest from: {json_filepath}",
-        {},
+        None,
         False,
     ),
 ])
 def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepath,
-                            kwargs, status, error, metas, save_exists):
+                            kwargs, status, error, references, save_exists):
     """
-    "get_manifest" behavior should be correct with given options.
+    "get_manifest" behaviors should be correct with given options.
     """
     caplog.set_level(logging.DEBUG, logger="py-css-styleguide")
 
@@ -207,7 +224,7 @@ def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepat
 
     assert manifest.status == status
 
-    assert manifest.metas == metas
+    assert manifest.metas.get("references") == references
 
     if save_exists is not None:
         assert os.path.exists(kwargs["json_filepath"]) == save_exists

@@ -3,6 +3,7 @@ Serializer
 ==========
 
 """
+import datetime
 import json
 
 from collections import OrderedDict
@@ -426,6 +427,7 @@ class ManifestSerializer(object):
         """
         self._metas = OrderedDict({
             "references": self.get_meta_references(datas),
+            "created": datetime.datetime.now().isoformat(timespec="seconds"),
         })
 
         return self.get_enabled_references(datas, self._metas["references"])
