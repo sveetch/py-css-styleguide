@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 0.8.3 - Unreleased
+Version 0.8.3 - 2023/08/18
 --------------------------
 
 A minor version only to update ``.readthedocs.yml`` file to follow service deprecations
