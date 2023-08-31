@@ -4,8 +4,12 @@
 
 @import "styleguide_helpers";
 
+.styleguide-metas-compiler{
+    --support: "#{$pycssstyleguide-compiler-support}";
+}
+
 .styleguide-metas-references{
-    --auto: "true";
+    --names: "palette version";
 }
 
 .styleguide-reference-palette{

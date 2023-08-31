@@ -1,7 +1,10 @@
-/* Helper functions from py-css-styleguide==0.6.0 */
+/* Helper functions from py-css-styleguide==1.0.0 */
+.styleguide-metas-compiler {
+  --support: "dartsass";
+}
+
 .styleguide-metas-references {
   --auto: "true";
-  --excludes: "schemes borders gradients grid_cell_sizes spaces version";
 }
 
 .styleguide-reference-palette {
@@ -11,11 +14,11 @@
 }
 
 .styleguide-reference-schemes {
-  --splitter: "json-list";
-  --keys: '["black", "grey", "white", "grey-gradient", "with-image"]';
-  --selector: '[".bg-black", ".bg-grey", ".bg-white", ".bg-grey-gradient", ".bg-with-image"]';
-  --background: '["#000000", "#404040", "#ffffff", "linear-gradient(#ffffff, #ffffff 85%, #404040)", "url(\u0022foo/bar.png\u0022)"]';
-  --font_color: '["#ffffff", "#ffffff", "#000000", "#000000", "#000000"]';
+  --splitter: "object-list";
+  --keys: "['black', 'grey', 'white', 'grey-gradient', 'with-image']";
+  --selector: "['.bg-black', '.bg-grey', '.bg-white', '.bg-grey-gradient', '.bg-with-image']";
+  --background: "['#000000', '#404040', '#ffffff', 'linear-gradient(#ffffff, #ffffff 85%, #404040)', 'url(\u0022foo/bar.png\u0022)']";
+  --font_color: "['#ffffff', '#ffffff', '#000000', '#000000', '#000000']";
 }
 
 .styleguide-reference-borders {
@@ -26,8 +29,8 @@
 }
 
 .styleguide-reference-gradients {
-  --structure: "json";
-  --object: '["linear-gradient(#f69d3c, #3f87a6)", "radial-gradient(#f69d3c, #3f87a6 50px)"]';
+  --structure: "object-complex";
+  --object: "['linear-gradient(#f69d3c, #3f87a6)', 'radial-gradient(#f69d3c, #3f87a6 50px)']";
 }
 
 .styleguide-reference-grid_cell_sizes {

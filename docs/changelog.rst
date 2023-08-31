@@ -3,6 +3,78 @@
 Changelog
 =========
 
+Version 1.0.0 - Unreleased
+--------------------------
+
+* Implemented Dart sass compile behaviors support, libsass compiler behaviors is still
+  the default one;
+* Serializer now emit some warnings in some situations;
+* Renamed ``json-list`` to ``object-list``, the first name is still working but
+  deprecated with a clear warning about it;
+* Renamed ``json`` to ``object-complex``, the first name is still working but
+  deprecated with a clear warning about it;
+* For now the only difference in Dart sass support is about string quotes from
+  ``object-list`` and ``object-complex``, it expect strings to be quoted with single
+  quotes;
+
+
+Todo list
+.........
+
+- [x] Implement dart-sass behaviors support along maintained libsass compatibility,
+      issue #19;
+- [ ] Ensure DeprecationWarning are show during compilation out of pytest (which enable
+      all warning types) else move to a UserWarning instead;
+- [ ] Upgrade package to modern structure and config. It may be simpler to restart
+      from last cookiecutter for Python project and replace contents with this package
+      code and doc. In resume:
+
+      - [ ] Flake8 new config;
+      - [ ] Use autopep8 or Black on code once (at least turn all single quote to
+            double quotes where it is possible);
+      - [ ] Python 3.8 to 3.10 or 11 support only;
+      - [ ] Use pathlib.Path instead of os or io;
+      - [ ] New doc
+      - [ ] Logo ?
+      - [ ] Better tests structure;
+      - [ ] package setup should use option to require for Python version(s) so
+            projects in unsupported Python version and that does not pin package version
+            won't upgrade automatically to this major version;
+
+- [ ] Clean useless ``# -*- coding: utf-8 -*-``;
+- [ ] Improve documentation for better and simpler explanations, some more little
+      usage sample and better document structure;
+- [ ] Upgrade stylesheet version;
+
+Migrate for libsass
+...................
+
+If you are using libsass, you have nothing to change in your Sass manifest since it is
+the default behavior. Also, think to upgrade (just replace it with the new one) the
+Sass mixin library (``_styleguide_helpers.scss``).
+
+You may however define it explicitely, add this line just after importing the Sass
+mixin library: ::
+
+    $pycssstyleguide-compiler-support: "libsass";
+
+This is not required but recommended for future.
+
+
+Migrate for dart-sass
+.....................
+
+* Boolean are in Python syntax True/False;
+* Null value is in Python syntax None;
+* Define compiler behavior with: ::
+
+      $pycssstyleguide-compiler-support: "libsass";
+
+* Double quote json-list and json rules.
+* json-list => object-list
+* json => object-complex
+
+
 Version 0.8.3 - 2023/08/18
 --------------------------
 

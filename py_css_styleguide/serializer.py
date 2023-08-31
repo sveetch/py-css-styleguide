@@ -3,19 +3,24 @@ Serializer
 ==========
 
 """
+import ast
 import datetime
 import json
 
 from collections import OrderedDict
+from warnings import warn
 
 from .nomenclature import (
     RULE_META_REFERENCES,
+    RULE_META_COMPILER,
     RULE_REFERENCE,
     is_valid_rule,
     is_valid_property,
 )
 
-from .exceptions import SerializerError
+from .exceptions import (
+    SerializerError, StyleguideDeprecationWarning, StyleguideUserWarning
+)
 
 
 class ManifestSerializer(object):
@@ -25,27 +30,62 @@ class ManifestSerializer(object):
     Raises:
         SerializerError: When there is an invalid syntax in parsed manifest.
 
+    Keyword Arguments:
+        compiler_support (string): Sass compiler name to assume when it has not been
+            defined in meta references. Default to
+            ``ManifestSerializer._DEFAULT_COMPILER_SUPPORT``.
+        evaluation_limit (int): A limit of string character length for
+            evaluation to avoid possibly Python crash with very large string to evaluate
+            with ``ast.literal_eval`` (see Python documentation for detail). Default to
+            ``ManifestSerializer._DEFAULT_EVALUATION_LIMIT``.
+
     Attributes:
         _metas (collections.OrderedDict): Buffer to store serialized metas
-            from parsed source. Default is an empty dict which reseted and
-            filled from ``serialize`` method.
+            from parsed source.
         _DEFAULT_SPLITTER (string): Default value splitter used for some
             structure kinds.
+        _DEFAULT_COMPILER_SUPPORT (string): Default Sass compiler name.
+        _DEFAULT_EVALUATION_LIMIT (int): Default limit of string character length for
+            evaluation. It has been set to 1000 characters which should be a
+            reasonnable large limit in our context.
     """
     _DEFAULT_SPLITTER = "white-space"
+    _DEFAULT_COMPILER_SUPPORT = "libsass"
+    _DEFAULT_EVALUATION_LIMIT = 1000
 
-    def __init__(self):
-        self._metas = OrderedDict()
+    def __init__(self, compiler_support=None, evaluation_limit=None):
+        self.compiler_support = compiler_support or self._DEFAULT_COMPILER_SUPPORT
+        self.evaluation_limit = evaluation_limit or self._DEFAULT_EVALUATION_LIMIT
 
-    def value_splitter(self, reference, prop, value, mode):
+        self._metas = OrderedDict({
+            "compiler_support": self.compiler_support,
+        })
+
+    def get_ref_varname(self, name):
+        """
+        Shortcut to format a reference name to a reference selector name.
+
+        Internally we pass a reference name (like `bar`) to methods which was parsed in
+        manifest from a CSS selector name (like ``.styleguide-foo-bar``) but for some
+        messages we need to display CSS selector name again.
+
+        Arguments:
+            name (string): A reference name.
+
+        Returns:
+            string: CSS selector name.
+        """
+        return "-".join((RULE_REFERENCE, name))
+
+    def value_splitter(self, name, prop, value, mode):
         """
         Split a string into a list items.
 
-        Default behavior is to split on white spaces.
-
+        Behavior depend on argument ``mode``, either a simple split on white spaces or
+        an evaluation for a list syntax.
 
         Arguments:
-            reference (string): Reference name used when raising possible
+            name (string): Reference name used when raising possible
                 error.
             prop (string): Property name used when raising possible error.
             value (string): Property value to split.
@@ -55,28 +95,99 @@ class ManifestSerializer(object):
                 Available splitter are:
 
                 * ``white-space``: Simply split a string on white spaces;
-                * ``json-list``: Assume the string is a JSON list to parse;
+                * ``object-list``: Assume the string is a list object to parse;
+                * ``json-list``: Old name for object-list, deprecated;
 
         Returns:
-            list:
+            list: List of values parsed from given original JSON list.
         """
         items = []
+        # NOTE: Maybe we should emits a StyleguideUserWarning if "compiler_support" has
+        # not been set, but not exclusively from this method, it is something to put up
+        # level
+        compiler_support = self._metas.get(
+            "compiler_support",
+            self.compiler_support
+        )
 
-        if mode == "json-list":
-            try:
-                items = json.loads(value)
-            except json.JSONDecodeError as e:
-                msg = ("Reference '{ref}' raised JSON decoder error when "
-                       "splitting values from '{prop}': {err}'")
-                raise SerializerError(msg.format(ref=reference, prop=prop,
-                                                 err=e))
+        if mode == "object-list" or mode == "json-list":
+            if mode == "json-list":
+                message = (
+                    "Reference '{ref}' use deprecated '--splitter: \"json-list\";', "
+                    "change it to '--splitter: \"object-list\";' instead."
+                )
+                warn(
+                    message.format(ref=self.get_ref_varname(name)),
+                    StyleguideDeprecationWarning
+                )
+
+            if compiler_support == "dartsass":
+                try:
+                    items = ast.literal_eval(value[:self.evaluation_limit])
+                except SyntaxError as e:
+                    msg = (
+                        "Reference '{ref}' raised a syntax error when "
+                        "splitting values from '{prop}': {err}'"
+                    )
+                    raise SerializerError(
+                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
+                    )
+            else:
+                try:
+                    items = json.loads(value)
+                except json.JSONDecodeError as e:
+                    msg = (
+                        "Reference '{ref}' raised JSON decoder error when "
+                        "splitting values from '{prop}': {err}'"
+                    )
+                    raise SerializerError(msg.format(
+                        ref=self.get_ref_varname(name),
+                        prop=prop,
+                        err=e
+                    ))
         else:
             if len(value) > 0:
                 items = value.split(" ")
 
         return items
 
-    def serialize_to_json(self, name, datas):
+    def limit_evaluation_string(self, name, value):
+        """
+        Truncate given string value to the string evaluation length limit.
+
+        If ``ManifestSerializer.evaluation_limit`` is 0 or None, no limit will be
+        applied.
+
+        Arguments:
+            name (string): Reference name only used in possible warning message.
+            value (string): String value to limit if needed
+
+        Returns:
+            string: Truncated string if needed depending
+            ``ManifestSerializer.evaluation_limit`` value.
+        """
+        if not self.evaluation_limit:
+            return value
+
+        # If string is over the limit, emit a warning.
+        if len(value) > self.evaluation_limit:
+            message = (
+                "Reference '{ref}' has a string value length that is over the "
+                "evaluation limit ({limit}). It has been truncated and may leads to "
+                "errors or unexpected results. Either you upgrade the limit or ensure "
+                "your string values keeps below the limit."
+            )
+            warn(
+                message.format(
+                    ref=self.get_ref_varname(name),
+                    limit=self.evaluation_limit
+                ),
+                StyleguideUserWarning
+            )
+
+        return value[:self.evaluation_limit]
+
+    def serialize_to_complex(self, name, datas):
         """
         Serialize given datas to any object from assumed JSON string.
 
@@ -85,21 +196,74 @@ class ManifestSerializer(object):
             datas (dict): Datas to serialize.
 
         Returns:
-            object: Object depending from JSON content.
+            object: Object depending from content.
         """
         data_object = datas.get("object", None)
+        compiler_support = self._metas.get(
+            "compiler_support",
+            self.compiler_support
+        )
 
         if data_object is None:
-            msg = ("JSON reference '{}' lacks of required 'object' variable")
-            raise SerializerError(msg.format(name))
+            msg = ("JSON reference '{refname}' lacks of required 'object' variable")
+            raise SerializerError(msg.format(
+                refname=self.get_ref_varname(name),
+            ))
 
-        try:
-            content = json.loads(data_object, object_pairs_hook=OrderedDict)
-        except json.JSONDecodeError as e:
-            msg = "JSON reference '{}' raised error from JSON decoder: {}"
-            raise SerializerError(msg.format(name, e))
+        if compiler_support == "dartsass":
+            try:
+                content = ast.literal_eval(
+                    data_object[:self.evaluation_limit]
+                )
+            except SyntaxError as e:
+                msg = (
+                    "Reference '{ref}' raised a syntax error when "
+                    "parsing values '{values}': {err}'"
+                )
+                raise SerializerError(
+                    msg.format(
+                        ref=self.get_ref_varname(name),
+                        values=data_object,
+                        err=e
+                    )
+                )
+            else:
+                return content
         else:
-            return content
+            try:
+                content = json.loads(data_object, object_pairs_hook=OrderedDict)
+            except json.JSONDecodeError as e:
+                msg = (
+                    "JSON reference '{refname}' raised error from JSON decoder: {err}"
+                )
+                raise SerializerError(msg.format(
+                    refname=self.get_ref_varname(name),
+                    err=e,
+                ))
+            else:
+                return content
+
+    def serialize_to_json(self, name, datas):
+        """
+        Shortcut around ``ManifestSerializer.serialize_to_complex()`` to maintain
+        support for deprecated structure name ``json`` and emit a deprecation warning.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            object: Object depending from content.
+        """
+        message = (
+            "Reference '{ref}' use deprecated '--structure: \"json\";', change it to "
+            "'--structure: \"object-complex\";' instead."
+        )
+        warn(
+            message.format(ref=self.get_ref_varname(name)),
+            StyleguideDeprecationWarning
+        )
+        return self.serialize_to_complex(name, datas)
 
     def serialize_to_nested(self, name, datas):
         """
@@ -238,9 +402,20 @@ class ManifestSerializer(object):
 
         return value
 
-    def get_meta_references(self, datas):
+    def get_meta_compiler(self, datas):
         """
-        Get manifest enabled references declaration
+        Get enabled compiler declarations.
+        """
+        rule = datas.get(RULE_META_COMPILER, {})
+
+        if rule and rule.get("support", None):
+            return rule.get("support")
+
+        return self.compiler_support
+
+    def get_meta_reference_names(self, datas):
+        """
+        Get enabled reference declarations.
 
         This required declaration is readed from
         ``styleguide-metas-references`` rule that require either a ``--names``
@@ -321,7 +496,7 @@ class ManifestSerializer(object):
         Returns:
             collections.OrderedDict: Serialized reference datas.
         """
-        rule_name = "-".join((RULE_REFERENCE, name))
+        rule_name = self.get_ref_varname(name)
         structure_mode = "nested"
 
         if rule_name not in datas:
@@ -340,11 +515,14 @@ class ManifestSerializer(object):
                 structure_mode = "string"
             elif properties["structure"] == "json":
                 structure_mode = "json"
+            elif properties["structure"] == "object-complex":
+                structure_mode = "object-complex"
             elif properties["structure"] == "nested":
+                # Nested is already default structure name
                 pass
             else:
                 msg = "Invalid structure mode name '{}' for reference '{}'"
-                raise SerializerError(msg.format(structure_mode, name))
+                raise SerializerError(msg.format(properties["structure"], name))
             del properties["structure"]
 
         # Validate variable names
@@ -362,6 +540,11 @@ class ManifestSerializer(object):
             context = self.serialize_to_nested(name, properties)
         elif structure_mode == "json":
             context = self.serialize_to_json(name, properties)
+        elif structure_mode == "object-complex":
+            context = self.serialize_to_complex(name, properties)
+        else:
+            msg = "Unexpected error for reference '{}': '{}'"
+            raise SerializerError(msg.format(name, properties))
 
         return context
 
@@ -426,7 +609,8 @@ class ManifestSerializer(object):
             collections.OrderedDict: Serialized enabled references datas.
         """
         self._metas = OrderedDict({
-            "references": self.get_meta_references(datas),
+            "compiler_support": self.get_meta_compiler(datas),
+            "references": self.get_meta_reference_names(datas),
             "created": datetime.datetime.now().isoformat(timespec="seconds"),
         })
 

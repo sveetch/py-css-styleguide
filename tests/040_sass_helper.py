@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import io
 import json
 import os
@@ -17,9 +16,10 @@ from py_css_styleguide.model import Manifest
 
 @freeze_time("2012-10-15 10:00:00")
 @pytest.mark.parametrize('manifest_name', [
-    "styleguide_manifest_full",
-    "styleguide_manifest_excludes",
-    "styleguide_manifest_names",
+    "sample_libsass",
+    "sample_dartsass",
+    "sample_excludes",
+    "sample_names",
 ])
 def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
     """
@@ -28,6 +28,11 @@ def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
     * Sass helpers correctly generate CSS;
     * Manifest is correctly serialized to expected datas;
     * Builded CSS is the same than stored one in data fixtures;
+
+    .. NOTE::
+
+        Boussole is libsass only, however it still be able to properly compile dartsass
+        behaviors for now so we still use Boussole for everything.
     """
     manifest_css = manifest_name + ".css"
     manifest_json = os.path.join(
@@ -73,7 +78,7 @@ def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
     )
 
     # Since Boussole list every compilable Sass source, we select only the entry
-    # corresponding to the manifest we seek for (from "manifest_css")
+    # corresponding to the manifest we seek for (from "manifest_css" dir)
     source_css_filename = None
     source_sass_filename = None
     for k, v in compilable_files:
@@ -92,10 +97,11 @@ def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
 
     # Output error to ease debug
     if not success:
-        print(u"Compile error with: {}".format(source_sass_filename))
+        print("Compile error with: {}".format(source_sass_filename))
         print(message)
+        assert 1 == 42
     else:
-        # Builded CSS is identical to the expected one from fixture
+        # Built CSS is identical to the expected one from fixture
         with io.open(source_css_filename, 'r') as fp:
             compiled_content = fp.read()
         assert expected_css_content == compiled_content

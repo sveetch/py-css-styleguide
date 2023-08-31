@@ -4,8 +4,13 @@
 
 @import "styleguide_helpers";
 
+.styleguide-metas-compiler{
+    --support: "#{$pycssstyleguide-compiler-support}";
+}
+
 .styleguide-metas-references{
-    --names: "palette version";
+    --auto: "true";
+    --excludes: "schemes borders gradients grid_cell_sizes spaces version";
 }
 
 .styleguide-reference-palette{

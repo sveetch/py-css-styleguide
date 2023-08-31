@@ -1,4 +1,8 @@
-/* Helper functions from py-css-styleguide==0.6.0 */
+/* Helper functions from py-css-styleguide==1.0.0 */
+
+//
+// Determine behavior to endorse at runtime.
+$pycssstyleguide-compiler-support: "libsass" !default;
 
 /// Replace every occurences of a character with a substition string.
 /// Useful to strip some characters.
@@ -80,18 +84,54 @@
     @return $result;
 }
 
+///
+/// Convert a list to a JSON list for Libsass compatibility.
+///
+/// Libsass does not enforce quote type around string, we can so produce valid JSON.
+/// NOTE: Not sure if libsass could endore the dartsass behavior so we would not need
+/// to support two functions for a same feature.
+///
+/// @arg {List} $list [null]
+///   A list.
+///
+
+@function list-to-json_libsass($list) {
+    $glue: '", "';
+    $result: to-string($list, $glue);
+
+    @return '["#{$result}"]';
+}
 
 ///
-/// Convert a list to a JSON list
+/// Convert a list to a JSON list for Dart sass compatibility.
+///
+/// Dart sass enforce double quotes around a string so we can't produce valid JSON, we
+/// have to quote with double quotes the value which contains JSON. So in this
+/// pseudo JSON we need to quote strings with simple quote to not break compiled CSS.
+///
+/// @arg {List} $list [null]
+///   A list.
+///
+
+@function list-to-json_dartsass($list) {
+    $glue: "', '";
+    $result: to-string($list, $glue);
+
+    @return "['#{$result}']";
+}
+
+///
+/// Convert a list to a JSON list depending the enabled compiler support.
 ///
 /// @arg {List} $list [null]
 ///   A list.
 ///
 @function list-to-json($list) {
-    $glue: '", "';
-    $result: to-string($list, $glue);
-
-    @return '["#{$result}"]';
+    @if $pycssstyleguide-compiler-support == "dartsass" {
+        @return list-to-json_dartsass($list);
+    } @else {
+        @return list-to-json_libsass($list);
+    }
 }
 
 ///

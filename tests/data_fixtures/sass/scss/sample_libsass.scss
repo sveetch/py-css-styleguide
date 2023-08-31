@@ -4,9 +4,14 @@
 
 @import "styleguide_helpers";
 
+$pycssstyleguide-compiler-support: "libsass";
+
+.styleguide-metas-compiler{
+    --support: "#{$pycssstyleguide-compiler-support}";
+}
+
 .styleguide-metas-references{
     --auto: "true";
-    --excludes: "schemes borders gradients grid_cell_sizes spaces version";
 }
 
 .styleguide-reference-palette{
@@ -16,7 +21,7 @@
 }
 
 .styleguide-reference-schemes {
-    --splitter: "json-list";
+    --splitter: "object-list";
     --keys: '#{get-names-to-json($schemes-colors)}';
     --selector: '#{get-names-to-json($schemes-colors, '.bg-')}';
     --background: '#{get-props-to-json($schemes-colors, 'background')}';
@@ -31,7 +36,7 @@
 }
 
 .styleguide-reference-gradients{
-    --structure: "json";
+    --structure: "object-complex";
     --object: '["#{to-string(map-values($gradients), $glue: '", "')}"]';
 }
 

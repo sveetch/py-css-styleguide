@@ -1,6 +1,11 @@
-/* Helper functions from py-css-styleguide==0.6.0 */
+/* Helper functions from py-css-styleguide==1.0.0 */
+.styleguide-metas-compiler {
+  --support: "libsass";
+}
+
 .styleguide-metas-references {
-  --names: "palette version";
+  --auto: "true";
+  --excludes: "schemes borders gradients grid_cell_sizes spaces version";
 }
 
 .styleguide-reference-palette {

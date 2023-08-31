@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Exceptions
 ==========
@@ -27,5 +26,21 @@ class SerializerError(PyCssStyleguideException):
 class StyleguideValidationError(PyCssStyleguideException):
     """
     Exception to raise when there is invalid naming in reference rules and properties.
+    """
+    pass
+
+
+class StyleguideDeprecationWarning(DeprecationWarning):
+    """
+    A deprecation warning explicitely named after application to distinct it from
+    DeprecationWarning.
+    """
+    pass
+
+
+class StyleguideUserWarning(UserWarning):
+    """
+    An usage warning explicitely named after application to distinct it from
+    UserWarning.
     """
     pass

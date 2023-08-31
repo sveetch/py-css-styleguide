@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Some test define manifest datas with an OrderedDict when they assert some
 value against a list. A simple dict can be used when there is no assertion
@@ -8,11 +7,32 @@ from collections import OrderedDict
 
 import pytest
 
-from py_css_styleguide.exceptions import SerializerError, StyleguideValidationError
+from py_css_styleguide.exceptions import (
+    SerializerError, StyleguideValidationError, StyleguideDeprecationWarning,
+    StyleguideUserWarning
+)
 from py_css_styleguide.serializer import ManifestSerializer
 
 
-@pytest.mark.parametrize('value,mode,expected', [
+def test_limit_evaluation_string_limit_truncation(recwarn):
+    """
+    The string evaluation limit should truncate string over the limit and emit a
+    warning.
+    """
+    # String is not over the limit, no warning or truncation
+    serializer = ManifestSerializer(evaluation_limit=3)
+    data = serializer.limit_evaluation_string('refname', "foo")
+    assert data == "foo"
+    assert len(recwarn) == 0
+
+    # String is over the limit, warning is emitted and string is truncated
+    serializer = ManifestSerializer(evaluation_limit=5)
+    with pytest.warns(StyleguideUserWarning):
+        data = serializer.limit_evaluation_string('refname', "123456")
+    assert data == "12345"
+
+
+@pytest.mark.parametrize('value, mode, expected', [
     # White space separator
     (
         "",
@@ -39,25 +59,32 @@ from py_css_styleguide.serializer import ManifestSerializer
         "white-space",
         ["foo", "bar", "téléphone-maison"],
     ),
+    # TODO: simple whitespace splitting should be normalized so we dont accept
+    # whitespace as value
+    (
+        "foo   bar  téléphone   maison",
+        "white-space",
+        ["foo", "", "", "bar", "", "téléphone", "", "", "maison"],
+    ),
     # JSON list parsing
     (
         "[]",
-        "json-list",
+        "object-list",
         [],
     ),
     (
         '["foo"]',
-        "json-list",
+        "object-list",
         ["foo"],
     ),
     (
         '["foo\'", "bar"]',
-        "json-list",
+        "object-list",
         ["foo'", "bar"],
     ),
     (
         '["foo", "ping pong", "bar", "téléphone"]',
-        "json-list",
+        "object-list",
         ["foo", "ping pong", "bar", "téléphone"],
     ),
 ])
@@ -69,15 +96,26 @@ def test_value_splitter_success(value, mode, expected):
     assert data == expected
 
 
+def test_value_splitter_deprecated_jsonlist():
+    """
+    Usage of 'json-list' splitter should works but emit a deprecation warning.
+    """
+    value = '["foo"]'
+    mode = "json-list"
+    expected = ["foo"]
+    serializer = ManifestSerializer()
+
+    with pytest.warns(StyleguideDeprecationWarning):
+        data = serializer.value_splitter('ref', 'prop', value, mode)
+
+    assert data == expected
+
+
 @pytest.mark.parametrize('value,mode', [
-    # Invalid JSON syntax
+    # Invalid syntax
     (
         "[",
-        "json-list",
-    ),
-    (
-        "['nope']",
-        "json-list",
+        "object-list",
     ),
 ])
 def test_value_splitter_error(value, mode):
@@ -180,10 +218,10 @@ def test_get_available_references(context, expected):
         ['foo', 'ping'],
     ),
 ])
-def test_get_meta_references_success(context, expected):
+def test_get_meta_reference_names_success(context, expected):
     serializer = ManifestSerializer()
 
-    reference_names = serializer.get_meta_references(context)
+    reference_names = serializer.get_meta_reference_names(context)
 
     assert reference_names == expected
 
@@ -226,14 +264,28 @@ def test_get_meta_references_success(context, expected):
         SerializerError,
     ),
 ])
-def test_get_meta_references_error(context, expected):
+def test_get_meta_reference_names_error(context, expected):
     serializer = ManifestSerializer()
 
     with pytest.raises(expected):
-        serializer.get_meta_references(context)
+        serializer.get_meta_reference_names(context)
 
 
 @pytest.mark.parametrize('context,expected', [
+    # Null value
+    (
+        {
+            'object': 'null',
+        },
+        None,
+    ),
+    # Boolean list
+    (
+        {
+            'object': 'true',
+        },
+        True,
+    ),
     # Empty list
     (
         {
@@ -295,10 +347,108 @@ def test_get_meta_references_error(context, expected):
         },
     ),
 ])
-def test_serialize_to_json_success(context, expected):
-    serializer = ManifestSerializer()
+def test_serialize_to_complex_success_libsass(context, expected):
+    """
+    Valid content with JSON parser for libsass support should be properly deserialized
+    as expected.
+    """
+    serializer = ManifestSerializer(compiler_support="libsass")
 
-    serialized = serializer.serialize_to_json('foo', context)
+    serialized = serializer.serialize_to_complex('foo', context)
+
+    assert serialized == expected
+
+
+@pytest.mark.parametrize('context,expected', [
+    # Null value
+    (
+        {
+            'object': 'None',
+        },
+        None,
+    ),
+    # Boolean list
+    (
+        {
+            'object': 'True',
+        },
+        True,
+    ),
+    # Empty list
+    (
+        {
+            'object': '[]',
+        },
+        [],
+    ),
+    # Empty dict
+    (
+        {
+            'object': '{}',
+        },
+        {},
+    ),
+    # Simple list and encoding
+    (
+        {
+            'object': '["foo", "téléphone"]',
+        },
+        ['foo', 'téléphone'],
+    ),
+    (
+        {
+            'object': "['foo', 'téléphone']",
+        },
+        ['foo', 'téléphone'],
+    ),
+    # Simple dict
+    (
+        {
+            'object': '{"foo": "ping", "bar": "pong"}',
+        },
+        {
+            "foo": "ping",
+            "bar": "pong"
+        },
+    ),
+    # Nested dict
+    (
+        {
+            'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
+        },
+        {
+            "foo": "bar",
+            "plop": {
+                "ping": "pang",
+                "pong": "pung"
+            }
+        },
+    ),
+    # Various type in a dict
+    (
+        {
+            'object': ("""{"foo": "bar", "life": 42, "moo": True,"""
+                       """"plop": ["ping", "pong"]}"""),
+        },
+        {
+            "foo": "bar",
+            "life": 42,
+            "moo": True,
+            "plop": [
+                "ping",
+                "pong"
+            ]
+        },
+    ),
+])
+def test_serialize_to_complex_success_dartsass(context, expected):
+    """
+    Valid content with Python AST parser for dart-sass support should be properly
+    deserialized as expected.
+    """
+    serializer = ManifestSerializer(compiler_support="dartsass")
+
+    serialized = serializer.serialize_to_complex('foo', context)
 
     assert serialized == expected
 
@@ -321,11 +471,52 @@ def test_serialize_to_json_success(context, expected):
         'object': '["foo"',
     },
 ])
-def test_serialize_to_json_error(context):
+def test_serialize_to_complex_libsass_error(context):
+    serializer = ManifestSerializer(compiler_support="libsass")
+    with pytest.raises(SerializerError):
+        serializer.serialize_to_complex('refname', context)
+
+
+@pytest.mark.parametrize('context', [
+    # Missing 'object'
+    {
+        'value': "#000000 #ffffff",
+    },
+    # Empty object
+    {
+        'object': '',
+    },
+    # Syntax error
+    {
+        'object': '["foo"',
+    },
+])
+def test_serialize_to_complex_dartsass_error(context):
+    serializer = ManifestSerializer(compiler_support="dartsass")
+    with pytest.raises(SerializerError):
+        serializer.serialize_to_complex('refname', context)
+
+
+def test_serialize_to_json_deprecated():
+    """
+    Usage of 'serialize_to_json' splitter should works but emit a deprecation warning.
+    """
+    context = {
+        'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
+    }
+    expected = {
+        "foo": "bar",
+        "plop": {
+            "ping": "pang",
+            "pong": "pung"
+        }
+    }
     serializer = ManifestSerializer()
 
-    with pytest.raises(SerializerError):
-        serializer.serialize_to_json('foo', context)
+    with pytest.warns(StyleguideDeprecationWarning):
+        serialized = serializer.serialize_to_json('foo', context)
+
+    assert serialized == expected
 
 
 @pytest.mark.parametrize('context,expected', [
@@ -370,7 +561,7 @@ def test_serialize_to_json_error(context):
             'keys': '["black", "white"]',
             'value': '["#000000", "#ffffff"]',
             "structure": "whatever",
-            "splitter": "json-list",
+            "splitter": "object-list",
         },
         {
             'black': {
@@ -461,7 +652,7 @@ def test_serialize_to_nested_error(context):
     # With JSON list splitter
     (
         OrderedDict((
-            ('splitter', 'json-list'),
+            ('splitter', 'object-list'),
             ('keys', '["black", "white"]'),
             ('values', '["#000000", "#ffffff"]'),
         )),
@@ -535,7 +726,7 @@ def test_serialize_to_flat_error(context):
     # With JSON list splitter
     (
         {
-            'splitter': "json-list",
+            'splitter': "object-list",
             'items': '["black", "white"]',
         },
         ['black', 'white'],
@@ -628,7 +819,7 @@ def test_serialize_to_string_error(context):
         'palette',
         {
             'styleguide-reference-palette': {
-                'structure': 'json',
+                'structure': 'object-complex',
                 'object': '["foo", "bar"]',
             },
         },
@@ -878,12 +1069,12 @@ def test_get_reference_error(name, context, expected):
                 'value': "V42.0",
             }),
             ('styleguide-reference-jsonstruct', {
-                'structure': 'json',
+                'structure': 'object-complex',
                 'object': '{"foo": "bar", "ping": "pong"}',
             }),
             ('styleguide-reference-flatjson', {
                 'structure': 'flat',
-                'splitter': 'json-list',
+                'splitter': 'object-list',
                 'keys': '["black", "white"]',
                 'values': '["#000000", "#ffffff"]',
             }),
@@ -931,7 +1122,7 @@ def test_get_reference_error(name, context, expected):
 def test_get_enabled_references(context, expected, order):
     serializer = ManifestSerializer()
 
-    enabled_references = serializer.get_meta_references(context)
+    enabled_references = serializer.get_meta_reference_names(context)
     references = serializer.get_enabled_references(context, enabled_references)
 
     assert expected == references

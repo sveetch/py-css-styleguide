@@ -1,5 +1,6 @@
 {
     "metas": {
+        "compiler_support": "dartsass",
         "references": [
             "palette",
             "schemes",

@@ -34,6 +34,7 @@ RULE_BASE_PREFIX = "styleguide"
 RULE_META = "metas"
 
 RULE_META_REFERENCES = "-".join((RULE_BASE_PREFIX, RULE_META, "references"))
+RULE_META_COMPILER = "-".join((RULE_BASE_PREFIX, RULE_META, "compiler"))
 
 RULE_REFERENCE = "-".join((RULE_BASE_PREFIX, "reference"))
 

@@ -136,6 +136,7 @@ def test_manifest_to_dict():
 
     expected = {
         "metas": {
+            "compiler_support": "libsass",
             "references": [
                 "palette",
                 "text_color",
@@ -191,6 +192,7 @@ def test_manifest_to_json():
 
     expected = {
         "metas": {
+            "compiler_support": "libsass",
             "references": [
                 "palette",
                 "text_color",

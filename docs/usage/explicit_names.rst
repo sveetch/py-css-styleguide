@@ -9,7 +9,7 @@ the name list to ensure they exists in references.
 
 Write a Sass file that will use the helpers and settings to build a CSS manifest:
 
-.. literalinclude:: ../../tests/data_fixtures/sass/scss/styleguide_manifest_names.scss
+.. literalinclude:: ../../tests/data_fixtures/sass/scss/sample_names.scss
    :language: scss
 
 .. note::
@@ -18,10 +18,10 @@ Write a Sass file that will use the helpers and settings to build a CSS manifest
 
 Build CSS manifest with your Sass compiler and you should get:
 
-.. literalinclude:: ../../tests/data_fixtures/sass/css/styleguide_manifest_names.css
+.. literalinclude:: ../../tests/data_fixtures/sass/css/sample_names.css
    :language: css
 
 Then load this manifest with script ``styleguide.py`` and it will return this JSON:
 
-.. literalinclude:: ../../tests/data_fixtures/json/styleguide_manifest_names.json
+.. literalinclude:: ../../tests/data_fixtures/json/sample_names.json
    :language: json
