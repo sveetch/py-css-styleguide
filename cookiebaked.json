@@ -1,0 +1,18 @@
+{
+    "__class_name": "PyCssStyleguide",
+    "_cookiecutter_sveetch_python_version": "0.4.1",
+    "_output_dir": "/home/emencia/Projects/Apps",
+    "_repo_dir": "/home/emencia/Projects/Apps/Cookies-dev/Python",
+    "_template": "/home/emencia/Projects/Apps/Cookies-dev/Python",
+    "app_name": "py_css_styleguide",
+    "author_email": "sveetch@gmail.com",
+    "author_name": "David Thenon",
+    "author_username": "sveetch",
+    "include_cli": false,
+    "init_git_repository": false,
+    "package_name": "py-css-styleguide",
+    "project_name": "PyCssStyleguide",
+    "project_short_description": "CSS driven styleguide for your project",
+    "pypi_username": "sveetch",
+    "version": "0.1.0"
+}

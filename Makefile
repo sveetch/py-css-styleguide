@@ -1,41 +1,66 @@
-VENV_PATH=.venv
 PYTHON_INTERPRETER=python3
+VENV_PATH=.venv
+
 PYTHON_BIN=$(VENV_PATH)/bin/python
-PIP=$(VENV_PATH)/bin/pip
-TWINE=$(VENV_PATH)/bin/twine
-FLAKE=$(VENV_PATH)/bin/flake8
-PYTEST=$(VENV_PATH)/bin/pytest
-SPHINX_RELOAD=$(VENV_PATH)/bin/python sphinx_reload.py
+PIP_BIN=$(VENV_PATH)/bin/pip
+FLAKE_BIN=$(VENV_PATH)/bin/flake8
+PYTEST_BIN=$(VENV_PATH)/bin/pytest
+SPHINX_RELOAD_BIN=$(PYTHON_BIN) docs/sphinx_reload.py
+TOX_BIN=$(VENV_PATH)/bin/tox
+TWINE_BIN=$(VENV_PATH)/bin/twine
 
 PACKAGE_NAME=py-css-styleguide
-PACKAGE_SLUG=`echo $(PACKAGE_NAME) | tr '-' '_'`
+PACKAGE_SLUG=py_css_styleguide
 APPLICATION_NAME=py_css_styleguide
 
+# Formatting variables, FORMATRESET is always to be used last to close formatting
+FORMATBLUE:=$(shell tput setab 4)
+FORMATGREEN:=$(shell tput setab 2)
+FORMATRED:=$(shell tput setab 1)
+FORMATBOLD:=$(shell tput bold)
+FORMATRESET:=$(shell tput sgr0)
+
 help:
-	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "Please use 'make <target> [<target>...]' where <target> is one of"
 	@echo
-	@echo "  install             -- to install this project with virtualenv and Pip"
-	@echo "  freeze-dependencies -- to write a frozen.txt file with installed dependencies versions"
+	@echo "  Cleaning"
+	@echo "  ========"
 	@echo
-	@echo "  clean               -- to clean EVERYTHING (Warning)"
-	@echo "  clean-doc           -- to remove documentation builds"
-	@echo "  clean-install       -- to clean Python side installation"
-	@echo "  clean-pycache       -- to remove all __pycache__, this is recursive from current directory"
+	@echo "  clean                      -- to clean EVERYTHING (Warning)"
+	@echo "  clean-doc                  -- to remove documentation builds"
+	@echo "  clean-install              -- to clean Python side installation"
+	@echo "  clean-pycache              -- to recursively remove all Python cache files"
 	@echo
-	@echo "  docs                -- to build documentation"
-	@echo "  livedocs            -- to run livereload server to rebuild documentation on source changes"
+	@echo "  Documentation"
+	@echo "  ============="
 	@echo
-	@echo "  flake               -- to launch Flake8 checking"
-	@echo "  test                -- to launch base test suite using Pytest"
-	@echo "  quality             -- to launch Flake8 checking, tests suites, documentation building, freeze dependencies and check release"
+	@echo "  docs                       -- to build documentation"
+	@echo "  livedocs                   -- to run a 'live reloaded' server for documentation"
 	@echo
-	@echo "  check-release       -- to check package release before uploading it to PyPi"
-	@echo "  release             -- to release package for latest version on PyPi (once release has been pushed to repository)"
+	@echo "  Installation"
+	@echo "  ============"
+	@echo
+	@echo "  freeze-dependencies        -- to write installed dependencies versions in frozen.txt"
+	@echo "  install                    -- to install this project with virtualenv and Pip"
+	@echo
+	@echo "  Quality"
+	@echo "  ======="
+	@echo
+	@echo "  check-release              -- to check package release before uploading it to PyPi"
+	@echo "  flake                      -- to launch Flake8 checking"
+	@echo "  quality                    -- to launch run quality tasks and checks"
+	@echo "  test                       -- to launch base test suite using Pytest"
+	@echo "  tox                        -- to launch tests for every Tox environments"
+	@echo
+	@echo "  Release"
+	@echo "  ======="
+	@echo
+	@echo "  release                    -- to release latest package version on PyPi"
 	@echo
 
 clean-pycache:
 	@echo ""
-	@echo "==== Clear Python cache ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Clear Python cache <---$(FORMATRESET)\n"
 	@echo ""
 	rm -Rf .pytest_cache
 	find . -type d -name "__pycache__"|xargs rm -Rf
@@ -44,17 +69,15 @@ clean-pycache:
 
 clean-install:
 	@echo ""
-	@echo "==== Clear installation ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Clear installation <---$(FORMATRESET)\n"
 	@echo ""
-	rm -Rf dist
-	rm -Rf .tox
 	rm -Rf $(VENV_PATH)
 	rm -Rf $(PACKAGE_SLUG).egg-info
 .PHONY: clean-install
 
 clean-doc:
 	@echo ""
-	@echo "==== Clear documentation ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Clear documentation <---$(FORMATRESET)\n"
 	@echo ""
 	rm -Rf docs/_build
 .PHONY: clean-doc
@@ -64,60 +87,60 @@ clean: clean-doc clean-install clean-pycache
 
 venv:
 	@echo ""
-	@echo "==== Install virtual environment ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Install virtual environment <---$(FORMATRESET)\n"
 	@echo ""
 	virtualenv -p $(PYTHON_INTERPRETER) $(VENV_PATH)
-	# This is required for those ones using old distribution
-	$(PIP) install --upgrade pip
-	$(PIP) install --upgrade setuptools
+	# Uncomment these two lines if you want development install support on old
+	# distributions (<2020)
+	#$(PIP_BIN) install --upgrade pip
+	#$(PIP_BIN) install --upgrade setuptools
 .PHONY: venv
 
 install: venv
 	@echo ""
-	@echo "==== Install everything for development ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Install everything for development <---$(FORMATRESET)\n"
 	@echo ""
-	$(PIP) install -e .[dev]
+	$(PIP_BIN) install -e .[dev,quality,doc]
 .PHONY: install
 
 docs:
 	@echo ""
-	@echo "==== Build documentation ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Build documentation <---$(FORMATRESET)\n"
 	@echo ""
 	cd docs && make html
 .PHONY: docs
 
 livedocs:
 	@echo ""
-	@echo "==== Watching documentation sources ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Watching documentation sources <---$(FORMATRESET)\n"
 	@echo ""
-	$(SPHINX_RELOAD)
+	$(SPHINX_RELOAD_BIN)
 .PHONY: livedocs
 
 flake:
 	@echo ""
-	@echo "==== Flake ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Flake <---$(FORMATRESET)\n"
 	@echo ""
-	$(FLAKE) --show-source $(APPLICATION_NAME)
-	$(FLAKE) --show-source tests
+	$(FLAKE_BIN) --statistics --show-source $(APPLICATION_NAME) tests
 .PHONY: flake
 
 test:
 	@echo ""
-	@echo "==== Tests ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Tests <---$(FORMATRESET)\n"
 	@echo ""
-	$(PYTEST) -vv tests/
+	$(PYTEST_BIN) -vv tests/
 .PHONY: test
 
 freeze-dependencies:
 	@echo ""
-	@echo "==== Freeze dependencies versions ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Freeze dependencies versions <---$(FORMATRESET)\n"
 	@echo ""
 	$(VENV_PATH)/bin/python freezer.py
 .PHONY: freeze-dependencies
 
 build-package:
 	@echo ""
-	@echo "==== Build package ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Build package <---$(FORMATRESET)\n"
 	@echo ""
 	rm -Rf dist
 	$(VENV_PATH)/bin/python setup.py sdist
@@ -125,21 +148,28 @@ build-package:
 
 release: build-package
 	@echo ""
-	@echo "==== Release ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Release package <---$(FORMATRESET)\n"
 	@echo ""
-	$(TWINE) upload dist/*
+	$(TWINE_BIN) upload dist/*
 .PHONY: release
 
 check-release: build-package
 	@echo ""
-	@echo "==== Check package ===="
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Check package <---$(FORMATRESET)\n"
 	@echo ""
-	$(TWINE) check dist/*
+	$(TWINE_BIN) check dist/*
 .PHONY: check-release
 
-
-quality: flake docs check-release freeze-dependencies
+tox:
 	@echo ""
-	@echo "♥ ♥ Everything should be fine ♥ ♥"
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Launch all Tox environments <---$(FORMATRESET)\n"
+	@echo ""
+	$(TOX_BIN)
+.PHONY: tox
+
+quality: test flake docs check-release freeze-dependencies
+	@echo ""
+	@printf "$(FORMATGREEN)$(FORMATBOLD) ♥ ♥ Everything should be fine ♥ ♥ $(FORMATRESET)\n"
+	@echo ""
 	@echo ""
 .PHONY: quality

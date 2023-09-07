@@ -9,7 +9,6 @@ every reference rules existing within the CSS manifest.
 Write a Sass file that will use the helpers and settings to build a CSS manifest:
 
 .. literalinclude:: ../../tests/data_fixtures/sass/scss/sample_libsass.scss
-   :language: scss
 
 .. note::
     From ``styleguide-metas-references`` we require to serialize every existing

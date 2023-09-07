@@ -1,1 +1,1 @@
-py-css-styleguide
+py-css-styleguide[doc]

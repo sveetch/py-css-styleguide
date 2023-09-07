@@ -6,6 +6,10 @@ Changelog
 Version 1.0.0 - Unreleased
 --------------------------
 
+* Dropped Python<3.8 supports;
+* Added Python support from 3.8 to 3.10;
+* Improved Makefile;
+* Modernized package configuration;
 * Implemented Dart sass compile behaviors support, libsass compiler behaviors is still
   the default one;
 * Serializer now emit some warnings in some situations;
@@ -21,6 +25,8 @@ Version 1.0.0 - Unreleased
 
 Migrate for libsass
 ...................
+
+TODO: Currently not accurate and uptodate
 
 If you are using libsass, you have nothing to change in your Sass manifest since it is
 the default behavior. Also, think to upgrade (just replace it with the new one) the

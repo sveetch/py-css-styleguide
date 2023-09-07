@@ -1,4 +1,4 @@
-
+.. _Python: https://www.python.org/
 .. _tinycss2: https://github.com/Kozea/tinycss2
 
 PyCssStyleguide
@@ -41,4 +41,5 @@ Links
 Dependancies
 ************
 
+* `Python`_>=3.8;
 * `tinycss2`_;
