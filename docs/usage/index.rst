@@ -42,14 +42,13 @@ Once you have a CSS manifest you will need to load it as a Manifest model throug
 PyCssStyleguide library, you can use the following Python snippet in a file
 ``styleguide.py``: ::
 
-    import io
+    from pathlib import Path
 
-    from py_css_styleguide.manifest import Manifest
+    from py_css_styleguide.model import Manifest
 
     manifest = Manifest()
 
-    with io.open('styleguide_manifest.css', 'r') as fp:
-        manifest.load(fp)
+    manifest.load(Path('styleguide_manifest.css').read_text())
 
     print(manifest.to_json())
 

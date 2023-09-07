@@ -8,8 +8,8 @@ from collections import OrderedDict
 import pytest
 
 from py_css_styleguide.exceptions import (
-    SerializerError, StyleguideValidationError, StyleguideDeprecationWarning,
-    StyleguideUserWarning
+    SerializerError, StyleguideValidationError, StyleguideUserWarning
+
 )
 from py_css_styleguide.serializer import ManifestSerializer
 
@@ -105,7 +105,7 @@ def test_value_splitter_deprecated_jsonlist():
     expected = ["foo"]
     serializer = ManifestSerializer()
 
-    with pytest.warns(StyleguideDeprecationWarning):
+    with pytest.warns(StyleguideUserWarning):
         data = serializer.value_splitter('ref', 'prop', value, mode)
 
     assert data == expected
@@ -513,7 +513,7 @@ def test_serialize_to_json_deprecated():
     }
     serializer = ManifestSerializer()
 
-    with pytest.warns(StyleguideDeprecationWarning):
+    with pytest.warns(StyleguideUserWarning):
         serialized = serializer.serialize_to_json('foo', context)
 
     assert serialized == expected

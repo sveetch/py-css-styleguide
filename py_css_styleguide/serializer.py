@@ -18,9 +18,7 @@ from .nomenclature import (
     is_valid_property,
 )
 
-from .exceptions import (
-    SerializerError, StyleguideDeprecationWarning, StyleguideUserWarning
-)
+from .exceptions import SerializerError, StyleguideUserWarning
 
 
 class ManifestSerializer(object):
@@ -118,7 +116,7 @@ class ManifestSerializer(object):
                 )
                 warn(
                     message.format(ref=self.get_ref_varname(name)),
-                    StyleguideDeprecationWarning
+                    StyleguideUserWarning
                 )
 
             if compiler_support == "dartsass":
@@ -261,7 +259,7 @@ class ManifestSerializer(object):
         )
         warn(
             message.format(ref=self.get_ref_varname(name)),
-            StyleguideDeprecationWarning
+            StyleguideUserWarning
         )
         return self.serialize_to_complex(name, datas)
 
