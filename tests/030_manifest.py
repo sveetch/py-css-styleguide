@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-import io
 import json
-import os
 
 from freezegun import freeze_time
 
@@ -63,17 +60,14 @@ def test_manifest_load_fileobject(tests_settings):
     Manifest.load() should load correctly manifest from given fileobject of a CSS
     manifest file.
     """
-    source_filepath = os.path.join(
-        tests_settings.fixtures_path,
-        "manifest_sample.css"
-    )
+    source_filepath = tests_settings.fixtures_path / "manifest_sample.css"
 
     manifest = Manifest()
 
-    with io.open(source_filepath, "r") as fp:
+    with source_filepath.open() as fp:
         manifest.load(fp)
 
-    assert manifest._path == source_filepath
+    assert manifest._path == str(source_filepath)
 
     assert sorted(manifest.metas.get("references")) == sorted([
         "palette",

@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 import logging
-import os
+from pathlib import Path
 
 import pytest
 
@@ -19,10 +18,7 @@ def test_resolve_css_filepath_existing_relative_path(tests_settings):
     mixin = StyleguideMixin()
     resolved_path = mixin.resolve_css_filepath(manifest_css_filepath)
 
-    assert resolved_path == os.path.join(
-        tests_settings.statics_path,
-        manifest_css_filepath,
-    )
+    assert resolved_path == str(tests_settings.statics_path / manifest_css_filepath)
 
 
 def test_resolve_css_filepath_unexisting_relative_path(tests_settings):
@@ -41,23 +37,19 @@ def test_resolve_css_filepath_existing_absolute_path(tests_settings):
     """
     Pointing an existing absolute path returns the same path.
     """
-    manifest_css_filepath = os.path.join(
-        tests_settings.fixtures_path, "manifest_sample.css"
-    )
+    manifest_css_filepath = tests_settings.fixtures_path / "manifest_sample.css"
 
     mixin = StyleguideMixin()
     resolved_path = mixin.resolve_css_filepath(manifest_css_filepath)
 
-    assert resolved_path == manifest_css_filepath
+    assert str(resolved_path) == str(manifest_css_filepath)
 
 
 def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
     """
     Pointing a non existing absolute path returns None.
     """
-    manifest_css_filepath = os.path.join(
-        tests_settings.package_path, "nope.css"
-    )
+    manifest_css_filepath = tests_settings.package_path / "nope.css"
 
     mixin = StyleguideMixin()
     resolved_path = mixin.resolve_css_filepath(manifest_css_filepath)
@@ -185,7 +177,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
         False,
     ),
 ])
-def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepath,
+def test_mixin_get_manifest(caplog, tests_settings, tmp_path, css_filepath,
                             kwargs, status, error, references, save_exists):
     """
     "get_manifest" behaviors should be correct with given options.
@@ -198,12 +190,12 @@ def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepat
     if kwargs.get("json_filepath"):
         # Assume filepath is prefix with settings variable to format
         if kwargs["json_filepath"].startswith("{"):
-            kwargs["json_filepath"] = tests_settings.format(kwargs["json_filepath"])
+            kwargs["json_filepath"] = Path(
+                tests_settings.format(kwargs["json_filepath"])
+            )
         # Else put JSON dump in temporary directory
         else:
-            kwargs["json_filepath"] = temp_builds_dir.join(
-                kwargs["json_filepath"]
-            ).strpath
+            kwargs["json_filepath"] = tmp_path / kwargs["json_filepath"]
 
     # Error message is formatted with possible variables (since we cannot
     # always know full paths from parametrize)
@@ -227,4 +219,4 @@ def test_mixin_get_manifest(caplog, tests_settings, temp_builds_dir, css_filepat
     assert manifest.metas.get("references") == references
 
     if save_exists is not None:
-        assert os.path.exists(kwargs["json_filepath"]) == save_exists
+        assert kwargs["json_filepath"].exists() is save_exists

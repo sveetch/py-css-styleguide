@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 from py_css_styleguide.parser import TinycssSourceParser

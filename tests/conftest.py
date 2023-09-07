@@ -1,7 +1,5 @@
-"""
-Some fixture methods
-"""
-import os
+from pathlib import Path
+
 import pytest
 
 import py_css_styleguide
@@ -25,48 +23,23 @@ class ApplicationTestSettings:
         fixtures_path (str): Absolute path to the tests datas.
     """
     def __init__(self):
-        self.application_path = os.path.abspath(
-            os.path.dirname(py_css_styleguide.__file__)
-        )
+        self.application_path = Path(
+            py_css_styleguide.__file__
+        ).parents[0].resolve()
 
-        self.package_path = os.path.normpath(
-            os.path.join(
-                os.path.abspath(
-                    os.path.dirname(py_css_styleguide.__file__)
-                ),
-                "..",
-            )
-        )
+        self.package_path = self.application_path.parent
+
+        self.tests_dir = "tests"
+        self.tests_path = self.package_path / self.tests_dir
+
+        self.fixtures_dir = "data_fixtures"
+        self.fixtures_path = self.tests_path / self.fixtures_dir
 
         self.sandbox_dir = "sandbox"
-        self.sandbox_path = os.path.join(
-            self.package_path,
-            self.sandbox_dir,
-        )
+        self.sandbox_path = self.package_path / self.sandbox_dir
 
-        # Sandbox static directory
         self.statics_dir = "static"
-        self.statics_path = os.path.join(
-            self.sandbox_path,
-            self.statics_dir,
-        )
-
-        # Tests directory
-        self.tests_dir = "tests"
-        self.tests_path = os.path.normpath(
-            os.path.join(
-                os.path.abspath(os.path.dirname(py_css_styleguide.__file__)),
-                "..",
-                self.tests_dir,
-            )
-        )
-
-        # Test fixtures directory
-        self.fixtures_dir = "data_fixtures"
-        self.fixtures_path = os.path.join(
-            self.tests_path,
-            self.fixtures_dir
-        )
+        self.statics_path = self.sandbox_path / self.statics_dir
 
     def format(self, content, extra={}):
         """
@@ -79,13 +52,13 @@ class ApplicationTestSettings:
             str: Given string formatted with possible values.
         """
         variables = {
-            "HOMEDIR": os.path.expanduser("~"),
-            "PACKAGE": self.package_path,
-            "APPLICATION": self.application_path,
-            "TESTS": self.tests_path,
-            "FIXTURES": self.fixtures_path,
-            "SANDBOX": self.sandbox_path,
-            "STATICS": self.statics_path,
+            "HOMEDIR": Path.home(),
+            "PACKAGE": str(self.package_path),
+            "APPLICATION": str(self.application_path),
+            "TESTS": str(self.tests_path),
+            "FIXTURES": str(self.fixtures_path),
+            "SANDBOX": str(self.sandbox_path),
+            "STATICS": str(self.statics_path),
             "VERSION": py_css_styleguide.__version__,
         }
         if extra:
@@ -95,12 +68,13 @@ class ApplicationTestSettings:
 
 
 @pytest.fixture(scope="function")
-def temp_builds_dir(tmpdir):
+def temp_builds_dir(tmp_path):
     """
-    Prepare a temporary build directory
+    Prepare a temporary build directory.
+
+    NOTE: You should use directly the "tmp_path" fixture in your tests.
     """
-    fn = tmpdir.mkdir("py_css_styleguide-tests")
-    return fn
+    return tmp_path
 
 
 @pytest.fixture(scope="module")
@@ -109,10 +83,10 @@ def tests_settings():
     Initialize and return settings for tests.
 
     Example:
-        You may use it in tests like this: ::
+        You may use it like: ::
 
-            def test_foo(tests_settings):
-                print(tests_settings.package_path)
-                print(tests_settings.format("foo: {VERSION}"))
+            def test_foo(settings):
+                print(settings.package_path)
+                print(settings.format("Application version: {VERSION}"))
     """
     return ApplicationTestSettings()

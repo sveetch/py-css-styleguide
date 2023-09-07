@@ -1,7 +1,7 @@
-import io
 import json
-import os
 import shutil
+
+from pathlib import Path
 
 import pytest
 
@@ -21,7 +21,7 @@ from py_css_styleguide.model import Manifest
     "sample_excludes",
     "sample_names",
 ])
-def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
+def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     """
     Testing everything:
 
@@ -34,39 +34,27 @@ def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
         Boussole is libsass only, however it still be able to properly compile dartsass
         behaviors for now so we still use Boussole for everything.
     """
-    manifest_css = manifest_name + ".css"
-    manifest_json = os.path.join(
-        tests_settings.fixtures_path,
-        'json',
-        manifest_name + ".json",
+    manifest_css = "{}.css".format(manifest_name)
+    manifest_json = (
+        tests_settings.fixtures_path / "json" / "{}.json".format(manifest_name)
     )
 
     # Open JSON fixture for expected serialized data from parsed manifest
-    with open(manifest_json, "r") as fp:
-        expected = json.load(fp)
+    expected = json.loads(manifest_json.read_text())
 
-    basepath = temp_builds_dir.join(
-        'sass_helper_boussole_compile_{}'.format(manifest_css)
-    )
-    basedir = basepath.strpath
+    template_sassdir = tests_settings.fixtures_path / "sass"
 
-    template_sassdir = os.path.join(tests_settings.fixtures_path, 'sass')
-
-    test_sassdir = os.path.join(basedir, 'sass')
-    test_config_filepath = os.path.join(test_sassdir, 'settings.json')
+    test_sassdir = tmp_path / "sass"
+    test_config_filepath = test_sassdir / "settings.json"
 
     # Copy Sass sources to compile from template
     shutil.copytree(template_sassdir, test_sassdir)
 
     # Get expected CSS content from file in fixture
-    expected_css_filepath = os.path.join(
-        tests_settings.fixtures_path,
-        "sass",
-        "css",
-        manifest_css
+    expected_css_filepath = (
+        tests_settings.fixtures_path / "sass" / "css" / manifest_css
     )
-    with io.open(expected_css_filepath, 'r') as fp:
-        expected_css_content = fp.read()
+    expected_css_content = expected_css_filepath.read_text()
 
     # Load boussole settings and search for compilable files
     project = ProjectBase(backend_name="json")
@@ -102,8 +90,7 @@ def test_boussole_compile_auto(tests_settings, temp_builds_dir, manifest_name):
         assert 1 == 42
     else:
         # Built CSS is identical to the expected one from fixture
-        with io.open(source_css_filename, 'r') as fp:
-            compiled_content = fp.read()
+        compiled_content = Path(source_css_filename).read_text()
         assert expected_css_content == compiled_content
 
         # Described manifest is the same as expected payload from fixture

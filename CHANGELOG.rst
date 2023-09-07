@@ -21,12 +21,14 @@ Version 1.0.0 - Unreleased
   ``object-list`` and ``object-complex``, it expect strings to be quoted with single
   quotes;
 * Fixed Python code from usage example;
+* Removed useless ``# -*- coding: utf-8 -*-`` lines;
+* Moved from usage of ``os`` + ``io`` modules in favor of ``pathlib.Path``;
 
 
 Migrate for libsass
 ...................
 
-TODO: Currently not accurate and uptodate
+TODO: Currently not accurate nor uptodate
 
 If you are using libsass, you have nothing to change in your Sass manifest since it is
 the default behavior. Also, think to upgrade (just replace it with the new one) the
