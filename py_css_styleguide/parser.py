@@ -26,6 +26,7 @@ class TinycssSourceParser(object):
     Since tinycss2 only return tokens, this parser is in charge to turn them
     to usable datas: a dict of properties for each selector.
     """
+
     def digest_prelude(self, rule):
         """
         Walk on rule prelude (aka CSS selector) tokens to return a string of
@@ -46,7 +47,7 @@ class TinycssSourceParser(object):
         name = []
 
         for token in rule.prelude:
-            if token.type == 'ident':
+            if token.type == "ident":
                 name.append(token.value)
 
         return "__".join(name)
@@ -71,19 +72,19 @@ class TinycssSourceParser(object):
 
         for token in rule.content:
             # Assume first identity token is the property name
-            if token.type == 'ident':
+            if token.type == "ident":
                 # Ignore starting dashes from CSS variables
                 name = token.value
-                if name.startswith('--'):
+                if name.startswith("--"):
                     name = name[2:]
-                elif name.startswith('-'):
+                elif name.startswith("-"):
                     name = name[1:]
 
                 current_key = name
                 data[current_key] = None
 
             # Assume first following string token is the property value.
-            if token.type == 'string':
+            if token.type == "string":
                 data[current_key] = token.value
 
         return data
@@ -100,11 +101,7 @@ class TinycssSourceParser(object):
         """
         manifest = OrderedDict()
 
-        rules = parse_stylesheet(
-            source,
-            skip_comments=True,
-            skip_whitespace=True,
-        )
+        rules = parse_stylesheet(source, skip_comments=True, skip_whitespace=True)
 
         for rule in rules:
             # Gather rule selector+properties

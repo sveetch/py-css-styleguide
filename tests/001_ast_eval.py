@@ -20,15 +20,9 @@ def test_literal_eval_limit_memory(tests_settings):
     assert len(ast.literal_eval(serialized)) == 200
 
     # Try with a four levels dictionnary
-    manifest_json = (
-        Path(tests_settings.fixtures_path) / "json" / "sample_libsass.json"
-    )
+    manifest_json = Path(tests_settings.fixtures_path) / "json" / "sample_libsass.json"
     manifest = json.loads(manifest_json.read_text())
     # Duplicate sample manifest three times
-    sample_dict = {
-        "first": manifest,
-        "second": manifest,
-        "third": manifest,
-    }
+    sample_dict = {"first": manifest, "second": manifest, "third": manifest}
     parsed = ast.literal_eval(json.dumps(sample_dict))
     assert len(parsed) == 3

@@ -84,18 +84,15 @@ def get_install_dependencies(requirements=None, ignore=[]):
         list: List of installed dependencies with their version. Either all or
         only those ones from given ``names``.
     """
-    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+    reqs = subprocess.check_output([sys.executable, "-m", "pip", "freeze"])
 
     # Filter from requirement names (if any) and ignored ones
     deps = []
     for item in reqs.splitlines():
-        pkg = item.decode('utf-8')
+        pkg = item.decode("utf-8")
         name = pkg.split("==")[0].lower()
 
-        if (
-            (requirements is None or name in requirements) and
-            name not in ignore
-        ):
+        if (requirements is None or name in requirements) and name not in ignore:
             deps.append(pkg)
 
     return deps

@@ -11,21 +11,21 @@ def test_manifest_load_string():
     manifest.
     """
     source = (
-        '.styleguide-metas-references{\n'
+        ".styleguide-metas-references{\n"
         '    --names: "palette text_color";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-palette{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-palette{\n"
         '    --structure: "flat";\n'
         '    --keys: "black white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-text_color{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-text_color{\n"
         '    --keys: "black white";\n'
         '    --selectors: ".bg-black .bg-white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}'
+        "}"
     )
 
     manifest = Manifest()
@@ -33,25 +33,13 @@ def test_manifest_load_string():
 
     assert manifest._path is None
 
-    assert sorted(manifest.metas.get("references")) == sorted([
-        "palette",
-        "text_color"
-    ])
+    assert sorted(manifest.metas.get("references")) == sorted(["palette", "text_color"])
 
-    assert manifest.palette == {
-        "white": "#ffffff",
-        "black": "#000000",
-    }
+    assert manifest.palette == {"white": "#ffffff", "black": "#000000"}
 
     assert manifest.text_color == {
-        "black": {
-            "selectors": ".bg-black",
-            "values": "#000000",
-        },
-        "white": {
-            "values": "#ffffff",
-            "selectors": ".bg-white",
-        },
+        "black": {"selectors": ".bg-black", "values": "#000000"},
+        "white": {"values": "#ffffff", "selectors": ".bg-white"},
     }
 
 
@@ -69,34 +57,17 @@ def test_manifest_load_fileobject(tests_settings):
 
     assert manifest._path == str(source_filepath)
 
-    assert sorted(manifest.metas.get("references")) == sorted([
-        "palette",
-        "text_color",
-        "spaces",
-    ])
+    assert sorted(manifest.metas.get("references")) == sorted(
+        ["palette", "text_color", "spaces"]
+    )
 
-    assert manifest.palette == {
-        "white": "#ffffff",
-        "black": "#000000",
-    }
+    assert manifest.palette == {"white": "#ffffff", "black": "#000000"}
 
-    assert manifest.spaces == [
-        "tiny",
-        "short",
-        "normal",
-        "large",
-        "wide",
-    ]
+    assert manifest.spaces == ["tiny", "short", "normal", "large", "wide"]
 
     assert manifest.text_color == {
-        "black": {
-            "selectors": ".bg-black",
-            "values": "#000000",
-        },
-        "white": {
-            "values": "#ffffff",
-            "selectors": ".bg-white",
-        },
+        "black": {"selectors": ".bg-black", "values": "#000000"},
+        "white": {"values": "#ffffff", "selectors": ".bg-white"},
     }
 
 
@@ -106,21 +77,21 @@ def test_manifest_to_dict():
     Manifest.to_dict() should dump a dictionnary of references with its metas.
     """
     source = (
-        '.styleguide-metas-references{\n'
+        ".styleguide-metas-references{\n"
         '    --names: "palette text_color";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-palette{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-palette{\n"
         '    --structure: "flat";\n'
         '    --keys: "black white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-text_color{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-text_color{\n"
         '    --keys: "black white";\n'
         '    --selectors: ".bg-black .bg-white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}'
+        "}"
     )
 
     manifest = Manifest()
@@ -131,25 +102,13 @@ def test_manifest_to_dict():
     expected = {
         "metas": {
             "compiler_support": "libsass",
-            "references": [
-                "palette",
-                "text_color",
-            ],
+            "references": ["palette", "text_color"],
             "created": "2012-10-15T10:00:00",
         },
-        "palette": {
-            "white": "#ffffff",
-            "black": "#000000",
-        },
+        "palette": {"white": "#ffffff", "black": "#000000"},
         "text_color": {
-            "black": {
-                "selectors": ".bg-black",
-                "values": "#000000",
-            },
-            "white": {
-                "values": "#ffffff",
-                "selectors": ".bg-white",
-            },
+            "black": {"selectors": ".bg-black", "values": "#000000"},
+            "white": {"values": "#ffffff", "selectors": ".bg-white"},
         },
     }
 
@@ -162,21 +121,21 @@ def test_manifest_to_json():
     Manifest.to_json() should dump a JSON of serialized dict from 'Manifest.to_dict()'
     """
     source = (
-        '.styleguide-metas-references{\n'
+        ".styleguide-metas-references{\n"
         '    --names: "palette text_color";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-palette{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-palette{\n"
         '    --structure: "flat";\n'
         '    --keys: "black white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}\n'
-        '\n'
-        '.styleguide-reference-text_color{\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-text_color{\n"
         '    --keys: "black white";\n'
         '    --selectors: ".bg-black .bg-white";\n'
         '    --values: "#000000 #ffffff";\n'
-        '}'
+        "}"
     )
 
     manifest = Manifest()
@@ -187,25 +146,13 @@ def test_manifest_to_json():
     expected = {
         "metas": {
             "compiler_support": "libsass",
-            "references": [
-                "palette",
-                "text_color",
-            ],
+            "references": ["palette", "text_color"],
             "created": "2012-10-15T10:00:00",
         },
-        "palette": {
-            "white": "#ffffff",
-            "black": "#000000",
-        },
+        "palette": {"white": "#ffffff", "black": "#000000"},
         "text_color": {
-            "black": {
-                "selectors": ".bg-black",
-                "values": "#000000",
-            },
-            "white": {
-                "values": "#ffffff",
-                "selectors": ".bg-white",
-            },
+            "black": {"selectors": ".bg-black", "values": "#000000"},
+            "white": {"values": "#ffffff", "selectors": ".bg-white"},
         },
     }
 
@@ -219,25 +166,13 @@ def test_manifest_from_dict():
     """
     source = {
         "metas": {
-            "references": [
-                "palette",
-                "text_color",
-            ],
+            "references": ["palette", "text_color"],
             "created": "2012-10-15T10:00:00",
         },
-        "palette": {
-            "white": "#ffffff",
-            "black": "#000000",
-        },
+        "palette": {"white": "#ffffff", "black": "#000000"},
         "text_color": {
-            "black": {
-                "selectors": ".bg-black",
-                "values": "#000000",
-            },
-            "white": {
-                "values": "#ffffff",
-                "selectors": ".bg-white",
-            },
+            "black": {"selectors": ".bg-black", "values": "#000000"},
+            "white": {"values": "#ffffff", "selectors": ".bg-white"},
         },
     }
 

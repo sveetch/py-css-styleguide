@@ -8,8 +8,9 @@ from collections import OrderedDict
 import pytest
 
 from py_css_styleguide.exceptions import (
-    SerializerError, StyleguideValidationError, StyleguideUserWarning
-
+    SerializerError,
+    StyleguideValidationError,
+    StyleguideUserWarning,
 )
 from py_css_styleguide.serializer import ManifestSerializer
 
@@ -21,77 +22,52 @@ def test_limit_evaluation_string_limit_truncation(recwarn):
     """
     # String is not over the limit, no warning or truncation
     serializer = ManifestSerializer(evaluation_limit=3)
-    data = serializer.limit_evaluation_string('refname', "foo")
+    data = serializer.limit_evaluation_string("refname", "foo")
     assert data == "foo"
     assert len(recwarn) == 0
 
     # String is over the limit, warning is emitted and string is truncated
     serializer = ManifestSerializer(evaluation_limit=5)
     with pytest.warns(StyleguideUserWarning):
-        data = serializer.limit_evaluation_string('refname', "123456")
+        data = serializer.limit_evaluation_string("refname", "123456")
     assert data == "12345"
 
 
-@pytest.mark.parametrize('value, mode, expected', [
-    # White space separator
-    (
-        "",
-        "white-space",
-        [],
-    ),
-    (
-        "foo",
-        "white-space",
-        ["foo"],
-    ),
-    (
-        "foo bar",
-        "white-space",
-        ["foo", "bar"],
-    ),
-    (
-        "foo bar téléphone maison",
-        "white-space",
-        ["foo", "bar", "téléphone", "maison"],
-    ),
-    (
-        "foo bar téléphone-maison",
-        "white-space",
-        ["foo", "bar", "téléphone-maison"],
-    ),
-    # TODO: simple whitespace splitting should be normalized so we dont accept
-    # whitespace as value
-    (
-        "foo   bar  téléphone   maison",
-        "white-space",
-        ["foo", "", "", "bar", "", "téléphone", "", "", "maison"],
-    ),
-    # JSON list parsing
-    (
-        "[]",
-        "object-list",
-        [],
-    ),
-    (
-        '["foo"]',
-        "object-list",
-        ["foo"],
-    ),
-    (
-        '["foo\'", "bar"]',
-        "object-list",
-        ["foo'", "bar"],
-    ),
-    (
-        '["foo", "ping pong", "bar", "téléphone"]',
-        "object-list",
-        ["foo", "ping pong", "bar", "téléphone"],
-    ),
-])
+@pytest.mark.parametrize(
+    "value, mode, expected",
+    [
+        # White space separator
+        ("", "white-space", []),
+        ("foo", "white-space", ["foo"]),
+        ("foo bar", "white-space", ["foo", "bar"]),
+        (
+            "foo bar téléphone maison",
+            "white-space",
+            ["foo", "bar", "téléphone", "maison"],
+        ),
+        ("foo bar téléphone-maison", "white-space", ["foo", "bar", "téléphone-maison"]),
+        # TODO: simple whitespace splitting should be normalized so we dont accept
+        # whitespace as value
+        (
+            "foo   bar  téléphone   maison",
+            "white-space",
+            ["foo", "", "", "bar", "", "téléphone", "", "", "maison"],
+        ),
+        # JSON list parsing
+        ("[]", "object-list", []),
+        ('["foo"]', "object-list", ["foo"]),
+        ('["foo\'", "bar"]', "object-list", ["foo'", "bar"]),
+        (
+            '["foo", "ping pong", "bar", "téléphone"]',
+            "object-list",
+            ["foo", "ping pong", "bar", "téléphone"],
+        ),
+    ],
+)
 def test_value_splitter_success(value, mode, expected):
     serializer = ManifestSerializer()
 
-    data = serializer.value_splitter('ref', 'prop', value, mode)
+    data = serializer.value_splitter("ref", "prop", value, mode)
 
     assert data == expected
 
@@ -106,56 +82,49 @@ def test_value_splitter_deprecated_jsonlist():
     serializer = ManifestSerializer()
 
     with pytest.warns(StyleguideUserWarning):
-        data = serializer.value_splitter('ref', 'prop', value, mode)
+        data = serializer.value_splitter("ref", "prop", value, mode)
 
     assert data == expected
 
 
-@pytest.mark.parametrize('value,mode', [
-    # Invalid syntax
-    (
-        "[",
-        "object-list",
-    ),
-])
+@pytest.mark.parametrize(
+    "value,mode",
+    [
+        # Invalid syntax
+        ("[", "object-list")
+    ],
+)
 def test_value_splitter_error(value, mode):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.value_splitter('ref', 'prop', value, mode)
+        serializer.value_splitter("ref", "prop", value, mode)
 
 
-@pytest.mark.parametrize('context,expected', [
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "palette",
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        (
+            {
+                "styleguide-metas-references": {"names": "palette"},
+                "styleguide-reference-foo": {"content": "bar"},
             },
-            'styleguide-reference-foo': {
-                'content': "bar",
-            },
-        },
-        ["foo"],
-    ),
-    # Enforce the right item order to match returned list order
-    (
-        OrderedDict((
-            ('styleguide-reference-foo', {
-                'content': "bar",
-            }),
-            ('styleguide-reference-pika', {
-                'content': "chu",
-            }),
-            ('dummy', {
-                'names': "yip",
-            }),
-            ('styleguide-reference-ping', {
-                'content': "pong",
-            }),
-        )),
-        ["foo", "pika", "ping"],
-    ),
-])
+            ["foo"],
+        ),
+        # Enforce the right item order to match returned list order
+        (
+            OrderedDict(
+                (
+                    ("styleguide-reference-foo", {"content": "bar"}),
+                    ("styleguide-reference-pika", {"content": "chu"}),
+                    ("dummy", {"names": "yip"}),
+                    ("styleguide-reference-ping", {"content": "pong"}),
+                )
+            ),
+            ["foo", "pika", "ping"],
+        ),
+    ],
+)
 def test_get_available_references(context, expected):
     serializer = ManifestSerializer()
 
@@ -164,60 +133,42 @@ def test_get_available_references(context, expected):
     assert reference_names == expected
 
 
-@pytest.mark.parametrize('context,expected', [
-    # With a dummy ignored rule just for fun
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "palette",
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # With a dummy ignored rule just for fun
+        (
+            {
+                "styleguide-metas-references": {"names": "palette"},
+                "dummy": {"names": "yip"},
             },
-            'dummy': {
-                'names': "yip",
-            },
-        },
-        ["palette"],
-    ),
-    # Every enabled rules are returned
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "palette schemes foo bar",
-            }
-        },
-        ["palette", "schemes", "foo", "bar"],
-    ),
-    # Automatically enable every references but no reference defined
-    (
-        {
-            'styleguide-metas-references': {
-                'auto': "true",
-            }
-        },
-        [],
-    ),
-    # Automatically enable every references and explicitely ignore some ones
-    (
-        OrderedDict((
-            ('styleguide-metas-references', {
-                'auto': "true",
-                'excludes': "bar pong",
-            }),
-            ('styleguide-reference-foo', {
-                'content': "dummy",
-            }),
-            ('styleguide-reference-bar', {
-                'content': "dummy",
-            }),
-            ('styleguide-reference-ping', {
-                'content': "dummy",
-            }),
-            ('styleguide-reference-pong', {
-                'content': "dummy",
-            }),
-        )),
-        ['foo', 'ping'],
-    ),
-])
+            ["palette"],
+        ),
+        # Every enabled rules are returned
+        (
+            {"styleguide-metas-references": {"names": "palette schemes foo bar"}},
+            ["palette", "schemes", "foo", "bar"],
+        ),
+        # Automatically enable every references but no reference defined
+        ({"styleguide-metas-references": {"auto": "true"}}, []),
+        # Automatically enable every references and explicitely ignore some ones
+        (
+            OrderedDict(
+                (
+                    (
+                        "styleguide-metas-references",
+                        {"auto": "true", "excludes": "bar pong"},
+                    ),
+                    ("styleguide-reference-foo", {"content": "dummy"}),
+                    ("styleguide-reference-bar", {"content": "dummy"}),
+                    ("styleguide-reference-ping", {"content": "dummy"}),
+                    ("styleguide-reference-pong", {"content": "dummy"}),
+                )
+            ),
+            ["foo", "ping"],
+        ),
+    ],
+)
 def test_get_meta_reference_names_success(context, expected):
     serializer = ManifestSerializer()
 
@@ -226,44 +177,22 @@ def test_get_meta_reference_names_success(context, expected):
     assert reference_names == expected
 
 
-@pytest.mark.parametrize('context, expected', [
-    # Missing references meta
-    (
-        {
-            'styleguide-metas-foo': {
-                'names': "palette",
-            }
-        },
-        SerializerError,
-    ),
-    # Missing names or auto property
-    (
-        {
-            'styleguide-metas-references': {
-                'content': "palette",
-            }
-        },
-        SerializerError,
-    ),
-    # Invalid name (from '-' character)
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "foo-bar",
-            }
-        },
-        StyleguideValidationError,
-    ),
-    # Empty list
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "",
-            }
-        },
-        SerializerError,
-    ),
-])
+@pytest.mark.parametrize(
+    "context, expected",
+    [
+        # Missing references meta
+        ({"styleguide-metas-foo": {"names": "palette"}}, SerializerError),
+        # Missing names or auto property
+        ({"styleguide-metas-references": {"content": "palette"}}, SerializerError),
+        # Invalid name (from '-' character)
+        (
+            {"styleguide-metas-references": {"names": "foo-bar"}},
+            StyleguideValidationError,
+        ),
+        # Empty list
+        ({"styleguide-metas-references": {"names": ""}}, SerializerError),
+    ],
+)
 def test_get_meta_reference_names_error(context, expected):
     serializer = ManifestSerializer()
 
@@ -271,82 +200,38 @@ def test_get_meta_reference_names_error(context, expected):
         serializer.get_meta_reference_names(context)
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Null value
-    (
-        {
-            'object': 'null',
-        },
-        None,
-    ),
-    # Boolean list
-    (
-        {
-            'object': 'true',
-        },
-        True,
-    ),
-    # Empty list
-    (
-        {
-            'object': '[]',
-        },
-        [],
-    ),
-    # Empty dict
-    (
-        {
-            'object': '{}',
-        },
-        {},
-    ),
-    # Simple list and encoding
-    (
-        {
-            'object': '["foo", "téléphone"]',
-        },
-        ['foo', 'téléphone'],
-    ),
-    # Simple dict
-    (
-        {
-            'object': '{"foo": "ping", "bar": "pong"}',
-        },
-        {
-            "foo": "ping",
-            "bar": "pong"
-        },
-    ),
-    # Nested dict
-    (
-        {
-            'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
-        },
-        {
-            "foo": "bar",
-            "plop": {
-                "ping": "pang",
-                "pong": "pung"
-            }
-        },
-    ),
-    # Various type in a dict
-    (
-        {
-            'object': ("""{"foo": "bar", "life": 42, "moo": true,"""
-                       """"plop": ["ping", "pong"]}"""),
-        },
-        {
-            "foo": "bar",
-            "life": 42,
-            "moo": True,
-            "plop": [
-                "ping",
-                "pong"
-            ]
-        },
-    ),
-])
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Null value
+        ({"object": "null"}, None),
+        # Boolean list
+        ({"object": "true"}, True),
+        # Empty list
+        ({"object": "[]"}, []),
+        # Empty dict
+        ({"object": "{}"}, {}),
+        # Simple list and encoding
+        ({"object": '["foo", "téléphone"]'}, ["foo", "téléphone"]),
+        # Simple dict
+        ({"object": '{"foo": "ping", "bar": "pong"}'}, {"foo": "ping", "bar": "pong"}),
+        # Nested dict
+        (
+            {"object": '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}'},
+            {"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}},
+        ),
+        # Various type in a dict
+        (
+            {
+                "object": (
+                    """{"foo": "bar", "life": 42, "moo": true,"""
+                    """"plop": ["ping", "pong"]}"""
+                )
+            },
+            {"foo": "bar", "life": 42, "moo": True, "plop": ["ping", "pong"]},
+        ),
+    ],
+)
 def test_serialize_to_complex_success_libsass(context, expected):
     """
     Valid content with JSON parser for libsass support should be properly deserialized
@@ -354,93 +239,44 @@ def test_serialize_to_complex_success_libsass(context, expected):
     """
     serializer = ManifestSerializer(compiler_support="libsass")
 
-    serialized = serializer.serialize_to_complex('foo', context)
+    serialized = serializer.serialize_to_complex("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Null value
-    (
-        {
-            'object': 'None',
-        },
-        None,
-    ),
-    # Boolean list
-    (
-        {
-            'object': 'True',
-        },
-        True,
-    ),
-    # Empty list
-    (
-        {
-            'object': '[]',
-        },
-        [],
-    ),
-    # Empty dict
-    (
-        {
-            'object': '{}',
-        },
-        {},
-    ),
-    # Simple list and encoding
-    (
-        {
-            'object': '["foo", "téléphone"]',
-        },
-        ['foo', 'téléphone'],
-    ),
-    (
-        {
-            'object': "['foo', 'téléphone']",
-        },
-        ['foo', 'téléphone'],
-    ),
-    # Simple dict
-    (
-        {
-            'object': '{"foo": "ping", "bar": "pong"}',
-        },
-        {
-            "foo": "ping",
-            "bar": "pong"
-        },
-    ),
-    # Nested dict
-    (
-        {
-            'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
-        },
-        {
-            "foo": "bar",
-            "plop": {
-                "ping": "pang",
-                "pong": "pung"
-            }
-        },
-    ),
-    # Various type in a dict
-    (
-        {
-            'object': ("""{"foo": "bar", "life": 42, "moo": True,"""
-                       """"plop": ["ping", "pong"]}"""),
-        },
-        {
-            "foo": "bar",
-            "life": 42,
-            "moo": True,
-            "plop": [
-                "ping",
-                "pong"
-            ]
-        },
-    ),
-])
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Null value
+        ({"object": "None"}, None),
+        # Boolean list
+        ({"object": "True"}, True),
+        # Empty list
+        ({"object": "[]"}, []),
+        # Empty dict
+        ({"object": "{}"}, {}),
+        # Simple list and encoding
+        ({"object": '["foo", "téléphone"]'}, ["foo", "téléphone"]),
+        ({"object": "['foo', 'téléphone']"}, ["foo", "téléphone"]),
+        # Simple dict
+        ({"object": '{"foo": "ping", "bar": "pong"}'}, {"foo": "ping", "bar": "pong"}),
+        # Nested dict
+        (
+            {"object": '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}'},
+            {"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}},
+        ),
+        # Various type in a dict
+        (
+            {
+                "object": (
+                    """{"foo": "bar", "life": 42, "moo": True,"""
+                    """"plop": ["ping", "pong"]}"""
+                )
+            },
+            {"foo": "bar", "life": 42, "moo": True, "plop": ["ping", "pong"]},
+        ),
+    ],
+)
 def test_serialize_to_complex_success_dartsass(context, expected):
     """
     Valid content with Python AST parser for dart-sass support should be properly
@@ -448,478 +284,368 @@ def test_serialize_to_complex_success_dartsass(context, expected):
     """
     serializer = ManifestSerializer(compiler_support="dartsass")
 
-    serialized = serializer.serialize_to_complex('foo', context)
+    serialized = serializer.serialize_to_complex("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'object'
-    {
-        'value': "#000000 #ffffff",
-    },
-    # Empty object
-    {
-        'object': '',
-    },
-    # Single quote encoding issue
-    {
-        'object': "['foo']",
-    },
-    # Syntax error
-    {
-        'object': '["foo"',
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'object'
+        {"value": "#000000 #ffffff"},
+        # Empty object
+        {"object": ""},
+        # Single quote encoding issue
+        {"object": "['foo']"},
+        # Syntax error
+        {"object": '["foo"'},
+    ],
+)
 def test_serialize_to_complex_libsass_error(context):
     serializer = ManifestSerializer(compiler_support="libsass")
     with pytest.raises(SerializerError):
-        serializer.serialize_to_complex('refname', context)
+        serializer.serialize_to_complex("refname", context)
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'object'
-    {
-        'value': "#000000 #ffffff",
-    },
-    # Empty object
-    {
-        'object': '',
-    },
-    # Syntax error
-    {
-        'object': '["foo"',
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'object'
+        {"value": "#000000 #ffffff"},
+        # Empty object
+        {"object": ""},
+        # Syntax error
+        {"object": '["foo"'},
+    ],
+)
 def test_serialize_to_complex_dartsass_error(context):
     serializer = ManifestSerializer(compiler_support="dartsass")
     with pytest.raises(SerializerError):
-        serializer.serialize_to_complex('refname', context)
+        serializer.serialize_to_complex("refname", context)
 
 
 def test_serialize_to_json_deprecated():
     """
     Usage of 'serialize_to_json' splitter should works but emit a deprecation warning.
     """
-    context = {
-        'object': '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}',
-    }
-    expected = {
-        "foo": "bar",
-        "plop": {
-            "ping": "pang",
-            "pong": "pung"
-        }
-    }
+    context = {"object": '{"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}'}
+    expected = {"foo": "bar", "plop": {"ping": "pang", "pong": "pung"}}
     serializer = ManifestSerializer()
 
     with pytest.warns(StyleguideUserWarning):
-        serialized = serializer.serialize_to_json('foo', context)
+        serialized = serializer.serialize_to_json("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Nested mode with single property and ensure 'structure' is an ignored
-    # keyword
-    (
-        {
-            'keys': "black white",
-            'value': "#000000 #ffffff",
-            "structure": "whatever",
-        },
-        {
-            'black': {
-                'value': "#000000",
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Nested mode with single property and ensure 'structure' is an ignored
+        # keyword
+        (
+            {
+                "keys": "black white",
+                "value": "#000000 #ffffff",
+                "structure": "whatever",
             },
-            'white': {
-                'value': "#ffffff",
+            {"black": {"value": "#000000"}, "white": {"value": "#ffffff"}},
+        ),
+        # Nested mode with multiple property
+        (
+            {
+                "keys": "black white",
+                "selectors": ".bg-black .bg-white",
+                "values": "#000000 #ffffff",
             },
-        },
-    ),
-    # Nested mode with multiple property
-    (
-        {
-            'keys': "black white",
-            'selectors': ".bg-black .bg-white",
-            'values': "#000000 #ffffff",
-        },
-        {
-            'black': {
-                'selectors': ".bg-black",
-                'values': "#000000",
+            {
+                "black": {"selectors": ".bg-black", "values": "#000000"},
+                "white": {"selectors": ".bg-white", "values": "#ffffff"},
             },
-            'white': {
-                'selectors': ".bg-white",
-                'values': "#ffffff",
+        ),
+        # With JSON list splitter
+        (
+            {
+                "keys": '["black", "white"]',
+                "value": '["#000000", "#ffffff"]',
+                "structure": "whatever",
+                "splitter": "object-list",
             },
-        },
-    ),
-    # With JSON list splitter
-    (
-        {
-            'keys': '["black", "white"]',
-            'value': '["#000000", "#ffffff"]',
-            "structure": "whatever",
-            "splitter": "object-list",
-        },
-        {
-            'black': {
-                'value': "#000000",
-            },
-            'white': {
-                'value': "#ffffff",
-            },
-        },
-    ),
-])
+            {"black": {"value": "#000000"}, "white": {"value": "#ffffff"}},
+        ),
+    ],
+)
 def test_serialize_to_nested_success(context, expected):
     serializer = ManifestSerializer()
 
-    serialized = serializer.serialize_to_nested('foo', context)
+    serialized = serializer.serialize_to_nested("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'keys'
-    {
-        'value': "#000000 #ffffff",
-    },
-    # Length difference with keys
-    {
-        'keys': "black white",
-        'selectors': ".bg-black",
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'keys'
+        {"value": "#000000 #ffffff"},
+        # Length difference with keys
+        {"keys": "black white", "selectors": ".bg-black"},
+    ],
+)
 def test_serialize_to_nested_error(context):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.serialize_to_nested('foo', context)
+        serializer.serialize_to_nested("foo", context)
 
 
-@pytest.mark.parametrize('context,expected,order', [
-    (
-        OrderedDict((
-            ('keys', "black white"),
-            ('values', "#000000 #ffffff"),
-        )),
-        OrderedDict((
-            ('black', "#000000"),
-            ('white', "#ffffff"),
-        )),
-        ['black', 'white'],
-    ),
-    (
-        OrderedDict((
-            ('keys', "black white red"),
-            ('values', "#000000 #ffffff #ff0000"),
-        )),
-        OrderedDict((
-            ('black', "#000000"),
-            ('white', "#ffffff"),
-            ('red', "#ff0000"),
-        )),
-        ['black', 'white', 'red'],
-    ),
-    (
-        OrderedDict((
-            ('keys', "cyan black white red"),
-            ('values', "#48999b #000000 #ffffff #ff0000"),
-        )),
-        OrderedDict((
-            ('cyan', "#48999b"),
-            ('black', "#000000"),
-            ('white', "#ffffff"),
-            ('red', "#ff0000"),
-        )),
-        ['cyan', 'black', 'white', 'red'],
-    ),
-    # keys/values only in flat mode, everything else is ignored
-    (
-        OrderedDict((
-            ('keys', "black white"),
-            ('values', "#000000 #ffffff"),
-            ('dummy', 'whatever'),
-        )),
-        OrderedDict((
-            ('black', "#000000"),
-            ('white', "#ffffff"),
-        )),
-        ['black', 'white'],
-    ),
-    # With JSON list splitter
-    (
-        OrderedDict((
-            ('splitter', 'object-list'),
-            ('keys', '["black", "white"]'),
-            ('values', '["#000000", "#ffffff"]'),
-        )),
-        OrderedDict((
-            ('black', "#000000"),
-            ('white', "#ffffff"),
-        )),
-        ['black', 'white'],
-    ),
-])
+@pytest.mark.parametrize(
+    "context,expected,order",
+    [
+        (
+            OrderedDict((("keys", "black white"), ("values", "#000000 #ffffff"))),
+            OrderedDict((("black", "#000000"), ("white", "#ffffff"))),
+            ["black", "white"],
+        ),
+        (
+            OrderedDict(
+                (("keys", "black white red"), ("values", "#000000 #ffffff #ff0000"))
+            ),
+            OrderedDict(
+                (("black", "#000000"), ("white", "#ffffff"), ("red", "#ff0000"))
+            ),
+            ["black", "white", "red"],
+        ),
+        (
+            OrderedDict(
+                (
+                    ("keys", "cyan black white red"),
+                    ("values", "#48999b #000000 #ffffff #ff0000"),
+                )
+            ),
+            OrderedDict(
+                (
+                    ("cyan", "#48999b"),
+                    ("black", "#000000"),
+                    ("white", "#ffffff"),
+                    ("red", "#ff0000"),
+                )
+            ),
+            ["cyan", "black", "white", "red"],
+        ),
+        # keys/values only in flat mode, everything else is ignored
+        (
+            OrderedDict(
+                (
+                    ("keys", "black white"),
+                    ("values", "#000000 #ffffff"),
+                    ("dummy", "whatever"),
+                )
+            ),
+            OrderedDict((("black", "#000000"), ("white", "#ffffff"))),
+            ["black", "white"],
+        ),
+        # With JSON list splitter
+        (
+            OrderedDict(
+                (
+                    ("splitter", "object-list"),
+                    ("keys", '["black", "white"]'),
+                    ("values", '["#000000", "#ffffff"]'),
+                )
+            ),
+            OrderedDict((("black", "#000000"), ("white", "#ffffff"))),
+            ["black", "white"],
+        ),
+    ],
+)
 def test_serialize_to_flat_success(context, expected, order):
     serializer = ManifestSerializer()
 
-    serialized = serializer.serialize_to_flat('foo', context)
+    serialized = serializer.serialize_to_flat("foo", context)
 
     assert serialized == expected
     assert order == list(serialized.keys())
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'keys'
-    {
-        'values': "#000000 #ffffff",
-    },
-    # Missing 'values'
-    {
-        'keys': "black white",
-    },
-    # Length differences between keys and values
-    {
-        'keys': "black white red",
-        'values': "#000000",
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'keys'
+        {"values": "#000000 #ffffff"},
+        # Missing 'values'
+        {"keys": "black white"},
+        # Length differences between keys and values
+        {"keys": "black white red", "values": "#000000"},
+    ],
+)
 def test_serialize_to_flat_error(context):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.serialize_to_flat('foo', context)
+        serializer.serialize_to_flat("foo", context)
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Single item list
-    (
-        {
-            'items': "black",
-        },
-        ['black'],
-    ),
-    # Empty list is ok
-    (
-        {
-            'items': "",
-        },
-        [],
-    ),
-    # Multiple list items
-    (
-        {
-            'items': "black white",
-        },
-        ['black', 'white'],
-    ),
-    # Many items
-    (
-        {
-            'items': "1 2 3 4 5 6 7 8 9 0",
-        },
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-    ),
-    # With JSON list splitter
-    (
-        {
-            'splitter': "object-list",
-            'items': '["black", "white"]',
-        },
-        ['black', 'white'],
-    ),
-])
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Single item list
+        ({"items": "black"}, ["black"]),
+        # Empty list is ok
+        ({"items": ""}, []),
+        # Multiple list items
+        ({"items": "black white"}, ["black", "white"]),
+        # Many items
+        (
+            {"items": "1 2 3 4 5 6 7 8 9 0"},
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+        ),
+        # With JSON list splitter
+        (
+            {"splitter": "object-list", "items": '["black", "white"]'},
+            ["black", "white"],
+        ),
+    ],
+)
 def test_serialize_to_list_success(context, expected):
     serializer = ManifestSerializer()
 
-    serialized = serializer.serialize_to_list('foo', context)
+    serialized = serializer.serialize_to_list("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'items'
-    {
-        'values': "#000000 #ffffff",
-    },
-    # None value although it can occurs from parsed data because it happen
-    # only if 'items' is not defined
-    {
-        'items': None,
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'items'
+        {"values": "#000000 #ffffff"},
+        # None value although it can occurs from parsed data because it happen
+        # only if 'items' is not defined
+        {"items": None},
+    ],
+)
 def test_serialize_to_list_error(context):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.serialize_to_list('foo', context)
+        serializer.serialize_to_list("foo", context)
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Basic string
-    (
-        {
-            'value': "ok",
-        },
-        "ok",
-    ),
-    # Empty string is ok
-    (
-        {
-            'value': "",
-        },
-        "",
-    ),
-    # Looks like a space separated list but it's a string
-    (
-        {
-            'value': "black white",
-        },
-        "black white",
-    ),
-    # Some unicode
-    (
-        {
-            'value': "¿ pœp ?",
-        },
-        "¿ pœp ?",
-    ),
-])
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Basic string
+        ({"value": "ok"}, "ok"),
+        # Empty string is ok
+        ({"value": ""}, ""),
+        # Looks like a space separated list but it's a string
+        ({"value": "black white"}, "black white"),
+        # Some unicode
+        ({"value": "¿ pœp ?"}, "¿ pœp ?"),
+    ],
+)
 def test_serialize_to_string_success(context, expected):
     serializer = ManifestSerializer()
 
-    serialized = serializer.serialize_to_string('foo', context)
+    serialized = serializer.serialize_to_string("foo", context)
 
     assert serialized == expected
 
 
-@pytest.mark.parametrize('context', [
-    # Missing 'value'
-    {
-        'content': "nope",
-    },
-    # None value for when variable is not defined
-    {
-        'value': None,
-    },
-])
+@pytest.mark.parametrize(
+    "context",
+    [
+        # Missing 'value'
+        {"content": "nope"},
+        # None value for when variable is not defined
+        {"value": None},
+    ],
+)
 def test_serialize_to_string_error(context):
     serializer = ManifestSerializer()
 
     with pytest.raises(SerializerError):
-        serializer.serialize_to_string('foo', context)
+        serializer.serialize_to_string("foo", context)
 
 
-@pytest.mark.parametrize('name,context,expected', [
-    # JSON object with a list
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'structure': 'object-complex',
-                'object': '["foo", "bar"]',
+@pytest.mark.parametrize(
+    "name,context,expected",
+    [
+        # JSON object with a list
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "structure": "object-complex",
+                    "object": '["foo", "bar"]',
+                }
             },
-        },
-        [
-            'foo',
-            'bar'
-        ],
-    ),
-    # Nested structure with single property
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
+            ["foo", "bar"],
+        ),
+        # Nested structure with single property
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                }
             },
-        },
-        {
-            'black': {
-                'value': "#000000",
+            {"black": {"value": "#000000"}, "white": {"value": "#ffffff"}},
+        ),
+        # Nested structure with multiple properties
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                    "foo": "one two",
+                }
             },
-            'white': {
-                'value': "#ffffff",
+            {
+                "black": {"value": "#000000", "foo": "one"},
+                "white": {"value": "#ffffff", "foo": "two"},
             },
-        },
-    ),
-    # Nested structure with multiple properties
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
-                'foo': "one two",
+        ),
+        # Flat structure
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "structure": "flat",
+                    "keys": "black white",
+                    "values": "#000000 #ffffff",
+                },
+                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
             },
-        },
-        {
-            'black': {
-                'value': "#000000",
-                'foo': "one",
+            {"black": "#000000", "white": "#ffffff"},
+        ),
+        # List structure
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "structure": "list",
+                    "items": "black white",
+                },
+                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
             },
-            'white': {
-                'value': "#ffffff",
-                'foo': "two",
+            ["black", "white"],
+        ),
+        # String structure
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {"structure": "string", "value": "ok"},
+                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
             },
-        },
-    ),
-    # Flat structure
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'structure': 'flat',
-                'keys': "black white",
-                'values': "#000000 #ffffff",
-            },
-            'styleguide-reference-dummy': {
-                'keys': "foo",
-                'values': "bar",
-            },
-        },
-        {
-            'black': "#000000",
-            'white': "#ffffff",
-        },
-    ),
-    # List structure
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'structure': 'list',
-                'items': "black white",
-            },
-            'styleguide-reference-dummy': {
-                'keys': "foo",
-                'values': "bar",
-            },
-        },
-        [
-            'black',
-            'white',
-        ],
-    ),
-    # String structure
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'structure': 'string',
-                'value': "ok",
-            },
-            'styleguide-reference-dummy': {
-                'keys': "foo",
-                'values': "bar",
-            },
-        },
-        "ok",
-    ),
-])
+            "ok",
+        ),
+    ],
+)
 def test_get_reference_success(name, context, expected):
     serializer = ManifestSerializer()
 
@@ -928,58 +654,61 @@ def test_get_reference_success(name, context, expected):
     assert reference == expected
 
 
-@pytest.mark.parametrize('name,context,expected', [
-    # Missing reference with single rule
-    (
-        'palette',
-        {
-            'styleguide-reference-foo': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
+@pytest.mark.parametrize(
+    "name,context,expected",
+    [
+        # Missing reference with single rule
+        (
+            "palette",
+            {
+                "styleguide-reference-foo": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                }
             },
-        },
-        SerializerError,
-    ),
-    # Invalid property name
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'keys': "black white",
-                'font-color': "red blue",
-                'value': "#000000 #ffffff",
+            SerializerError,
+        ),
+        # Invalid property name
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "font-color": "red blue",
+                    "value": "#000000 #ffffff",
+                }
             },
-        },
-        StyleguideValidationError,
-    ),
-    # Invalid structure mode name
-    (
-        'palette',
-        {
-            'styleguide-reference-palette': {
-                'structure': "whatever",
-                'keys': "black white",
-                'values': "#000000 #ffffff",
+            StyleguideValidationError,
+        ),
+        # Invalid structure mode name
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "structure": "whatever",
+                    "keys": "black white",
+                    "values": "#000000 #ffffff",
+                }
             },
-        },
-        SerializerError,
-    ),
-    # Missing required reference from enabled references
-    (
-        'foo',
-        {
-            'styleguide-reference-palette': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
+            SerializerError,
+        ),
+        # Missing required reference from enabled references
+        (
+            "foo",
+            {
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                },
+                "styleguide-reference-bar": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                },
             },
-            'styleguide-reference-bar': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
-            },
-        },
-        SerializerError,
-    ),
-])
+            SerializerError,
+        ),
+    ],
+)
 def test_get_reference_error(name, context, expected):
     serializer = ManifestSerializer()
 
@@ -987,138 +716,126 @@ def test_get_reference_error(name, context, expected):
         serializer.get_reference(context, name)
 
 
-@pytest.mark.parametrize('context,expected,order', [
-    # Default nested structure for a reference
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "palette",
-            },
-            'dummy': {
-                'content': "foo",
-            },
-            'styleguide-reference-palette': {
-                'keys': "black white",
-                'value': "#000000 #ffffff",
-                'selector': ".bg-black .bg-white",
-            },
-        },
-        {
-            'palette': {
-                'black': {
-                    'value': "#000000",
-                    'selector': ".bg-black",
-                },
-                'white': {
-                    'value': "#ffffff",
-                    'selector': ".bg-white",
+@pytest.mark.parametrize(
+    "context,expected,order",
+    [
+        # Default nested structure for a reference
+        (
+            {
+                "styleguide-metas-references": {"names": "palette"},
+                "dummy": {"content": "foo"},
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "value": "#000000 #ffffff",
+                    "selector": ".bg-black .bg-white",
                 },
             },
-        },
-        ['palette'],
-    ),
-    # Reference order comes from explicitely enabled reference names order
-    (
-        OrderedDict((
-            ('styleguide-metas-references', {
-                'names': "foo pika ping",
-            }),
-            ('styleguide-reference-ping', {
-                'structure': "string",
-                'value': "pong",
-            }),
-            ('styleguide-reference-pika', {
-                'structure': "string",
-                'value': "chu",
-            }),
-            ('styleguide-reference-foo', {
-                'structure': "string",
-                'value': "bar",
-            }),
-        )),
-        {
-            'foo': "bar",
-            'pika': "chu",
-            'ping': "pong",
-        },
-        ['foo', 'pika', 'ping'],
-    ),
-    # Every structure modes and splitter with automatic enabling
-    (
-        OrderedDict((
-            ('styleguide-metas-references', {
-                'auto': "true",
-            }),
-            ('styleguide-reference-palette', {
-                'structure': 'flat',
-                'keys': "black white",
-                'values': "#000000 #ffffff",
-            }),
-            ('styleguide-reference-schemes', {
-                'keys': "black white gray25",
-                'background': "#000000 #ffffff #404040",
-                'font_color': "#ffffff #000000 #ffffff",
-                'selector': ".black .white .gray25",
-            }),
-            ('styleguide-reference-spaces', {
-                'structure': 'list',
-                'items': "short normal large",
-            }),
-            ('styleguide-reference-version', {
-                'structure': 'string',
-                'value': "V42.0",
-            }),
-            ('styleguide-reference-jsonstruct', {
-                'structure': 'object-complex',
-                'object': '{"foo": "bar", "ping": "pong"}',
-            }),
-            ('styleguide-reference-flatjson', {
-                'structure': 'flat',
-                'splitter': 'object-list',
-                'keys': '["black", "white"]',
-                'values': '["#000000", "#ffffff"]',
-            }),
-        )),
-        {
-            'palette': {
-                'black': "#000000",
-                'white': "#ffffff",
+            {
+                "palette": {
+                    "black": {"value": "#000000", "selector": ".bg-black"},
+                    "white": {"value": "#ffffff", "selector": ".bg-white"},
+                }
             },
-            'schemes': {
-                'black': {
-                    'background': "#000000",
-                    'selector': ".black",
-                    'font_color': "#ffffff",
+            ["palette"],
+        ),
+        # Reference order comes from explicitely enabled reference names order
+        (
+            OrderedDict(
+                (
+                    ("styleguide-metas-references", {"names": "foo pika ping"}),
+                    (
+                        "styleguide-reference-ping",
+                        {"structure": "string", "value": "pong"},
+                    ),
+                    (
+                        "styleguide-reference-pika",
+                        {"structure": "string", "value": "chu"},
+                    ),
+                    (
+                        "styleguide-reference-foo",
+                        {"structure": "string", "value": "bar"},
+                    ),
+                )
+            ),
+            {"foo": "bar", "pika": "chu", "ping": "pong"},
+            ["foo", "pika", "ping"],
+        ),
+        # Every structure modes and splitter with automatic enabling
+        (
+            OrderedDict(
+                (
+                    ("styleguide-metas-references", {"auto": "true"}),
+                    (
+                        "styleguide-reference-palette",
+                        {
+                            "structure": "flat",
+                            "keys": "black white",
+                            "values": "#000000 #ffffff",
+                        },
+                    ),
+                    (
+                        "styleguide-reference-schemes",
+                        {
+                            "keys": "black white gray25",
+                            "background": "#000000 #ffffff #404040",
+                            "font_color": "#ffffff #000000 #ffffff",
+                            "selector": ".black .white .gray25",
+                        },
+                    ),
+                    (
+                        "styleguide-reference-spaces",
+                        {"structure": "list", "items": "short normal large"},
+                    ),
+                    (
+                        "styleguide-reference-version",
+                        {"structure": "string", "value": "V42.0"},
+                    ),
+                    (
+                        "styleguide-reference-jsonstruct",
+                        {
+                            "structure": "object-complex",
+                            "object": '{"foo": "bar", "ping": "pong"}',
+                        },
+                    ),
+                    (
+                        "styleguide-reference-flatjson",
+                        {
+                            "structure": "flat",
+                            "splitter": "object-list",
+                            "keys": '["black", "white"]',
+                            "values": '["#000000", "#ffffff"]',
+                        },
+                    ),
+                )
+            ),
+            {
+                "palette": {"black": "#000000", "white": "#ffffff"},
+                "schemes": {
+                    "black": {
+                        "background": "#000000",
+                        "selector": ".black",
+                        "font_color": "#ffffff",
+                    },
+                    "gray25": {
+                        "background": "#404040",
+                        "selector": ".gray25",
+                        "font_color": "#ffffff",
+                    },
+                    "white": {
+                        "background": "#ffffff",
+                        "selector": ".white",
+                        "font_color": "#000000",
+                    },
                 },
-                'gray25': {
-                    'background': "#404040",
-                    'selector': ".gray25",
-                    'font_color': "#ffffff",
-                },
-                'white': {
-                    'background': "#ffffff",
-                    'selector': ".white",
-                    'font_color': "#000000",
-                },
+                "spaces": ["short", "normal", "large"],
+                "version": "V42.0",
+                "jsonstruct": {"foo": "bar", "ping": "pong"},
+                "flatjson": {"black": "#000000", "white": "#ffffff"},
             },
-            'spaces': [
-                'short',
-                'normal',
-                'large',
-            ],
-            'version': "V42.0",
-            'jsonstruct': {
-                'foo': "bar",
-                'ping': "pong",
-            },
-            'flatjson': {
-                'black': "#000000",
-                'white': "#ffffff",
-            },
-        },
-        ["palette", "schemes", "spaces", "version", "jsonstruct", "flatjson"],
-    ),
-])
+            ["palette", "schemes", "spaces", "version", "jsonstruct", "flatjson"],
+        ),
+    ],
+)
 def test_get_enabled_references(context, expected, order):
     serializer = ManifestSerializer()
 
@@ -1129,30 +846,24 @@ def test_get_enabled_references(context, expected, order):
     assert order == list(references.keys())
 
 
-@pytest.mark.parametrize('context,expected', [
-    # Basic test to check serialize() glue method is ok
-    (
-        {
-            'styleguide-metas-references': {
-                'names': "palette",
+@pytest.mark.parametrize(
+    "context,expected",
+    [
+        # Basic test to check serialize() glue method is ok
+        (
+            {
+                "styleguide-metas-references": {"names": "palette"},
+                "dummy": {"content": "foo"},
+                "styleguide-reference-palette": {
+                    "structure": "flat",
+                    "keys": "black white",
+                    "values": "#000000 #ffffff",
+                },
             },
-            'dummy': {
-                'content': "foo",
-            },
-            'styleguide-reference-palette': {
-                'structure': 'flat',
-                'keys': "black white",
-                'values': "#000000 #ffffff",
-            },
-        },
-        {
-            'palette': {
-                'black': "#000000",
-                'white': "#ffffff",
-            },
-        },
-    ),
-])
+            {"palette": {"black": "#000000", "white": "#ffffff"}},
+        )
+    ],
+)
 def test_serialize(context, expected):
     serializer = ManifestSerializer()
 

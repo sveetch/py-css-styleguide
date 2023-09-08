@@ -34,6 +34,7 @@ class Manifest(object):
             serializer (with ``load`` method) or dump content (with ``from_dict``
             method).
     """
+
     def __init__(self):
         self._path = None
         self._datas = None
@@ -125,9 +126,7 @@ class Manifest(object):
         Returns:
             dict: Data dictionnary.
         """
-        agregate = {
-            RULE_META: self.metas,
-        }
+        agregate = {RULE_META: self.metas}
 
         agregate.update({k: getattr(self, k) for k in self._rule_attrs})
 

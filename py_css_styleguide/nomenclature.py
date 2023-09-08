@@ -44,29 +44,17 @@ RULE_ALLOWED_CHARS = ascii_letters + digits + "_"
 PROPERTY_ALLOWED_START = ascii_letters
 PROPERTY_ALLOWED_CHARS = ascii_letters + digits + "_"
 
-FORBIDDEN_PREFIXES = (
-    "_",
-    "-",
-)
+FORBIDDEN_PREFIXES = ("_", "-")
 """
 Rule and property names can not start with following strings
 """
 
-RESERVED_RULE_NAMES = (
-    "styleguide",
-    "load",
-    "to_dict",
-    "to_json",
-    "from_dict",
-    "metas",
-)
+RESERVED_RULE_NAMES = ("styleguide", "load", "to_dict", "to_json", "from_dict", "metas")
 """
 Rule name can not be one of the following string
 """
 
-RESERVED_PROPERTY_NAMES = (
-    "structure",
-)
+RESERVED_PROPERTY_NAMES = ("structure",)
 """
 Property (variable) name can not be one of the following string
 """
@@ -82,7 +70,7 @@ def is_reserved_rule(name):
     Returns:
         bool: ``True`` if name match a reserved name.
     """
-    return (name in RESERVED_RULE_NAMES)
+    return name in RESERVED_RULE_NAMES
 
 
 def is_reserved_property(name):
@@ -95,7 +83,7 @@ def is_reserved_property(name):
     Returns:
         bool: ``True`` if name match a reserved name.
     """
-    return (name in RESERVED_PROPERTY_NAMES)
+    return name in RESERVED_PROPERTY_NAMES
 
 
 def is_valid_rule(name):

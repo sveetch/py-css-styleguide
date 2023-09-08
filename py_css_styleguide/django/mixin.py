@@ -20,6 +20,7 @@ class StyleguideMixin:
     """
     A mixin to return a manifest object.
     """
+
     def resolve_css_filepath(self, path):
         """
         Validate path or resolve static filepath if needed.
@@ -82,9 +83,7 @@ class StyleguideMixin:
         else:
             # Log CSS load fail details
             manifest.status = "failed"
-            msg = (
-                "Unable to find CSS manifest from: {}"
-            )
+            msg = "Unable to find CSS manifest from: {}"
             logger.warning(msg.format(path))
             manifest.loading_error = msg.format(path)
 
@@ -111,18 +110,14 @@ class StyleguideMixin:
                 content = json.load(fp)
         except FileNotFoundError:
             # Log details
-            msg = (
-                "Unable to find JSON manifest from: {}"
-            )
+            msg = "Unable to find JSON manifest from: {}"
             logger.warning(msg.format(path))
             manifest.loading_error = msg.format(path)
 
             manifest.status = "failed"
         except json.decoder.JSONDecodeError as e:
             # Log details
-            msg = (
-                "Invalid JSON manifest: {}"
-            )
+            msg = "Invalid JSON manifest: {}"
             logger.warning(msg.format(str(e)))
             manifest.loading_error = msg.format(str(e))
 
@@ -133,8 +128,9 @@ class StyleguideMixin:
 
         return manifest
 
-    def get_manifest(self, css_filepath, json_filepath=None, save_dump=True,
-                     development_mode=True):
+    def get_manifest(
+        self, css_filepath, json_filepath=None, save_dump=True, development_mode=True
+    ):
         """
         Get and load manifest, either from CSS or JSON file depending options.
 
@@ -162,10 +158,7 @@ class StyleguideMixin:
 
         if development_mode:
             manifest = self.get_css_manifest(
-                manifest,
-                css_filepath,
-                json_filepath=json_filepath,
-                save_dump=save_dump,
+                manifest, css_filepath, json_filepath=json_filepath, save_dump=save_dump
             )
 
         if manifest.status in ["empty", "failed"] and json_filepath:

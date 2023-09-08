@@ -47,6 +47,7 @@ class ManifestSerializer(object):
             evaluation. It has been set to 1000 characters which should be a
             reasonnable large limit in our context.
     """
+
     _DEFAULT_SPLITTER = "white-space"
     _DEFAULT_COMPILER_SUPPORT = "libsass"
     _DEFAULT_EVALUATION_LIMIT = 1000
@@ -55,9 +56,7 @@ class ManifestSerializer(object):
         self.compiler_support = compiler_support or self._DEFAULT_COMPILER_SUPPORT
         self.evaluation_limit = evaluation_limit or self._DEFAULT_EVALUATION_LIMIT
 
-        self._metas = OrderedDict({
-            "compiler_support": self.compiler_support,
-        })
+        self._metas = OrderedDict({"compiler_support": self.compiler_support})
 
     def get_ref_varname(self, name):
         """
@@ -103,10 +102,7 @@ class ManifestSerializer(object):
         # NOTE: Maybe we should emits a StyleguideUserWarning if "compiler_support" has
         # not been set, but not exclusively from this method, it is something to put up
         # level
-        compiler_support = self._metas.get(
-            "compiler_support",
-            self.compiler_support
-        )
+        compiler_support = self._metas.get("compiler_support", self.compiler_support)
 
         if mode == "object-list" or mode == "json-list":
             if mode == "json-list":
@@ -116,12 +112,12 @@ class ManifestSerializer(object):
                 )
                 warn(
                     message.format(ref=self.get_ref_varname(name)),
-                    StyleguideUserWarning
+                    StyleguideUserWarning,
                 )
 
             if compiler_support == "dartsass":
                 try:
-                    items = ast.literal_eval(value[:self.evaluation_limit])
+                    items = ast.literal_eval(value[: self.evaluation_limit])
                 except SyntaxError as e:
                     msg = (
                         "Reference '{ref}' raised a syntax error when "
@@ -138,11 +134,9 @@ class ManifestSerializer(object):
                         "Reference '{ref}' raised JSON decoder error when "
                         "splitting values from '{prop}': {err}'"
                     )
-                    raise SerializerError(msg.format(
-                        ref=self.get_ref_varname(name),
-                        prop=prop,
-                        err=e
-                    ))
+                    raise SerializerError(
+                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
+                    )
         else:
             if len(value) > 0:
                 items = value.split(" ")
@@ -177,13 +171,12 @@ class ManifestSerializer(object):
             )
             warn(
                 message.format(
-                    ref=self.get_ref_varname(name),
-                    limit=self.evaluation_limit
+                    ref=self.get_ref_varname(name), limit=self.evaluation_limit
                 ),
-                StyleguideUserWarning
+                StyleguideUserWarning,
             )
 
-        return value[:self.evaluation_limit]
+        return value[: self.evaluation_limit]
 
     def serialize_to_complex(self, name, datas):
         """
@@ -197,22 +190,15 @@ class ManifestSerializer(object):
             object: Object depending from content.
         """
         data_object = datas.get("object", None)
-        compiler_support = self._metas.get(
-            "compiler_support",
-            self.compiler_support
-        )
+        compiler_support = self._metas.get("compiler_support", self.compiler_support)
 
         if data_object is None:
-            msg = ("JSON reference '{refname}' lacks of required 'object' variable")
-            raise SerializerError(msg.format(
-                refname=self.get_ref_varname(name),
-            ))
+            msg = "JSON reference '{refname}' lacks of required 'object' variable"
+            raise SerializerError(msg.format(refname=self.get_ref_varname(name)))
 
         if compiler_support == "dartsass":
             try:
-                content = ast.literal_eval(
-                    data_object[:self.evaluation_limit]
-                )
+                content = ast.literal_eval(data_object[: self.evaluation_limit])
             except SyntaxError as e:
                 msg = (
                     "Reference '{ref}' raised a syntax error when "
@@ -220,9 +206,7 @@ class ManifestSerializer(object):
                 )
                 raise SerializerError(
                     msg.format(
-                        ref=self.get_ref_varname(name),
-                        values=data_object,
-                        err=e
+                        ref=self.get_ref_varname(name), values=data_object, err=e
                     )
                 )
             else:
@@ -231,13 +215,10 @@ class ManifestSerializer(object):
             try:
                 content = json.loads(data_object, object_pairs_hook=OrderedDict)
             except json.JSONDecodeError as e:
-                msg = (
-                    "JSON reference '{refname}' raised error from JSON decoder: {err}"
+                msg = "JSON reference '{refname}' raised error from JSON decoder: {err}"
+                raise SerializerError(
+                    msg.format(refname=self.get_ref_varname(name), err=e)
                 )
-                raise SerializerError(msg.format(
-                    refname=self.get_ref_varname(name),
-                    err=e,
-                ))
             else:
                 return content
 
@@ -257,10 +238,7 @@ class ManifestSerializer(object):
             "Reference '{ref}' use deprecated '--structure: \"json\";', change it to "
             "'--structure: \"object-complex\";' instead."
         )
-        warn(
-            message.format(ref=self.get_ref_varname(name)),
-            StyleguideUserWarning
-        )
+        warn(message.format(ref=self.get_ref_varname(name)), StyleguideUserWarning)
         return self.serialize_to_complex(name, datas)
 
     def serialize_to_nested(self, name, datas):
@@ -275,16 +253,17 @@ class ManifestSerializer(object):
 
         Returns:
             dict: Nested dictionnary of serialized reference datas.
-       """
+        """
         keys = datas.get("keys", None)
-        splitter = datas.get('splitter', self._DEFAULT_SPLITTER)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if not keys:
-            msg = ("Nested reference '{}' lacks of required 'keys' variable "
-                   "or is empty")
+            msg = (
+                "Nested reference '{}' lacks of required 'keys' variable " "or is empty"
+            )
             raise SerializerError(msg.format(name))
         else:
-            keys = self.value_splitter(name, 'keys', keys, mode=splitter)
+            keys = self.value_splitter(name, "keys", keys, mode=splitter)
 
         # Initialize context dict with reference keys
         context = OrderedDict()
@@ -298,8 +277,10 @@ class ManifestSerializer(object):
                 values = self.value_splitter(name, "values", v, mode=splitter)
 
                 if len(values) != len(keys):
-                    msg = ("Nested reference '{}' has different length for "
-                           "values of '{}' and 'keys'")
+                    msg = (
+                        "Nested reference '{}' has different length for "
+                        "values of '{}' and 'keys'"
+                    )
                     raise SerializerError(msg.format(name, k))
 
                 # Put each value to its respective key using position index.
@@ -331,22 +312,24 @@ class ManifestSerializer(object):
         splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if not keys:
-            msg = ("Flat reference '{}' lacks of required 'keys' variable or "
-                   "is empty")
+            msg = "Flat reference '{}' lacks of required 'keys' variable or " "is empty"
             raise SerializerError(msg.format(name))
         else:
             keys = self.value_splitter(name, "keys", keys, mode=splitter)
 
         if not values:
-            msg = ("Flat reference '{}' lacks of required 'values' variable "
-                   "or is empty")
+            msg = (
+                "Flat reference '{}' lacks of required 'values' variable " "or is empty"
+            )
             raise SerializerError(msg.format(name))
         else:
-            values = self.value_splitter(name, 'values', values, mode=splitter)
+            values = self.value_splitter(name, "values", values, mode=splitter)
 
         if len(values) != len(keys):
-            msg = ("Flat reference have different length of 'keys' ands "
-                   "'values' variable")
+            msg = (
+                "Flat reference have different length of 'keys' ands "
+                "'values' variable"
+            )
             raise SerializerError(msg.format(name))
 
         return OrderedDict(zip(keys, values))
@@ -370,8 +353,9 @@ class ManifestSerializer(object):
         splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if items is None:
-            msg = ("List reference '{}' lacks of required 'items' variable "
-                   "or is empty")
+            msg = (
+                "List reference '{}' lacks of required 'items' variable " "or is empty"
+            )
             raise SerializerError(msg.format(name))
         else:
             items = self.value_splitter(name, "items", items, mode=splitter)
@@ -394,8 +378,10 @@ class ManifestSerializer(object):
         value = datas.get("value", None)
 
         if value is None:
-            msg = ("String reference '{}' lacks of required 'value' variable "
-                   "or is empty")
+            msg = (
+                "String reference '{}' lacks of required 'value' variable "
+                "or is empty"
+            )
             raise SerializerError(msg.format(name))
 
         return value
@@ -463,8 +449,10 @@ class ManifestSerializer(object):
                     names = [item for item in names if item not in excludes]
             # Meta reference rule lacks of required properties
             else:
-                msg = ("'.{}' either require '--names' or '--auto' variable "
-                       "to be defined")
+                msg = (
+                    "'.{}' either require '--names' or '--auto' variable "
+                    "to be defined"
+                )
                 raise SerializerError(msg.format(RULE_META_REFERENCES))
 
         for item in names:
@@ -566,7 +554,7 @@ class ManifestSerializer(object):
 
         for k, v in datas.items():
             if k.startswith(RULE_REFERENCE):
-                names.append(k[len(RULE_REFERENCE)+1:])
+                names.append(k[len(RULE_REFERENCE) + 1 :])
 
         return names
 
@@ -607,9 +595,9 @@ class ManifestSerializer(object):
             collections.OrderedDict: Serialized enabled references datas.
         """
         self._metas = OrderedDict({
-            "compiler_support": self.get_meta_compiler(datas),
-            "references": self.get_meta_reference_names(datas),
-            "created": datetime.datetime.now().isoformat(timespec="seconds"),
+                "compiler_support": self.get_meta_compiler(datas),
+                "references": self.get_meta_reference_names(datas),
+                "created": datetime.datetime.now().isoformat(timespec="seconds"),
         })
 
         return self.get_enabled_references(datas, self._metas["references"])

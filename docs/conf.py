@@ -13,6 +13,7 @@
 
 # Get current date
 import datetime
+
 now = datetime.date.today()
 
 # Get the module version
@@ -74,10 +75,7 @@ html_static_path = ["_static"]
 
 # For Furo theme
 html_theme = "furo"
-html_title = "{name}<br><small>v{version}</small>".format(
-    name=project,
-    version=version,
-)
+html_title = "{name}<br><small>v{version}</small>".format(name=project, version=version)
 
 html_theme_options = {
     "footer_icons": [
@@ -90,7 +88,7 @@ html_theme_options = {
                 </svg>
             """,
             "class": "",
-        },
+        }
     ],
     "source_repository": "https://github.com/sveetch/py-css-styleguide/",
     "source_branch": "master",
@@ -98,9 +96,7 @@ html_theme_options = {
 }
 
 # Apply some CSS patch to Furo
-html_css_files = [
-    "css/furo-adjustments.css",
-]
+html_css_files = ["css/furo-adjustments.css"]
 
 # -- Autodoc config---------- -------------------------------------------------
 

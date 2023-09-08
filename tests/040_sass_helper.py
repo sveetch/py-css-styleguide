@@ -15,12 +15,10 @@ from py_css_styleguide.model import Manifest
 
 
 @freeze_time("2012-10-15 10:00:00")
-@pytest.mark.parametrize('manifest_name', [
-    "sample_libsass",
-    "sample_dartsass",
-    "sample_excludes",
-    "sample_names",
-])
+@pytest.mark.parametrize(
+    "manifest_name",
+    ["sample_libsass", "sample_dartsass", "sample_excludes", "sample_names"],
+)
 def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     """
     Testing everything:
@@ -51,9 +49,7 @@ def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     shutil.copytree(template_sassdir, test_sassdir)
 
     # Get expected CSS content from file in fixture
-    expected_css_filepath = (
-        tests_settings.fixtures_path / "sass" / "css" / manifest_css
-    )
+    expected_css_filepath = tests_settings.fixtures_path / "sass" / "css" / manifest_css
     expected_css_content = expected_css_filepath.read_text()
 
     # Load boussole settings and search for compilable files
@@ -62,7 +58,7 @@ def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     compilable_files = ScssFinder().mirror_sources(
         settings.SOURCES_PATH,
         targetdir=settings.TARGET_PATH,
-        excludes=settings.EXCLUDES
+        excludes=settings.EXCLUDES,
     )
 
     # Since Boussole list every compilable Sass source, we select only the entry
@@ -78,9 +74,7 @@ def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     # Compile only the source we target from "manifest_css"
     compiler = SassCompileHelper()
     success, message = compiler.safe_compile(
-        settings,
-        source_sass_filename,
-        source_css_filename
+        settings, source_sass_filename, source_css_filename
     )
 
     # Output error to ease debug

@@ -22,10 +22,9 @@ class ApplicationTestSettings:
         fixtures_dir (str): Directory name which include tests datas.
         fixtures_path (str): Absolute path to the tests datas.
     """
+
     def __init__(self):
-        self.application_path = Path(
-            py_css_styleguide.__file__
-        ).parents[0].resolve()
+        self.application_path = Path(py_css_styleguide.__file__).parents[0].resolve()
 
         self.package_path = self.application_path.parent
 

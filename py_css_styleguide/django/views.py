@@ -16,6 +16,7 @@ class StyleguideViewMixin(StyleguideMixin, TemplateView):
     is just a recommended template path you may use or not, it is at your
     responsability.
     """
+
     template_name = "styleguide/index.html"
     manifest_css_filepath = None
     manifest_json_filepath = None
@@ -28,13 +29,15 @@ class StyleguideViewMixin(StyleguideMixin, TemplateView):
         """
         context = super().get_context_data(**kwargs)
 
-        context.update({
-            "styleguide": self.get_manifest(
-                self.manifest_css_filepath,
-                json_filepath=self.manifest_json_filepath,
-                save_dump=self.save_dump,
-                development_mode=self.development_mode,
-            ),
-        })
+        context.update(
+            {
+                "styleguide": self.get_manifest(
+                    self.manifest_css_filepath,
+                    json_filepath=self.manifest_json_filepath,
+                    save_dump=self.save_dump,
+                    development_mode=self.development_mode,
+                )
+            }
+        )
 
         return context

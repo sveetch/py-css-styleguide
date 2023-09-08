@@ -10,13 +10,7 @@ SECRET_KEY = "***TOPSECRET***"
 
 
 # Root of project
-BASE_DIR = normpath(
-    join(
-        dirname(abspath(__file__)),
-        "..",
-        "..",
-    )
-)
+BASE_DIR = normpath(join(dirname(abspath(__file__)), "..", ".."))
 
 # Django project
 PROJECT_PATH = join(BASE_DIR, "sandbox")
@@ -50,15 +44,10 @@ TIME_ZONE = "America/Chicago"
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = "en"
 
-LANGUAGES = (
-    ("en", "English"),
-    ('fr', "Français"),
-)
+LANGUAGES = (("en", "English"), ("fr", "Français"))
 
 # A tuple of directories where Django looks for translation files
-LOCALE_PATHS = [
-    join(PROJECT_PATH, "locale"),
-]
+LOCALE_PATHS = [join(PROJECT_PATH, "locale")]
 
 SITE_ID = 1
 
@@ -97,7 +86,7 @@ STATICFILES_DIRS = [
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    join(PROJECT_PATH, "static"),
+    join(PROJECT_PATH, "static")
 ]
 
 
@@ -120,9 +109,7 @@ WSGI_APPLICATION = "sandbox.wsgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            join(PROJECT_PATH, "templates"),
-        ],
+        "DIRS": [join(PROJECT_PATH, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": False,
@@ -137,13 +124,10 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
         },
-    },
+    }
 ]
 
-INSTALLED_APPS = [
-    "django.contrib.staticfiles",
-    "django.forms",
-]
+INSTALLED_APPS = ["django.contrib.staticfiles", "django.forms"]
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
