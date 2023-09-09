@@ -6,8 +6,9 @@ Usage
 You need a CSS manifest to describe your styleguide references then you will parse the
 manifest with a Python script to parse and serialize your references.
 
-Create manifest
-***************
+
+Create a manifest
+*****************
 
 You may write directly a CSS manifest but this is best to build it from a Sass source
 which will be able to use your project Sass settings.
@@ -19,6 +20,7 @@ So in the same directory than your Sass manifest you will copy
 `this Sass file <https://github.com/sveetch/py-css-styleguide/blob/master/py_css_styleguide/scss/_styleguide_helpers.scss>`_
 to ``_styleguide_helpers.scss``. It contains some Sass helpers to ease writing manifest
 from Sass maps.
+
 
 Demonstration settings
 **********************
@@ -34,6 +36,7 @@ You will create a file ``_settings.scss`` in your Sass directory with this conte
 This is basic Sass settings for demonstration purpose and obviously for a real project
 you will use your own (like from Bootstrap, Foundation or a totally custom one)
 depending your project.
+
 
 Load manifest
 *************
@@ -60,6 +63,7 @@ manifest object attributes to reach references rules.
 
 And finally build this Sass file with your prefered libsass compiler. You will get the
 same CSS manifest from the first section.
+
 
 Samples
 *******

@@ -9,7 +9,8 @@ Contents
    :maxdepth: 2
 
    install.rst
-   basics.rst
+   overview.rst
+   references.rst
    usage/index.rst
    api/index.rst
 
