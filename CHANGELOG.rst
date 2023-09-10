@@ -6,23 +6,35 @@ Changelog
 Version 1.0.0 - Unreleased
 --------------------------
 
-* Dropped Python<3.8 supports;
+* Dropped Python<3.8 support;
 * Added Python support from 3.8 to 3.10;
 * Improved Makefile;
 * Modernized package configuration;
+* Improved documentation:
+
+  * Added Sphinx theme Furo usage;
+  * Fixed typo;
+  * Reworded some sentences;
+  * Upgraded details to fit to last changes;
+  * Restructured contents;
+
 * Implemented Dart sass compile behaviors support, libsass compiler behaviors is still
-  the default one;
-* Serializer now emit some warnings in some situations;
-* Renamed ``json-list`` to ``object-list``, the first name is still working but
-  deprecated with a clear warning about it;
-* Renamed ``json`` to ``object-complex``, the first name is still working but
-  deprecated with a clear warning about it;
-* For now the only difference in Dart sass support is about string quotes from
-  ``object-list`` and ``object-complex``, it expect strings to be quoted with single
-  quotes;
+  the default one:
+
+  * Added new meta rule ``styleguide-metas-compiler``;
+  * Serializer now emit some warnings in some situations;
+  * Renamed ``json-list`` to ``object-list``, the first name is still working but
+    deprecated with a clear warning about it;
+  * Renamed ``json`` to ``object-complex``, the first name is still working but
+    deprecated with a clear warning about it;
+  * For now the only difference in Dart sass support is about string quotes from
+    ``object-list`` and ``object-complex``, it expect strings to be quoted with
+    single quotes;
+
 * Fixed Python code from usage example;
 * Removed useless ``# -*- coding: utf-8 -*-`` lines;
 * Moved from usage of ``os`` + ``io`` modules in favor of ``pathlib.Path``;
+* Added Github issue templates;
 
 
 Migrate for libsass

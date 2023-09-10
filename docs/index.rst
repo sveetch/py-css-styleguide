@@ -10,7 +10,7 @@ Contents
 
    install.rst
    overview.rst
-   references.rst
+   manifest/index.rst
    usage/index.rst
    api/index.rst
 

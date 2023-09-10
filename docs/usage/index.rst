@@ -10,8 +10,9 @@ manifest with a Python script to parse and serialize your references.
 Create a manifest
 *****************
 
-You may write directly a CSS manifest but this is best to build it from a Sass source
-which will be able to use your project Sass settings.
+You may write directly a CSS manifest but this is better to build it from a Sass source
+that will be able to use your project Sass settings, so manifest can be automatically
+updated on each build.
 
 Usage samples in this documentation will only demonstrate this process using Sass
 sources.
@@ -38,8 +39,8 @@ you will use your own (like from Bootstrap, Foundation or a totally custom one)
 depending your project.
 
 
-Load manifest
-*************
+Manifest loader
+***************
 
 Once you have a CSS manifest you will need to load it as a Manifest model through
 PyCssStyleguide library, you can use the following Python snippet in a file

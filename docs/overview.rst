@@ -21,6 +21,15 @@ variable settings that we can stand on to automatize styleguide manifest.
     However we only support a Sass mixin library and the documentation only have
     samples with Sass.
 
+Finally our point of view of a styleguide is not to demonstrate every CSS components or
+objects with their variants. You could do it but it is seems a long work that would
+require a lot of maintenance.
+
+We prefer to consider styleguide a as cheat sheet for your base settings like font
+sizes, colors, basic object variants, etc.. that can be demonstrated visually in a
+single page. You should focus first on establish these bases, once done you may possibly
+start to demonstrate more high level objects or components.
+
 
 Basic example
 *************
