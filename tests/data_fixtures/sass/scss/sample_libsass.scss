@@ -6,15 +6,15 @@
 
 $pycssstyleguide-compiler-support: "libsass";
 
-.styleguide-metas-compiler{
+.styleguide-metas-compiler {
     --support: "#{$pycssstyleguide-compiler-support}";
 }
 
-.styleguide-metas-references{
+.styleguide-metas-references {
     --auto: "true";
 }
 
-.styleguide-reference-palette{
+.styleguide-reference-palette {
     --structure: "flat";
     --keys: "#{get-names($palette)}";
     --values: "#{get-values($palette)}";
@@ -35,23 +35,23 @@ $pycssstyleguide-compiler-support: "libsass";
     --color: "#{get-props($borders, 'color')}";
 }
 
-.styleguide-reference-gradients{
+.styleguide-reference-gradients {
     --structure: "object-complex";
     --object: '["#{to-string(map-values($gradients), $glue: '", "')}"]';
 }
 
-.styleguide-reference-grid_cell_sizes{
+.styleguide-reference-grid_cell_sizes {
     --structure: "flat";
     --keys: "#{floor-number-items($grid-cell-sizes)}";
     --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
 }
 
-.styleguide-reference-spaces{
+.styleguide-reference-spaces {
     --structure: "list";
     --items: "#{to-string($spaces, $glue: ' ')}";
 }
 
-.styleguide-reference-version{
+.styleguide-reference-version {
     --structure: "string";
     --value: "#{$version}";
 }

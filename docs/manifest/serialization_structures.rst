@@ -28,22 +28,26 @@ String
 
 A very basic structure to serialize a value as a simple string.
 
-It is enabled when there is a variable ``--structure`` with value ``string``.
+Enabled by
+    ``--structure: "string";``
 
-It requires a ``--value`` which value is returned.
+Required variables
+    ``--value`` that will contain a string.
 
-So for example, a reference like this: ::
+Reference source sample
+    ::
 
-    .styleguide-reference-dummy {
-        --structure: "string";
-        --value: "my value";
-    }
+        .styleguide-reference-dummy {
+            --structure: "string";
+            --value: "my value";
+        }
 
-Will be serialized to this in JSON: ::
+Reference serialization
+    ::
 
-    {
-        "dummy": "my value"
-    }
+        {
+            "dummy": "my value"
+        }
 
 
 .. _serializer_structures_list:
@@ -53,26 +57,30 @@ List
 
 A structure that serialize to a list.
 
-It is enabled when there is a variable ``--structure`` containing ``"list"``.
+Enabled by
+    ``--structure: "list";``
 
-It requires a ``--items`` variable which value will be splitted on white space to a
-list items.
+Required variables
+    ``--items`` which value will be splitted using
+    :ref:`serializer_item_separator`.
 
-So for example, a reference like this: ::
+Reference source sample
+    ::
 
-    .styleguide-reference-dummy {
-        --structure: "list";
-        --items: "foo bar";
-    }
+        .styleguide-reference-dummy {
+            --structure: "list";
+            --items: "foo bar";
+        }
 
-Will be serialized to this in JSON: ::
+Reference serialization
+    ::
 
-    {
-        "dummy": [
-            "foo",
-            "bar"
-        ]
-    }
+        {
+            "dummy": [
+                "foo",
+                "bar"
+            ]
+        }
 
 
 .. _serializer_structures_flat:
@@ -80,32 +88,35 @@ Will be serialized to this in JSON: ::
 Flat
 ****
 
-A serialization structure when you only have key/value pair to store.
+A serialization structure when you only have key/value pair to store. Key and value
+pairs are associated following order.
 
-It is enabled when there is a variable ``--structure`` containing ``"flat"``.
+Enabled by
+    ``--structure: "flat";``
 
-In this mode there is two other variables: ``--keys`` and ``--values``. And they are
-both required.
+Required variables
+    * ``--keys`` is for key name list splitted using :ref:`serializer_item_separator`;
+    * ``--values`` is for key value list splitted using
+      :ref:`serializer_item_separator`.
 
-Obviously ``--keys`` is for key names and ``--values`` for key values. All other
-variables are ignored.
+Reference source sample
+    ::
 
-So for example, a reference like this: ::
-
-    .styleguide-reference-dummy {
-        --structure: "flat";
-        --keys: "foo bar";
-        --values: "#000000 #ffffff";
-    }
-
-Will be serialized to this in JSON: ::
-
-    {
-        "dummy": {
-            "foo": "#000000",
-            "bar": "#ffffff"
+        .styleguide-reference-dummy {
+            --structure: "flat";
+            --keys: "foo bar";
+            --values: "#000000 #ffffff";
         }
-    }
+
+Reference serialization
+    ::
+
+        {
+            "dummy": {
+                "foo": "#000000",
+                "bar": "#ffffff"
+            }
+        }
 
 
 .. _serializer_structures_nested:
@@ -113,36 +124,74 @@ Will be serialized to this in JSON: ::
 Nested
 ******
 
-This is the default serialization structure. It requires a ``--keys`` variable to
-define map keys to create where each other variable will be stored.
+A structure that will serialize to a dictionnary.
 
-Variables values are stored in their respective map key according to their order
-position, so order does matter when defining values in your variables. Also a variable
-that contains much or less values than the ``--keys`` values will raise an error, it
-must be the exact same length.
+Enabled by
+    ``--structure: "nested";``
 
-So for example, a reference like this: ::
+    In fact, this is currently the default used structure if you don't define a
+    ``--structure`` in your reference. It is recommended to define it.
 
-    .styleguide-reference-dummy {
-        --keys: "foo bar";
-        --selector: ".myfoo .mybar";
-        --value: "#000000 #ffffff";
-    }
+Required variables
+    * ``--keys`` to define map keys to create where each other variable will be stored.
+      It is splitted using :ref:`serializer_item_separator`;
 
-Will be serialized to this in JSON: ::
+Optional variables
+    Any other variable values are stored in their respective map key according to their
+    order position. A variable that contains much or less values than the ``--keys``
+    values will raise an error, it must be the exact same length.
 
-    {
-        "dummy": {
-            "foo": {
-                "selector": ".myfoo",
-                "value": "#000000"
+Reference source sample
+    ::
+
+        .styleguide-reference-dummy {
+            --keys: "foo bar";
+            --selector: ".myfoo .mybar";
+            --value: "#000000 #ffffff";
+        }
+        .styleguide-reference-alternative {
+            --keys: "foo bar ping";
+            --selector: ".myfoo .mybar .myping";
+            --value: "#000000 #ffffff #ff0000";
+            --content: "black white red";
+            --size: "1rem 2rem 3rem";
+        }
+
+Reference serialization
+    ::
+
+        {
+            "dummy": {
+                "foo": {
+                    "selector": ".myfoo",
+                    "value": "#000000"
+                },
+                "bar": {
+                    "selector": ".mybar",
+                    "value": "#ffffff"
+                }
             },
-            "bar": {
-                "selector": ".mybar",
-                "value": "#ffffff"
+            "alternative": {
+                "foo": {
+                    "selector": ".myfoo",
+                    "value": "#000000",
+                    "content": "black",
+                    "size": "1rem"
+                },
+                "bar": {
+                    "selector": ".mybar",
+                    "value": "#ffffff",
+                    "content": "white",
+                    "size": "2rem"
+                },
+                "ping": {
+                    "selector": ".myping",
+                    "value": "#ff0000",
+                    "content": "red",
+                    "size": "3rem"
+                }
             }
         }
-    }
 
 
 .. _serializer_structures_complex:
@@ -153,25 +202,27 @@ Complex
 When every other structures does not fit to your needs, complex structure may be the
 way to go but be aware that this is not easy to build complex object from Sass.
 
-It is enabled when there is a variable ``--structure`` containing ``"object-complex"``.
+Enabled by
+    ``--structure: "object-complex";``
 
-It requires a ``--object`` which contains a string of a valid JSON object.
+Required variables
+    ``--object`` which contains a string of a valid JSON or Python object depending on
+    :ref:`manifest_meta_compiler`.
 
-Remember than array item names and string values must be double quoted, single quotes
-usage for them is invalid in JSON.
+Reference source sample
+    ::
 
-So for example, a reference like this: ::
+        .styleguide-reference-dummy {
+            --structure: "object-complex";
+            --value: '["my value", "foo"]';
+        }
 
-    .styleguide-reference-dummy {
-        --structure: "object-complex";
-        --value: '["my value", "foo"]';
-    }
+Reference serialization
+    ::
 
-Will be serialized to this in JSON: ::
-
-    {
-        "dummy": [
-            "my value",
-            "foo"
-        ]
-    }
+        {
+            "dummy": [
+                "my value",
+                "foo"
+            ]
+        }

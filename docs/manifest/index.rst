@@ -13,6 +13,8 @@ A manifest is a valid CSS3 stylesheet composed of rules.
 Even though it is a valid CSS3 stylesheet the purpose of a manifest is not to be
 published on frontend, only to be parsed from manifest serializer.
 
+.. _manifest_rule_format:
+
 Rule format
 ***********
 
@@ -44,11 +46,15 @@ Rule names are normalized such as manifest serializer can parse them:
 Every class selectors that does not start with the rule base prefix are ignored.
 
 
+.. _manifest_meta_rule:
+
 Meta rule
 *********
 
 Meta rules is on charge to define some global parameters for manifest serializer.
 
+
+.. _manifest_meta_compiler:
 
 styleguide-metas-compiler
 -------------------------
@@ -76,6 +82,8 @@ To enable `Dart Sass`_ behaviors: ::
         --support: "dartsass";
     }
 
+
+.. _manifest_meta_references:
 
 styleguide-metas-references
 ---------------------------
@@ -126,6 +134,8 @@ Enable automatically
     This would ignore ``reference2`` and ``reference3`` but will allow every other
     references.
 
+
+.. _manifest_reference_rule:
 
 Reference rule
 **************

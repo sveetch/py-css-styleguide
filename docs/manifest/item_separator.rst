@@ -26,8 +26,8 @@ you can not use different separators in a same rule.
 
 .. _serializer_item_separator_whitespace:
 
-Split on white spaces
-*********************
+White spaces
+************
 
 Default behavior is to use a simple white space separator such as: ::
 
@@ -58,27 +58,101 @@ Object list
 The white space separator may not fit to every cases particularly when you have value
 items that contains spaces.
 
-For such cases you have possibility to declare your item values as an object list such
-as: ::
+For such cases you have possibility to declare your item values as an object list and
+it will be turned to a true Python list. It stands on a simple trick, we put it in a
+string since Sass does not support JSON syntax but encased in a string it is still
+valid Sass.
 
-    '["foo", "bar", "ping pong"]'
+You can enable this mode by using variable ``--splitter`` with value
+``"object-list"``: ::
 
-Is turned to a Python list: ::
+    --splitter: "object-list";
 
-    ["foo", "bar", "ping pong"]
+.. Note::
+    This splitter was previously called ``json-list`` that is still working for now but
+    deprecated, you will have warning about it until you change it to ``object-list``.
 
-You can enable this mode by using variable ``--splitter`` with value ``"json-list"``: ::
+.. Caution::
+   Since we parse content from either JSON or Python, it would allow more than a list
+   but this won't work with manifest serializer which only expect a list and any other
+   type will raise error or lead to unexpected results.
+
+This feature is subject to compiler behavior from :ref:`manifest_meta_compiler` so its
+usage depends from enabled compiler support.
+
+Libsass behavior
+----------------
+
+This compiler allows to write basic JSON syntax since it does not enforce string
+quotes. Your object list will have to be written in a correct JSON syntax.
+
+In a reference source example: ::
 
     .styleguide-reference-dummy{
         --structure: "list";
         --splitter: "object-list";
-        --items: '["foo", "bar", "ping pong"]';
+        --items: '["foo", "bar", true, "ping pong"]';
     }
 
 .. admonition:: Syntax
    :class: caution
 
-   You may encounter decoding issues for invalid syntax.
+   You are required to surround your object list with simple quotes so your object
+   list items can use double quotes for strings as required from JSON syntax. Don't
+   mess with the quotes else you will have JSON syntax error or very unexpected
+   content results.
 
-   The most common issue is the single quote usage around string, this is invalid in
-   JSON since every string is expected to be double quoted.
+Reference content will be parsed to a Python list: ::
+
+    {
+        "dummy": [
+            "foo",
+            "bar",
+            True,
+            "ping pong"
+        ]
+    }
+
+.. Hint::
+    Remember that in JSON  the boolean values are ``true`` or ``false`` and null value
+    is ``null``.
+
+
+Dart Sass behavior
+------------------
+
+This compiler does not allow to write valid JSON due to enforcing double quotes on
+Sass strings that prevent us to write JSON strings.
+
+So instead of JSON, we are using Python syntax that is more versatile, it allows both
+single or double quotes for a Python string.
+
+In a reference source example: ::
+
+    .styleguide-reference-dummy{
+        --structure: "list";
+        --splitter: "object-list";
+        --items: "['foo', 'bar', True, 'ping pong']";
+    }
+
+.. admonition:: Syntax
+   :class: caution
+
+   You are required to surround your object list with double quotes so your object
+   list items can use single quotes for strings. Don't mess with the quotes else you
+   will have Python syntax error or very unexpected content results.
+
+Reference content will be parsed to a Python list: ::
+
+    {
+        "dummy": [
+            "foo",
+            "bar",
+            True,
+            "ping pong"
+        ]
+    }
+
+.. Hint::
+    Remember that in Python the boolean values are ``True`` or ``False`` and null value
+    is ``None``.

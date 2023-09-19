@@ -1,7 +1,7 @@
 /* Helper functions from py-css-styleguide==1.0.0 */
 
-//
-// Determine behavior to endorse at runtime.
+///
+/// Determine behavior to endorse at runtime.
 $pycssstyleguide-compiler-support: "libsass" !default;
 
 /// Replace every occurences of a character with a substition string.
@@ -94,7 +94,6 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 /// @arg {List} $list [null]
 ///   A list.
 ///
-
 @function list-to-json_libsass($list) {
     $glue: '", "';
     $result: to-string($list, $glue);
@@ -112,7 +111,6 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 /// @arg {List} $list [null]
 ///   A list.
 ///
-
 @function list-to-json_dartsass($list) {
     $glue: "', '";
     $result: to-string($list, $glue);
