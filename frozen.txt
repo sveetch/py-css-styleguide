@@ -1,4 +1,4 @@
-# Frozen requirement versions from '1.0.0rc15' installation
+# Frozen requirement versions from '1.0.0' installation
 boussole==2.1.1
 Django==3.1.14
 flake8==6.1.0

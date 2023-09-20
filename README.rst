@@ -33,7 +33,7 @@ Dependencies
 ************
 
 * `Python`_>=3.8;
-* `tinycss2`_;
+* `tinycss2`_>=1.1.0;
 
 
 Credits

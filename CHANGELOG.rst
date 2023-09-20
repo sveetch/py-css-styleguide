@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 1.0.0 - Unreleased
+Version 1.0.0 - 2023/09/21
 --------------------------
 
 A major release with breaking changes, see
