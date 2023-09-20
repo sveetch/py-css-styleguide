@@ -8,6 +8,7 @@ Version 1.0.0 - Unreleased
 
 * Dropped Python<3.8 support;
 * Added Python support from 3.8 to 3.10;
+* Added official Django support from 2.2 to 4.2 for included optional Django mixins;
 * Improved Makefile;
 * Modernized package configuration;
 * Improved documentation:
