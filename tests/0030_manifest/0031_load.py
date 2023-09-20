@@ -18,6 +18,7 @@ def test_manifest_load_string():
         "}\n"
         "\n"
         ".styleguide-reference-text_color{\n"
+        '    --structure: "nested";\n'
         '    --keys: "black white";\n'
         '    --selectors: ".bg-black .bg-white";\n'
         '    --values: "#000000 #ffffff";\n'

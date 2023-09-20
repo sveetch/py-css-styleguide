@@ -17,7 +17,7 @@ Available serialization structure are:
 
 * String;
 * List;
-* Nested dictionnary (default);
+* Nested dictionnary;
 * Flat dictionnary;
 * Complex;
 
@@ -129,9 +129,6 @@ A structure that will serialize to a dictionnary.
 Enabled by
     ``--structure: "nested";``
 
-    In fact, this is currently the default used structure if you don't define a
-    ``--structure`` in your reference. It is recommended to define it.
-
 Required variables
     * ``--keys`` to define map keys to create where each other variable will be stored.
       It is splitted using :ref:`serializer_item_separator`;
@@ -145,11 +142,13 @@ Reference source sample
     ::
 
         .styleguide-reference-dummy {
+            --structure: "nested";
             --keys: "foo bar";
             --selector: ".myfoo .mybar";
             --value: "#000000 #ffffff";
         }
         .styleguide-reference-alternative {
+            --structure: "nested";
             --keys: "foo bar ping";
             --selector: ".myfoo .mybar .myping";
             --value: "#000000 #ffffff #ff0000";

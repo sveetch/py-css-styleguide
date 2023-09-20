@@ -192,6 +192,9 @@ def test_mixin_get_manifest(
 ):
     """
     "get_manifest" behaviors should be correct with given options.
+
+    NOTE: Some parametrize load files from test fixtures dir, some other from sandbox
+    staticfile dir.
     """
     caplog.set_level(logging.DEBUG, logger="py-css-styleguide")
 

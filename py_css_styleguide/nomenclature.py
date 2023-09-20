@@ -59,6 +59,12 @@ RESERVED_PROPERTY_NAMES = ("structure",)
 Property (variable) name can not be one of the following string
 """
 
+REFERENCE_STRUCTURES = ("flat", "list", "string", "json", "object-complex", "nested")
+"""
+Tuple of available reference structures. Structure name ``json`` is deprecated and
+supersed by name ``object-complex``.
+"""
+
 
 def is_reserved_rule(name):
     """

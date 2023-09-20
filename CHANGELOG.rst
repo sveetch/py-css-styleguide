@@ -32,6 +32,7 @@ Version 1.0.0 - Unreleased
     ``object-list`` and ``object-complex``, it expect strings to be quoted with
     single quotes;
 
+* Changed reference structure validation so the variable ``--structure`` is required;
 * Fixed Python code from usage example;
 * Removed useless ``# -*- coding: utf-8 -*-`` lines;
 * Moved from usage of ``os`` + ``io`` modules in favor of ``pathlib.Path``;

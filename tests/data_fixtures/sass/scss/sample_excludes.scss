@@ -20,7 +20,8 @@
 }
 
 .styleguide-reference-schemes {
-    --splitter: "json-list";
+    --structure: "nested";
+    --splitter: "object-list";
     --keys: '#{get-names-to-json($schemes-colors)}';
     --selector: '#{get-names-to-json($schemes-colors, '.bg-')}';
     --background: '#{get-props-to-json($schemes-colors, 'background')}';
@@ -28,6 +29,7 @@
 }
 
 .styleguide-reference-borders {
+    --structure: "nested";
     --keys: "#{get-names($borders)}";
     --size: "#{get-props($borders, 'size')}";
     --style: "#{get-props($borders, 'style')}";
@@ -35,7 +37,7 @@
 }
 
 .styleguide-reference-gradients {
-    --structure: "json";
+    --structure: "object-complex";
     --object: '["#{to-string(map-values($gradients), $glue: '", "')}"]';
 }
 

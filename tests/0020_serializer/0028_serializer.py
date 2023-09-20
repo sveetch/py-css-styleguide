@@ -28,6 +28,7 @@ from py_css_styleguide.serializer import ManifestSerializer
             "palette",
             {
                 "styleguide-reference-palette": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                 }
@@ -39,6 +40,7 @@ from py_css_styleguide.serializer import ManifestSerializer
             "palette",
             {
                 "styleguide-reference-palette": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                     "foo": "one two",
@@ -58,7 +60,11 @@ from py_css_styleguide.serializer import ManifestSerializer
                     "keys": "black white",
                     "values": "#000000 #ffffff",
                 },
-                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
+                "styleguide-reference-dummy": {
+                    "structure": "nested",
+                    "keys": "foo",
+                    "values": "bar"
+                },
             },
             {"black": "#000000", "white": "#ffffff"},
         ),
@@ -70,7 +76,11 @@ from py_css_styleguide.serializer import ManifestSerializer
                     "structure": "list",
                     "items": "black white",
                 },
-                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
+                "styleguide-reference-dummy": {
+                    "structure": "nested",
+                    "keys": "foo",
+                    "values": "bar"
+                },
             },
             ["black", "white"],
         ),
@@ -101,6 +111,7 @@ def test_get_reference_success(name, context, expected):
             "palette",
             {
                 "styleguide-reference-foo": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                 }
@@ -112,12 +123,24 @@ def test_get_reference_success(name, context, expected):
             "palette",
             {
                 "styleguide-reference-palette": {
+                    "structure": "nested",
                     "keys": "black white",
                     "font-color": "red blue",
                     "value": "#000000 #ffffff",
                 }
             },
             StyleguideValidationError,
+        ),
+        # Missing structure mode name
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {
+                    "keys": "black white",
+                    "values": "#000000 #ffffff",
+                }
+            },
+            SerializerError,
         ),
         # Invalid structure mode name
         (
@@ -136,10 +159,12 @@ def test_get_reference_success(name, context, expected):
             "foo",
             {
                 "styleguide-reference-palette": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                 },
                 "styleguide-reference-bar": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                 },
@@ -164,6 +189,7 @@ def test_get_reference_error(name, context, expected):
                 "styleguide-metas-references": {"names": "palette"},
                 "dummy": {"content": "foo"},
                 "styleguide-reference-palette": {
+                    "structure": "nested",
                     "keys": "black white",
                     "value": "#000000 #ffffff",
                     "selector": ".bg-black .bg-white",
@@ -215,6 +241,7 @@ def test_get_reference_error(name, context, expected):
                     (
                         "styleguide-reference-schemes",
                         {
+                            "structure": "nested",
                             "keys": "black white gray25",
                             "background": "#000000 #ffffff #404040",
                             "font_color": "#ffffff #000000 #ffffff",

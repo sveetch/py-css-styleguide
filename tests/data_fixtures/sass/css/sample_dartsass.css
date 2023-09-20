@@ -14,6 +14,7 @@
 }
 
 .styleguide-reference-schemes {
+  --structure: "nested";
   --splitter: "object-list";
   --keys: "['black', 'grey', 'white', 'grey-gradient', 'with-image']";
   --selector: "['.bg-black', '.bg-grey', '.bg-white', '.bg-grey-gradient', '.bg-with-image']";
@@ -22,6 +23,7 @@
 }
 
 .styleguide-reference-borders {
+  --structure: "nested";
   --keys: "thin normal bold";
   --size: "rem-calc(1px) rem-calc(3px) rem-calc(5px)";
   --style: "solid solid solid";

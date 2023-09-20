@@ -21,6 +21,7 @@ $pycssstyleguide-compiler-support: "libsass";
 }
 
 .styleguide-reference-schemes {
+    --structure: "nested";
     --splitter: "object-list";
     --keys: '#{get-names-to-json($schemes-colors)}';
     --selector: '#{get-names-to-json($schemes-colors, '.bg-')}';
@@ -29,6 +30,7 @@ $pycssstyleguide-compiler-support: "libsass";
 }
 
 .styleguide-reference-borders {
+    --structure: "nested";
     --keys: "#{get-names($borders)}";
     --size: "#{get-props($borders, 'size')}";
     --style: "#{get-props($borders, 'style')}";

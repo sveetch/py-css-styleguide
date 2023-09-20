@@ -1,17 +1,18 @@
-.styleguide-metas-references{
-    --names: "palette text_color spaces";
+.styleguide-metas-references {
+  --names: "palette text_color spaces";
 }
 
-.styleguide-reference-palette{
-    --structure: "flat";
-    --keys: "black white";
-    --values: "#000000 #ffffff";
+.styleguide-reference-palette {
+  --structure: "flat";
+  --keys: "black white";
+  --values: "#000000 #ffffff";
 }
 
-.styleguide-reference-text_color{
-    --keys: "black white";
-    --selectors: ".bg-black .bg-white";
-    --values: "#000000 #ffffff";
+.styleguide-reference-text_color {
+  --structure: "nested";
+  --keys: "black white";
+  --selectors: ".bg-black .bg-white";
+  --values: "#000000 #ffffff";
 }
 
 .styleguide-reference-spaces {

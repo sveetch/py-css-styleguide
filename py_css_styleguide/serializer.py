@@ -14,6 +14,7 @@ from .nomenclature import (
     RULE_META_REFERENCES,
     RULE_META_COMPILER,
     RULE_REFERENCE,
+    REFERENCE_STRUCTURES,
     is_valid_rule,
     is_valid_property,
 )
@@ -483,7 +484,6 @@ class ManifestSerializer(object):
             collections.OrderedDict: Serialized reference datas.
         """
         rule_name = self.get_ref_varname(name)
-        structure_mode = "nested"
 
         if rule_name not in datas:
             msg = "Unable to find enabled reference '{}'"
@@ -493,23 +493,16 @@ class ManifestSerializer(object):
 
         # Search for "structure" variable
         if "structure" in properties:
-            if properties["structure"] == "flat":
-                structure_mode = "flat"
-            elif properties["structure"] == "list":
-                structure_mode = "list"
-            elif properties["structure"] == "string":
-                structure_mode = "string"
-            elif properties["structure"] == "json":
-                structure_mode = "json"
-            elif properties["structure"] == "object-complex":
-                structure_mode = "object-complex"
-            elif properties["structure"] == "nested":
-                # Nested is already default structure name
-                pass
+            if properties["structure"] in REFERENCE_STRUCTURES:
+                structure_mode = properties["structure"]
             else:
                 msg = "Invalid structure mode name '{}' for reference '{}'"
                 raise SerializerError(msg.format(properties["structure"], name))
+            # Clean structure from props so it does not trigger validation
             del properties["structure"]
+        else:
+            msg = "Structure variable '--structure' is missing from reference '{}'"
+            raise SerializerError(msg.format(rule_name))
 
         # Validate variable names
         for item in properties.keys():
