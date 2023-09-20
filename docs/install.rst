@@ -1,9 +1,11 @@
-.. _intro_install:
+.. _install_intro:
 
 =======
 Install
 =======
 
-Easy as : ::
+Install package in your environment : ::
 
     pip install py-css-styleguide
+
+For development usage see :ref:`development_intro`.

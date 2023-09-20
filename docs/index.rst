@@ -12,6 +12,7 @@ Contents
    overview.rst
    manifest/index.rst
    usage/index.rst
+   sass_library.rst
    api/index.rst
 
 
@@ -23,3 +24,4 @@ About the project
 
    development.rst
    history.rst
+   migrations.rst

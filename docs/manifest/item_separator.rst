@@ -80,6 +80,8 @@ You can enable this mode by using variable ``--splitter`` with value
 This feature is subject to compiler behavior from :ref:`manifest_meta_compiler` so its
 usage depends from enabled compiler support.
 
+.. _serializer_item_separator_list_libsass:
+
 Libsass behavior
 ----------------
 
@@ -117,6 +119,8 @@ Reference content will be parsed to a Python list: ::
     Remember that in JSON  the boolean values are ``true`` or ``false`` and null value
     is ``null``.
 
+
+.. _serializer_item_separator_list_dartsass:
 
 Dart Sass behavior
 ------------------

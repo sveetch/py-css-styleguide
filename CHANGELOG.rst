@@ -6,6 +6,10 @@ Changelog
 Version 1.0.0 - Unreleased
 --------------------------
 
+A major release with breaking changes, see
+`Migrations <https://pycssstyleguide.readthedocs.io/en/latest/migrations.html>`_ to
+know about migrating your project.
+
 * Dropped Python<3.8 support;
 * Added Python support from 3.8 to 3.10;
 * Added official Django support from 2.2 to 4.2 for included optional Django mixins;
@@ -18,6 +22,7 @@ Version 1.0.0 - Unreleased
   * Reworded some sentences;
   * Upgraded details to fit to last changes;
   * Restructured contents;
+  * Added more details;
 
 * Implemented Dart sass compile behaviors support, libsass compiler behaviors is still
   the default one:

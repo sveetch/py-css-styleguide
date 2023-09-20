@@ -1,4 +1,6 @@
 
+.. _usage_intro:
+
 =====
 Usage
 =====
@@ -6,6 +8,12 @@ Usage
 You need a CSS manifest to describe your styleguide references then you will parse the
 manifest with a Python script to parse and serialize your references.
 
+.. Warning::
+    Sorry these usage samples are made for Libsass compiler, if you plan to use them
+    with Dart Sass compiler you may have some things to adapt, see
+    :ref:`migrate_intro` for some details.
+
+.. _usage_manifest:
 
 Create a manifest
 *****************
@@ -17,11 +25,12 @@ updated on each build.
 Usage samples in this documentation will only demonstrate this process using Sass
 sources.
 
-So in the same directory than your Sass manifest you will copy
-`this Sass file <https://github.com/sveetch/py-css-styleguide/blob/master/py_css_styleguide/scss/_styleguide_helpers.scss>`_
-to ``_styleguide_helpers.scss``. It contains some Sass helpers to ease writing manifest
-from Sass maps.
+So in the same directory than your Sass manifest you will copy the
+:ref:`sassmixins_intro` file to ``_styleguide_helpers.scss``. It contains some Sass
+helpers to ease writing manifest from Sass maps.
 
+
+.. _usage_demo_settings:
 
 Demonstration settings
 **********************
@@ -38,6 +47,8 @@ This is basic Sass settings for demonstration purpose and obviously for a real p
 you will use your own (like from Bootstrap, Foundation or a totally custom one)
 depending your project.
 
+
+.. _usage_loader:
 
 Manifest loader
 ***************
@@ -65,6 +76,8 @@ manifest object attributes to reach references rules.
 And finally build this Sass file with your prefered libsass compiler. You will get the
 same CSS manifest from the first section.
 
+
+.. _usage_samples:
 
 Samples
 *******
