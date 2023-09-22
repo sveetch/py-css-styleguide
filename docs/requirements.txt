@@ -1,1 +1,4 @@
-py-css-styleguide[doc]
+sphinx
+furo==2023.7.26
+sphinx-copybutton==0.5.2
+Django<5.0,>=2.2

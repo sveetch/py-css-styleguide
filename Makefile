@@ -6,6 +6,7 @@ PIP_BIN=$(VENV_PATH)/bin/pip
 FLAKE_BIN=$(VENV_PATH)/bin/flake8
 PYTEST_BIN=$(VENV_PATH)/bin/pytest
 SPHINX_RELOAD_BIN=$(PYTHON_BIN) docs/sphinx_reload.py
+BUILD_DOCREQ_BIN=$(PYTHON_BIN) docs/build_requirements.py
 TOX_BIN=$(VENV_PATH)/bin/tox
 TWINE_BIN=$(VENV_PATH)/bin/twine
 
@@ -100,13 +101,14 @@ install: venv
 	@echo ""
 	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Install everything for development <---$(FORMATRESET)\n"
 	@echo ""
-	$(PIP_BIN) install -e .[dev,quality,doc]
+	$(PIP_BIN) install -e .[dev,django,quality,doc,doc-live]
 .PHONY: install
 
 docs:
 	@echo ""
 	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Build documentation <---$(FORMATRESET)\n"
 	@echo ""
+	$(BUILD_DOCREQ_BIN)
 	cd docs && make html
 .PHONY: docs
 

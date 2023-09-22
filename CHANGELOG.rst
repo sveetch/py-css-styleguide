@@ -3,6 +3,17 @@
 Changelog
 =========
 
+Version 1.0.1 - Unreleased
+--------------------------
+
+Minor release just to fix documentation.
+
+* Added a new Python script to automatically build documentation requirements file
+  from package setup;
+* Changed documentation requirements files to only include the minimal requirements
+  without to install package from Pypi;
+
+
 Version 1.0.0 - 2023/09/21
 --------------------------
 
@@ -42,37 +53,6 @@ know about migrating your project.
 * Removed useless ``# -*- coding: utf-8 -*-`` lines;
 * Moved from usage of ``os`` + ``io`` modules in favor of ``pathlib.Path``;
 * Added Github issue templates;
-
-
-Migrate for libsass
-...................
-
-TODO: Currently not accurate nor uptodate
-
-If you are using libsass, you have nothing to change in your Sass manifest since it is
-the default behavior. Also, think to upgrade (just replace it with the new one) the
-Sass mixin library (``_styleguide_helpers.scss``).
-
-You may however define it explicitely, add this line just after importing the Sass
-mixin library: ::
-
-    $pycssstyleguide-compiler-support: "libsass";
-
-This is not required but recommended for future.
-
-
-Migrate for dart-sass
-.....................
-
-* Boolean are in Python syntax True/False;
-* Null value is in Python syntax None;
-* Define compiler behavior with: ::
-
-      $pycssstyleguide-compiler-support: "libsass";
-
-* Double quote json-list and json rules.
-* json-list => object-list
-* json => object-complex
 
 
 Version 0.8.3 - 2023/08/18
