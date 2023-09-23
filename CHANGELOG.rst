@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 1.0.1 - Unreleased
+Version 1.1.0 - Unreleased
 --------------------------
 
 Minor release just to fix documentation.
@@ -12,6 +12,7 @@ Minor release just to fix documentation.
   from package setup;
 * Changed documentation requirements files to only include the minimal requirements
   without to install package from Pypi;
+* Added serialization structure ``number``;
 
 
 Version 1.0.0 - 2023/09/21

@@ -49,7 +49,14 @@ FORBIDDEN_PREFIXES = ("_", "-")
 Rule and property names can not start with following strings
 """
 
-RESERVED_RULE_NAMES = ("styleguide", "load", "to_dict", "to_json", "from_dict", "metas")
+RESERVED_RULE_NAMES = (
+    "styleguide",
+    "load",
+    "to_dict",
+    "to_json",
+    "from_dict",
+    "metas",
+)
 """
 Rule name can not be one of the following string
 """
@@ -59,7 +66,15 @@ RESERVED_PROPERTY_NAMES = ("structure",)
 Property (variable) name can not be one of the following string
 """
 
-REFERENCE_STRUCTURES = ("flat", "list", "string", "json", "object-complex", "nested")
+REFERENCE_STRUCTURES = (
+    "flat",
+    "list",
+    "string",
+    "number",
+    "json",
+    "object-complex",
+    "nested",
+)
 """
 Tuple of available reference structures. Structure name ``json`` is deprecated and
 supersed by name ``object-complex``.

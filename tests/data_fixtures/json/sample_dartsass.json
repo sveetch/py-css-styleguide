@@ -7,6 +7,7 @@
             "borders",
             "gradients",
             "grid_cell_sizes",
+            "grid_cell_total",
             "spaces",
             "version"
         ],
@@ -40,6 +41,7 @@
         "75": "75",
         "100": "100"
     },
+    "grid_cell_total": 5,
     "version": "42.0",
     "palette": {
         "black": "#000000",

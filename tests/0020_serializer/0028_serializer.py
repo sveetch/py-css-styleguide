@@ -93,6 +93,15 @@ from py_css_styleguide.serializer import ManifestSerializer
             },
             "ok",
         ),
+        # Number structure
+        (
+            "palette",
+            {
+                "styleguide-reference-palette": {"structure": "number", "value": "42"},
+                "styleguide-reference-dummy": {"keys": "foo", "values": "bar"},
+            },
+            42,
+        ),
     ],
 )
 def test_get_reference_success(name, context, expected):
@@ -268,8 +277,8 @@ def test_get_reference_error(name, context, expected):
                         {
                             "structure": "flat",
                             "splitter": "object-list",
-                            "keys": '["black", "white"]',
-                            "values": '["#000000", "#ffffff"]',
+                            "keys": '["black", "integer", "false", "null"]',
+                            "values": '["#000000", 42, false, null]',
                         },
                     ),
                 )
@@ -296,7 +305,12 @@ def test_get_reference_error(name, context, expected):
                 "spaces": ["short", "normal", "large"],
                 "version": "V42.0",
                 "jsonstruct": {"foo": "bar", "ping": "pong"},
-                "flatjson": {"black": "#000000", "white": "#ffffff"},
+                "flatjson": {
+                    "black": "#000000",
+                    "integer": 42,
+                    "false": False,
+                    "null": None,
+                },
             },
             ["palette", "schemes", "spaces", "version", "jsonstruct", "flatjson"],
         ),

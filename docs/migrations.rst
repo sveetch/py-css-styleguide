@@ -4,6 +4,12 @@
 Migrations
 ==========
 
+From 1.0.0 to 1.1.0
+*******************
+
+This is a minor release without incompatible changes, you won't have nothing to do.
+
+
 From 0.8.x to 1.0.0
 *******************
 

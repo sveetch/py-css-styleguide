@@ -12,7 +12,17 @@ def test_manifest_to_dict():
     """
     source = (
         ".styleguide-metas-references{\n"
-        '    --names: "palette text_color";\n'
+        '    --names: "size ratio palette text_color";\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-ratio{\n"
+        '    --structure: "number";\n'
+        '    --value: 42.123;\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-size{\n"
+        '    --structure: "number";\n'
+        '    --value: 42;\n'
         "}\n"
         "\n"
         ".styleguide-reference-palette{\n"
@@ -35,9 +45,11 @@ def test_manifest_to_dict():
     dump = manifest.to_dict()
 
     expected = {
+        "size": 42,
+        "ratio": 42.123,
         "metas": {
             "compiler_support": "libsass",
-            "references": ["palette", "text_color"],
+            "references": ["size", "ratio", "palette", "text_color"],
             "created": "2012-10-15T10:00:00",
         },
         "palette": {"white": "#ffffff", "black": "#000000"},
@@ -57,7 +69,17 @@ def test_manifest_to_json():
     """
     source = (
         ".styleguide-metas-references{\n"
-        '    --names: "palette text_color";\n'
+        '    --names: "size ratio palette text_color";\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-ratio{\n"
+        '    --structure: "number";\n'
+        '    --value: 42.123;\n'
+        "}\n"
+        "\n"
+        ".styleguide-reference-size{\n"
+        '    --structure: "number";\n'
+        '    --value: 42;\n'
         "}\n"
         "\n"
         ".styleguide-reference-palette{\n"
@@ -82,10 +104,12 @@ def test_manifest_to_json():
     expected = {
         "metas": {
             "compiler_support": "libsass",
-            "references": ["palette", "text_color"],
+            "references": ["size", "ratio", "palette", "text_color"],
             "created": "2012-10-15T10:00:00",
         },
         "palette": {"white": "#ffffff", "black": "#000000"},
+        "ratio": 42.123,
+        "size": 42,
         "text_color": {
             "black": {"selectors": ".bg-black", "values": "#000000"},
             "white": {"values": "#ffffff", "selectors": ".bg-white"},

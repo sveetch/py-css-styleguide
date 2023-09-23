@@ -387,6 +387,47 @@ class ManifestSerializer(object):
 
         return value
 
+    def serialize_to_number(self, name, datas):
+        """
+        Serialize given datas to a number.
+
+        Simply return the value from required variable``value`` coerced to a number
+        type, either a integer or an float. Value must be a valid number. String, empty
+        value or None is not a valid number and will raise an error.
+
+        Serializer will first try to convert string to an integer and if it fails it
+        will switch to float. Finally if no conversion succeed, an error is raised.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            integer or float: Coerced value.
+        """
+        value = datas.get("value", None)
+
+        if value is None:
+            msg = (
+                "Number reference '{}' lacks of required 'value' variable "
+                "or is empty"
+            )
+            raise SerializerError(msg.format(name))
+
+        try:
+            value = int(value)
+        except ValueError:
+            try:
+                value = float(value)
+            except ValueError:
+                msg = (
+                    "Number reference '{}' value is either not a valid integer or "
+                    "valid float or is empty: {}"
+                )
+                raise SerializerError(msg.format(name, value))
+
+        return value
+
     def get_meta_compiler(self, datas):
         """
         Get enabled compiler declarations.
@@ -472,8 +513,8 @@ class ManifestSerializer(object):
         A reference name starts with 'styleguide-reference-' followed by
         name for reference.
 
-        A reference can contains variable ``--structure`` setted to ``"flat"``,
-        ``"list"`` or ``"string"`` to define serialization structure.
+        A reference can contains variable ``--structure`` to define serialization
+        structure.
 
         Arguments:
             datas (dict): Data where to search for reference declaration. This
@@ -513,6 +554,8 @@ class ManifestSerializer(object):
             context = self.serialize_to_flat(name, properties)
         elif structure_mode == "list":
             context = self.serialize_to_list(name, properties)
+        elif structure_mode == "number":
+            context = self.serialize_to_number(name, properties)
         elif structure_mode == "string":
             context = self.serialize_to_string(name, properties)
         elif structure_mode == "nested":

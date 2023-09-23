@@ -52,17 +52,22 @@ from py_css_styleguide.serializer import ManifestSerializer
             OrderedDict((("black", "#000000"), ("white", "#ffffff"))),
             ["black", "white"],
         ),
-        # With JSON list splitter
+        # With JSON list splitter and mixed types
         (
             OrderedDict(
                 (
                     ("splitter", "object-list"),
-                    ("keys", '["black", "white"]'),
-                    ("values", '["#000000", "#ffffff"]'),
+                    ("keys", '["black", "integer", "false", "null"]'),
+                    ("values", '["#000000", 42, false, null]'),
                 )
             ),
-            OrderedDict((("black", "#000000"), ("white", "#ffffff"))),
-            ["black", "white"],
+            OrderedDict((
+                ("black", "#000000"),
+                ("integer", 42),
+                ("false", False),
+                ("null", None),
+            )),
+            ["black", "integer", "false", "null"],
         ),
     ],
 )

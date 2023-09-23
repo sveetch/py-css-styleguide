@@ -41,6 +41,11 @@
   --values: "5 25 33.3333 75 100";
 }
 
+.styleguide-reference-grid_cell_total {
+  --structure: "number";
+  --value: 5;
+}
+
 .styleguide-reference-spaces {
   --structure: "list";
   --items: "tiny short normal large wide";

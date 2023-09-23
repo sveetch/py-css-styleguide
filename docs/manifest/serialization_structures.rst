@@ -16,6 +16,7 @@ Introduction
 Available serialization structure are:
 
 * String;
+* Number (either integer or float);
 * List;
 * Nested dictionnary;
 * Flat dictionnary;
@@ -47,6 +48,42 @@ Reference serialization
 
         {
             "dummy": "my value"
+        }
+
+
+.. _serializer_structures_number:
+
+Number
+******
+
+A structure to serialize a value as a number, meaning in Python it would be
+either integer or float.
+
+Enabled by
+    ``--structure: "number";``
+
+Required variables
+    ``--value`` that will contain a number like ``42`` or ``42.123``. In fact you can
+    also define it in a string like ``"42.123"``.
+
+Reference source sample
+    ::
+
+        .styleguide-reference-dummy {
+            --structure: "number";
+            --value: 42;
+        }
+        .styleguide-reference-dumber {
+            --structure: "number";
+            --value: "43";
+        }
+
+Reference serialization
+    ::
+
+        {
+            "dummy": 42,
+            "dumber": 43
         }
 
 

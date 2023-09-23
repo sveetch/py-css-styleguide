@@ -48,6 +48,11 @@ $pycssstyleguide-compiler-support: "libsass";
     --values: "#{to-string($grid-cell-sizes, $glue: ' ')}";
 }
 
+.styleguide-reference-grid_cell_total {
+    --structure: "number";
+    --value: #{$grid-cell-total};
+}
+
 .styleguide-reference-spaces {
     --structure: "list";
     --items: "#{to-string($spaces, $glue: ' ')}";

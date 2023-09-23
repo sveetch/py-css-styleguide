@@ -72,8 +72,12 @@ You can enable this mode by using variable ``--splitter`` with value
     This splitter was previously called ``json-list`` that is still working for now but
     deprecated, you will have warning about it until you change it to ``object-list``.
 
+.. Hint::
+    This allows to mix multiple value types like string, integer, float, boolean and
+    null.
+
 .. Caution::
-   Since we parse content from either JSON or Python, it would allow more than a list
+   Since we parse content from either JSON or Python, it would allow to nest a list
    but this won't work with manifest serializer which only expect a list and any other
    type will raise error or lead to unexpected results.
 
@@ -93,7 +97,7 @@ In a reference source example: ::
     .styleguide-reference-dummy{
         --structure: "list";
         --splitter: "object-list";
-        --items: '["foo", "bar", true, "ping pong"]';
+        --items: '["foo", "bar", 42, null, true, "ping pong"]';
     }
 
 .. admonition:: Syntax
@@ -110,6 +114,8 @@ Reference content will be parsed to a Python list: ::
         "dummy": [
             "foo",
             "bar",
+            42,
+            None,
             True,
             "ping pong"
         ]
@@ -136,7 +142,7 @@ In a reference source example: ::
     .styleguide-reference-dummy{
         --structure: "list";
         --splitter: "object-list";
-        --items: "['foo', 'bar', True, 'ping pong']";
+        --items: "['foo', 'bar', 42, None, True, 'ping pong']";
     }
 
 .. admonition:: Syntax
@@ -152,6 +158,8 @@ Reference content will be parsed to a Python list: ::
         "dummy": [
             "foo",
             "bar",
+            42,
+            None,
             True,
             "ping pong"
         ]

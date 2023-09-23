@@ -3,8 +3,8 @@
 Explicit reference names
 ========================
 
-With this way, we don't use automatic desciption and explicitely define every
-references we retain for description, obviously you will have to maintain correctly
+With this way, we don't use automatic description and instead explicitely define every
+references we want for description. Obviously you will have to maintain correctly
 the name list to ensure they exists in references.
 
 Write a Sass file that will use the helpers and settings to build a CSS manifest:

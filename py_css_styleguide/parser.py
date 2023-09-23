@@ -83,9 +83,12 @@ class TinycssSourceParser(object):
                 current_key = name
                 data[current_key] = None
 
-            # Assume first following string token is the property value.
+            # Assume first following string or number token is the property value.
             if token.type == "string":
                 data[current_key] = token.value
+            elif token.type == "number":
+                # Number must be stringified again to ensure proper conversion
+                data[current_key] = str(token.int_value or token.value)
 
         return data
 
