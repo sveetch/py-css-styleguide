@@ -3,7 +3,7 @@
 Changelog
 =========
 
-Version 1.1.0 - Unreleased
+Version 1.1.0 - 2023/09/24
 --------------------------
 
 A minor release to fix documentation, add number structure and add a CLI.
