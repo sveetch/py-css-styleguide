@@ -1,6 +1,7 @@
 import pytest
 
 from py_css_styleguide.parser import TinycssSourceParser
+from py_css_styleguide.exceptions import ParserErrors
 
 
 @pytest.mark.parametrize(
@@ -40,7 +41,7 @@ from py_css_styleguide.parser import TinycssSourceParser
         ),
     ],
 )
-def test_source_parse(source, expected):
+def test_css_parser(source, expected):
     """
     Ensure TinyCSS parsing is still working as expected.
     """
@@ -48,3 +49,61 @@ def test_source_parse(source, expected):
     rules = parser.parse(source)
 
     assert rules == expected
+
+
+def test_css_parser_no_references():
+    """
+    Valid CSS without any reference should succeed and just returns an empty
+    OrderedDict.
+    """
+    parser = TinycssSourceParser()
+    rules = parser.parse((
+        ".foo { content: \"bar\"; }\n"
+        ".zip {\n"
+        "    font-size: 1rem;\n"
+        "    color: #ffffff;\n"
+        "}\n"
+    ))
+
+    assert rules == {}
+
+
+def test_css_parser_naivety():
+    """
+    Demonstrate that parse is pretty naive and would accept many invalid syntax.
+    """
+    parser = TinycssSourceParser()
+    rules = parser.parse((
+        "n##{ope\n"
+        ".ping { pong }\n"
+        ".zip {\n"
+        "    font-size: 1rem;\n"
+        ".foo { content: \"bar\"; }\n"
+        "    color: #ffffff;\n"
+        "}\n"
+    ))
+
+    assert rules == {}
+
+
+def test_css_parser_error():
+    """
+    Parser should raise explicit ParserErrors with error details in its
+    'error_payload' attribute.
+    """
+    parser = TinycssSourceParser()
+    error = payload = None
+
+    try:
+        parser.parse("nope")
+    except ParserErrors as e:
+        error = e
+        payload = e.error_payload
+
+    assert str(error) == "Unable to parse CSS due to 1 parsing error(s)"
+    assert payload == [
+        (
+            "Line 1 - Column 1 : [invalid] EOF reached before {} block for a "
+            "qualified rule."
+        )
+    ]

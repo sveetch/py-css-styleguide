@@ -29,6 +29,9 @@ So in the same directory than your Sass manifest you will copy the
 :ref:`sassmixins_intro` file to ``_styleguide_helpers.scss``. It contains some Sass
 helpers to ease writing manifest from Sass maps.
 
+.. Hint::
+    You can use the command :ref:`cli_parse` to check your CSS manifest.
+
 
 .. _usage_demo_settings:
 

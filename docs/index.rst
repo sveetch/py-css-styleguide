@@ -13,6 +13,7 @@ Contents
    manifest/index.rst
    usage/index.rst
    sass_library.rst
+   cli.rst
    api/index.rst
 
 

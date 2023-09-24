@@ -1,10 +1,12 @@
 {
     "metas": {
+        "compiler_support": "libsass",
         "references": [
             "palette",
             "text_color",
             "spaces"
-        ]
+        ],
+        "created": "2012-10-15T10:00:00"
     },
     "palette": {
         "black": "#000000",

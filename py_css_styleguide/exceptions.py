@@ -17,6 +17,22 @@ class PyCssStyleguideException(Exception):
     pass
 
 
+class ParserErrors(PyCssStyleguideException):
+    """
+    Exception to raise when there is errors when parsing a manifest.
+
+    Attribute ``error_payload`` contains a dict of runned command details.
+
+    Keyword Arguments:
+        error_payload (dict): A dictionnary of command response error details. It
+            won't output as exception message from traceback, you need to exploit it
+            yourself if needed.
+    """
+    def __init__(self, *args, **kwargs):
+        self.error_payload = kwargs.pop("error_payload", None)
+        super().__init__(*args, **kwargs)
+
+
 class SerializerError(PyCssStyleguideException):
     """
     Exception to raise when there is a syntax issue during serialization.

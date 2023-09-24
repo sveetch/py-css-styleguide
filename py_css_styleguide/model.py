@@ -74,9 +74,6 @@ class Manifest(object):
         except AttributeError:
             source_content = source
 
-        print()
-        print(source_content)
-        print()
         # Parse and serialize given source
         parser = TinycssSourceParser()
         self._datas = parser.parse(source_content)

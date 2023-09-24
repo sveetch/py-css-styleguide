@@ -15,8 +15,10 @@ other syntax for non styleguide rules.
 from collections import OrderedDict
 
 from tinycss2 import parse_stylesheet
+from tinycss2.ast import ParseError as TinyCSS2ParseError
 
 from .nomenclature import RULE_BASE_PREFIX
+from .exceptions import ParserErrors
 
 
 class TinycssSourceParser(object):
@@ -105,6 +107,27 @@ class TinycssSourceParser(object):
         manifest = OrderedDict()
 
         rules = parse_stylesheet(source, skip_comments=True, skip_whitespace=True)
+
+        errors = [
+            item
+            for item in rules
+            if isinstance(item, TinyCSS2ParseError)
+        ]
+
+        if errors:
+            error_payload = [
+                "Line {line} - Column {col} : [{kind}] {msg}".format(
+                    line=item.source_line,
+                    col=item.source_column,
+                    kind=item.kind,
+                    msg=item.message,
+                )
+                for item in errors
+            ]
+            raise ParserErrors(
+                "Unable to parse CSS due to {} parsing error(s)".format(len(errors)),
+                error_payload=error_payload,
+            )
 
         for rule in rules:
             # Gather rule selector+properties

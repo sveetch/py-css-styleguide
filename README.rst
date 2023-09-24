@@ -1,5 +1,6 @@
 .. _Python: https://www.python.org/
 .. _tinycss2: https://github.com/Kozea/tinycss2
+.. _Click: https://click.palletsprojects.com
 
 PyCssStyleguide
 ===============
@@ -34,6 +35,7 @@ Dependencies
 
 * `Python`_>=3.8;
 * `tinycss2`_>=1.1.0;
+* `Click`_>=8.0;
 
 
 Credits

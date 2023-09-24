@@ -9,6 +9,14 @@ From 1.0.0 to 1.1.0
 
 This is a minor release without incompatible changes, you won't have nothing to do.
 
+.. Note::
+    Parser has been improved to raise exception on parsing errors. Previously an
+    invalid CSS manifest did not raised parsing error but instead a serialization
+    error.
+
+    In practice it won't really change nothing except you will have to catch also for
+    new ``ParserErrors`` exception if you were catching exceptions in your code.
+
 
 From 0.8.x to 1.0.0
 *******************

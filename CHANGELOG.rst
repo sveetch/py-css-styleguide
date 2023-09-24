@@ -6,13 +6,16 @@ Changelog
 Version 1.1.0 - Unreleased
 --------------------------
 
-Minor release just to fix documentation.
+A minor release to fix documentation, add number structure and add a CLI.
 
 * Added a new Python script to automatically build documentation requirements file
   from package setup;
 * Changed documentation requirements files to only include the minimal requirements
   without to install package from Pypi;
 * Added serialization structure ``number``;
+* Added ``ParserErrors`` exception to raise when there is error from parsing CSS
+  manifest with ``TinycssSourceParser``;
+* Added commandline with ``click`` with ``version`` and ``parse`` commands;
 
 
 Version 1.0.0 - 2023/09/21
