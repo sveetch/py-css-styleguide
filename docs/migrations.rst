@@ -4,6 +4,13 @@
 Migrations
 ==========
 
+From 1.1.0 to 1.1.1
+*******************
+
+Nothing to do, this is a minor maintenance release about documentation build on
+readthedocs.
+
+
 From 1.0.0 to 1.1.0
 *******************
 

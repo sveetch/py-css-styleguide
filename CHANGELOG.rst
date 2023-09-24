@@ -3,6 +3,16 @@
 Changelog
 =========
 
+Version 1.1.1 - 2023/09/24
+--------------------------
+
+Another minor release to change the readthedocs configuration to install this package
+and dependencies.
+
+Now we use section ``python.install`` in readthedocs configuration to ask to install
+local package from commit with extra requirements for doc building.
+
+
 Version 1.1.0 - 2023/09/24
 --------------------------
 
