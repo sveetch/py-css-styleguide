@@ -313,14 +313,14 @@ class ManifestSerializer(object):
         splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
 
         if not keys:
-            msg = "Flat reference '{}' lacks of required 'keys' variable or " "is empty"
+            msg = "Flat reference '{}' lacks of required 'keys' variable or is empty"
             raise SerializerError(msg.format(name))
         else:
             keys = self.value_splitter(name, "keys", keys, mode=splitter)
 
         if not values:
             msg = (
-                "Flat reference '{}' lacks of required 'values' variable " "or is empty"
+                "Flat reference '{}' lacks of required 'values' variable or is empty"
             )
             raise SerializerError(msg.format(name))
         else:
@@ -328,10 +328,14 @@ class ManifestSerializer(object):
 
         if len(values) != len(keys):
             msg = (
-                "Flat reference have different length of 'keys' ands "
-                "'values' variable"
+                "Flat reference '{name}' has different lengths for 'keys' ({klength}) "
+                "and 'values' ({vlength}) variables"
             )
-            raise SerializerError(msg.format(name))
+            raise SerializerError(msg.format(
+                name=name,
+                klength=len(keys),
+                vlength=len(values),
+            ))
 
         return OrderedDict(zip(keys, values))
 
@@ -527,7 +531,7 @@ class ManifestSerializer(object):
         rule_name = self.get_ref_varname(name)
 
         if rule_name not in datas:
-            msg = "Unable to find enabled reference '{}'"
+            msg = "Unable to find enabled reference name '{}'"
             raise SerializerError(msg.format(name))
 
         properties = datas.get(rule_name)

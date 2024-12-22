@@ -3,8 +3,15 @@
 Changelog
 =========
 
+Development
+***********
+
+* Fixed error message from ``ManifestSerializer.serialize_to_flat()`` that was missing
+  reference name;
+
+
 Version 1.1.1 - 2023/09/24
---------------------------
+**************************
 
 Another minor release to change the readthedocs configuration to install this package
 and dependencies.
@@ -14,7 +21,7 @@ local package from commit with extra requirements for doc building.
 
 
 Version 1.1.0 - 2023/09/24
---------------------------
+**************************
 
 A minor release to fix documentation, add number structure and add a CLI.
 
@@ -29,7 +36,7 @@ A minor release to fix documentation, add number structure and add a CLI.
 
 
 Version 1.0.0 - 2023/09/21
---------------------------
+**************************
 
 A major release with breaking changes, see
 `Migrations <https://pycssstyleguide.readthedocs.io/en/latest/migrations.html>`_ to
@@ -70,14 +77,14 @@ know about migrating your project.
 
 
 Version 0.8.3 - 2023/08/18
---------------------------
+**************************
 
 A minor version only to update ``.readthedocs.yml`` file to follow service deprecations
 changes.
 
 
 Version 0.8.2 - 2021/09/12
---------------------------
+**************************
 
 * Fix a critical error with CSS manifest relative path to static directory;
 * Add "created" item in manifest metas to include datetime of serialization;
@@ -87,13 +94,13 @@ Version 0.8.2 - 2021/09/12
 
 
 Version 0.8.1 - 2021/09/12
---------------------------
+**************************
 
 Just a minor release to fix package Readme which was different from documentation.
 
 
 Version 0.8.0 - 2021/09/12
---------------------------
+**************************
 
 * Add a Django view mixin ``StyleguideMixin`` to include in a view to use a manifest;
 * Add a basic Django view ``StyleguideViewMixin`` based on ``TemplateView`` and
@@ -105,7 +112,7 @@ Version 0.8.0 - 2021/09/12
 
 
 Version 0.7.0 - 2021/09/09
---------------------------
+**************************
 
 * Rename some model methods:
 
@@ -120,7 +127,7 @@ Version 0.7.0 - 2021/09/09
 
 
 Version 0.6.0 - 2021/08/19
---------------------------
+**************************
 
 * Fix documentation typo issue, close #13;
 * Add ``Manifest.to_dict()`` and make ``Manifest.to_json()`` using it, close #14;
@@ -132,7 +139,7 @@ Version 0.6.0 - 2021/08/19
 
 
 Version 0.5.1 - 2019/07/16
---------------------------
+**************************
 
 * Added some Sass functions to escape a value from quotes;
 * Enabled quote escape on ``get-props-to-json`` and ``get-values-to-json`` functions to
@@ -140,7 +147,7 @@ Version 0.5.1 - 2019/07/16
 
 
 Version 0.5.0 - 2019/05/05
---------------------------
+**************************
 
 * Pinned ``tinycss2`` version to ``>=1.0.2``
 * Updated parser so double dashes for CSS variable are correctly supported now, close #8;
@@ -148,7 +155,7 @@ Version 0.5.0 - 2019/05/05
 
 
 Version 0.4.0 - 2018/05/09
---------------------------
+**************************
 
 * Enforce order on flat structure, close #6;
 * Added ``splitter`` property for ``flat``,  ``nested`` and ``list`` structure to be
@@ -160,7 +167,7 @@ Version 0.4.0 - 2018/05/09
 
 
 Version 0.3.0 - 2018/04/19
---------------------------
+**************************
 
 * Added automatic enable references mode, close #1;
 * Fixed Sass helper function ``to-string`` for empty list, close #2;
@@ -171,7 +178,7 @@ Version 0.3.0 - 2018/04/19
 
 
 Version 0.2.0 - 2018/04/08
---------------------------
+**************************
 
 * Added Sass function ``floor-number-items()``;
 * Removed ``flat`` property in favor of ``structure`` to allow other structure modes;
@@ -180,7 +187,7 @@ Version 0.2.0 - 2018/04/08
 
 
 Version 0.1.0 - 2018/04/07
---------------------------
+**************************
 
 * Added documentation with Sphinx;
 * Changed ``Manifest.load()`` so it also accepts a file-like object;
@@ -188,13 +195,13 @@ Version 0.1.0 - 2018/04/07
 
 
 Version 0.0.2 - 2018/04/04
---------------------------
+**************************
 
 * Added ``to_json`` method to Manifest model;
 * Fixed some code quality issues;
 
 
 Version 0.0.1 - 2018/04/02
---------------------------
+**************************
 
 First commit with a basic working version.

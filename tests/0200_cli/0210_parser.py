@@ -83,7 +83,7 @@ def test_cli_parse_success(caplog, tmp_path, tests_settings):
                 (
                     __pkgname__,
                     logging.CRITICAL,
-                    "Unable to find enabled reference 'palette'"
+                    "Unable to find enabled reference name 'palette'"
                 ),
             ],
         ),
