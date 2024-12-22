@@ -594,7 +594,8 @@ class ManifestSerializer(object):
 
         for k, v in datas.items():
             if k.startswith(RULE_REFERENCE):
-                names.append(k[len(RULE_REFERENCE) + 1 :])
+                i = len(RULE_REFERENCE) + 1
+                names.append(k[i:])
 
         return names
 

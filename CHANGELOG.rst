@@ -8,7 +8,12 @@ Development
 
 * Fixed error message from ``ManifestSerializer.serialize_to_flat()`` that was missing
   reference name;
-
+* Added support for Python 3.11 and 3.12;
+* Added Django support from 5.0 to 5.1 for included optional Django mixins;
+* Added minimal version for all requirements;
+* Updated script to freeze local dependencies;
+* Removed 'colorama' from requirements since it is automatically installed on Windows
+  from 'colorlog';
 
 Version 1.1.1 - 2023/09/24
 **************************
