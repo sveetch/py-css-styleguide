@@ -3,8 +3,10 @@
 Changelog
 =========
 
-Development
-***********
+Version 1.2.0 - 2024/12/24
+**************************
+
+Minor version for new features and improvements.
 
 * Fixed error message from ``ManifestSerializer.serialize_to_flat()`` that was missing
   reference name;
@@ -17,6 +19,8 @@ Development
 * Updated script to freeze local dependencies;
 * Removed 'colorama' from requirements since it is automatically installed on Windows
   from 'colorlog';
+* Sass mixin library does not include compatibility for both compiler Libsass and
+  Dartsass. Now each compiler has its own mixin library;
 * Updated documentation;
 
 

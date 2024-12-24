@@ -1,4 +1,4 @@
-# Frozen requirement versions for 'py-css-styleguide==1.2.0rc3' installation
+# Frozen requirement versions for 'py-css-styleguide==1.2.0' installation
 tinycss2==1.4.0
 click==8.1.8
 colorlog==6.9.0

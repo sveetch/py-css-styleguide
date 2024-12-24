@@ -4,6 +4,18 @@
 Migrations
 ==========
 
+From 1.1.1 to 1.2.0
+*******************
+
+Nothing to do, this is a minor maintenance release with some improvements but there is
+no incompatibility issue to manage.
+
+However if you are using Dartsass compiler you will want to update the Sass mixin
+library you were using in your Sass project because it has been updated. If you are
+using Libsass compiler you may also the mixin library from your project but it works
+the same.
+
+
 From 1.1.0 to 1.1.1
 *******************
 
