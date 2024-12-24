@@ -12,7 +12,7 @@ in sources and sometime requires you to maintain every variables values when you
 them in sources.
 
 In our modern era we mostly build CSS from a pre-compiler like Sass or Less using
-variable settings that we can stand on to automatize styleguide manifest.
+variable settings that we can use to automatize styleguide manifest.
 
 .. Note::
     Since PyCssStyleguide only parse a CSS file, you would be able to use it with any
@@ -25,7 +25,7 @@ Finally our point of view of a styleguide is not to demonstrate every CSS compon
 objects with their variants. You could do it but it is seems a long work that would
 require a lot of maintenance.
 
-We prefer to consider styleguide a as cheat sheet for your base settings like font
+We prefer to consider styleguide as a cheat sheet for your base settings like font
 sizes, colors, basic object variants, etc.. that can be demonstrated visually in a
 single page. You should focus first on establish these bases, once done you may possibly
 start to demonstrate more high level objects or components.
@@ -55,6 +55,8 @@ Once given to PyCssStyleguide interface, you would get the following JSON : ::
     In practice you won't write manifest directly in a CSS and there is a lot more data
     structures available to work with your settings diversity.
 
+Then you could exploit this JSON data into your backend template to build a styleguide
+page like with :ref:`core_contrib_django`.
 
 Workflow
 ********

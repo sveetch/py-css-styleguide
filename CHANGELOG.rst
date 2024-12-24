@@ -11,9 +11,14 @@ Development
 * Added support for Python 3.11 and 3.12;
 * Added Django support from 5.0 to 5.1 for included optional Django mixins;
 * Added minimal version for all requirements;
+* Added new option ``--cleaner`` for splitters. When its value is ``whitespaces`` it
+  will remove empty whitespaces that could happen with Sass mixin functions. When this
+  property is not defined, the legacy behavior (keep whitespaces) is still used;
 * Updated script to freeze local dependencies;
 * Removed 'colorama' from requirements since it is automatically installed on Windows
   from 'colorlog';
+* Updated documentation;
+
 
 Version 1.1.1 - 2023/09/24
 **************************

@@ -21,7 +21,7 @@ Build CSS manifest with your Sass compiler and you should get:
 .. literalinclude:: ../../tests/data_fixtures/sass/css/sample_excludes.css
    :language: css
 
-Then load this manifest with script ``styleguide.py`` and it will return this JSON:
+Then load this manifest with command :ref:`cli_parse` and it will return this JSON:
 
 .. literalinclude:: ../../tests/data_fixtures/json/sample_excludes.json
    :language: json

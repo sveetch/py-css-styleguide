@@ -8,10 +8,9 @@ Usage
 You need a CSS manifest to describe your styleguide references then you will parse the
 manifest with a Python script to parse and serialize your references.
 
-.. Warning::
-    Sorry these usage samples are made for Libsass compiler, if you plan to use them
-    with Dart Sass compiler you may have some things to adapt, see
-    :ref:`migrate_intro` for some details.
+.. Note::
+    This document does not explain the reference rules syntax in detail, you will
+    find them in :ref:`manifest_intro`.
 
 .. _usage_manifest:
 
@@ -57,8 +56,10 @@ Manifest loader
 ***************
 
 Once you have a CSS manifest you will need to load it as a Manifest model through
-PyCssStyleguide library, you can use the following Python snippet in a file
-``styleguide.py``: ::
+PyCssStyleguide library. There is a commandline script :ref:`cli_parse` to do it but
+for integration in a project you may prefer to use your own script.
+
+The following Python snippet is a sample of a custom script you can start from: ::
 
     from pathlib import Path
 
@@ -66,18 +67,15 @@ PyCssStyleguide library, you can use the following Python snippet in a file
 
     manifest = Manifest()
 
-    manifest.load(Path('styleguide_manifest.css').read_text())
+    manifest.load(Path("styleguide_manifest.css").read_text())
 
     print(manifest.to_json())
 
-And here you go, when executed this basic script will output JSON datas from your
-manifest.
+When executed this basic script will output JSON datas from your manifest.
 
-Note than this sample use ``Manifest.to_json()`` for simplicity but you could also use
-manifest object attributes to reach references rules.
-
-And finally build this Sass file with your prefered libsass compiler. You will get the
-same CSS manifest from the first section.
+.. Note::
+    This sample use ``Manifest.to_json()`` for simplicity but you could also use
+    manifest object attributes to reach references rules.
 
 
 .. _usage_samples:
@@ -85,9 +83,9 @@ same CSS manifest from the first section.
 Samples
 *******
 
-For the following samples, you will use the ``_settings.scss``,
-``_styleguide_helpers.scss`` and ``styleguide.py`` files previously cited without
-changes.
+For the following samples, you will use the ``_settings.scss``, the
+:ref:`sassmixins_intro` and the manifest parser commandline script from
+:ref:`cli_parse`.
 
 .. toctree::
    :maxdepth: 2

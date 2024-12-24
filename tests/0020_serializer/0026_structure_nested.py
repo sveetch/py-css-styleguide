@@ -17,6 +17,30 @@ from py_css_styleguide.serializer import ManifestSerializer
             },
             {"black": {"value": "#000000"}, "white": {"value": "#ffffff"}},
         ),
+        # Nested mode with empty whitespaces keeped
+        (
+            {
+                "keys": " black   white ",
+                "value": " #000000   #ffffff ",
+            },
+            {
+                "": {"value": ""},
+                "black": {"value": "#000000"},
+                "white": {"value": "#ffffff"}
+            },
+        ),
+        # Nested mode with empty whitespaces cleaned
+        (
+            {
+                "cleaner": "whitespaces",
+                "keys": " black   white ",
+                "value": " #000000   #ffffff ",
+            },
+            {
+                "black": {"value": "#000000"},
+                "white": {"value": "#ffffff"}
+            },
+        ),
         # Nested mode with multiple property
         (
             {
@@ -34,6 +58,30 @@ from py_css_styleguide.serializer import ManifestSerializer
             {
                 "keys": '["black", "white"]',
                 "value": '["#000000", "#ffffff"]',
+                "structure": "whatever",
+                "splitter": "object-list",
+            },
+            {"black": {"value": "#000000"}, "white": {"value": "#ffffff"}},
+        ),
+        # With JSON list splitter with leading and ending whitespaces keeped
+        (
+            {
+                "keys": '[" black", " white   "]',
+                "value": '[" #000000 ", "   #ffffff "]',
+                "structure": "whatever",
+                "splitter": "object-list",
+            },
+            {
+                " black": {"value": " #000000 "},
+                " white   ": {"value": "   #ffffff "}
+            },
+        ),
+        # With JSON list splitter with leading and ending whitespaces cleaned
+        (
+            {
+                "cleaner": "whitespaces",
+                "keys": '[" black", " white   "]',
+                "value": '[" #000000 ", "   #ffffff "]',
                 "structure": "whatever",
                 "splitter": "object-list",
             },

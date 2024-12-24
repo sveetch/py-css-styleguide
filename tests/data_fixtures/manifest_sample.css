@@ -1,5 +1,5 @@
 .styleguide-metas-references {
-  --names: "palette text_color spaces";
+  --names: "palette text_color spaces columns";
 }
 
 .styleguide-reference-palette {
@@ -18,4 +18,10 @@
 .styleguide-reference-spaces {
   --structure: "list";
   --items: "tiny short normal large wide";
+}
+
+.styleguide-reference-columns {
+  --structure: "list";
+  --cleaner: "whitespaces";
+  --items: "w30   w50 w70  ";
 }

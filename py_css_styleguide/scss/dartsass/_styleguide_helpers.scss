@@ -1,8 +1,13 @@
-/* Helper functions from py-css-styleguide==1.0.0 */
+/* Helper functions from py-css-styleguide==1.2.0 */
+@use "sass:list";
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
 
 ///
 /// Determine behavior to endorse at runtime.
-$pycssstyleguide-compiler-support: "libsass" !default;
+$pycssstyleguide-compiler-support: "dartsass";
 
 /// Replace every occurences of a character with a substition string.
 /// Useful to strip some characters.
@@ -19,10 +24,10 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 /// @return {String} - Modified string following given arguments.
 ///
 @function _strip-token($string, $search, $replace: '') {
-  $index: str-index($string, $search);
+  $index: string.index($string, $search);
 
   @if $index {
-    @return str-slice($string, 1, $index - 1) + $replace + _strip-token(str-slice($string, $index + str-length($search)), $search, $replace);
+    @return string.slice($string, 1, $index - 1) + $replace + _strip-token(string.slice($string, $index + string.length($search)), $search, $replace);
   }
 
   @return $string;
@@ -65,17 +70,17 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 @function to-string($list, $glue: '', $is-nested: false) {
     $result: null;
 
-    @if length($list) > 0{
-        @for $i from 1 through length($list) {
-            $e: nth($list, $i);
+    @if list.length($list) > 0{
+        @for $index from 1 through list.length($list) {
+            $item: list.nth($list, $index);
 
-            @if type-of($e) == list {
-                $result: $result#{to-string($e, $glue, true)};
+            @if meta.type-of($item) == list {
+                $result: $result#{to-string($item, $glue, true)};
             } @else {
                 $result: if(
-                    $i != length($list) or $is-nested,
-                    $result#{$e}#{$glue},
-                    $result#{$e}
+                    $index != list.length($list) or $is-nested,
+                    $result#{$item}#{$glue},
+                    $result#{$item}
                 );
             }
         }
@@ -85,24 +90,7 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 }
 
 ///
-/// Convert a list to a JSON list for Libsass compatibility.
-///
-/// Libsass does not enforce quote type around string, we can so produce valid JSON.
-/// NOTE: Not sure if libsass could endore the dartsass behavior so we would not need
-/// to support two functions for a same feature.
-///
-/// @arg {List} $list [null]
-///   A list.
-///
-@function list-to-json_libsass($list) {
-    $glue: '", "';
-    $result: to-string($list, $glue);
-
-    @return '["#{$result}"]';
-}
-
-///
-/// Convert a list to a JSON list for Dart sass compatibility.
+/// Convert a list to a JSON list depending the enabled compiler support.
 ///
 /// Dart sass enforce double quotes around a string so we can't produce valid JSON, we
 /// have to quote with double quotes the value which contains JSON. So in this
@@ -111,25 +99,11 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 /// @arg {List} $list [null]
 ///   A list.
 ///
-@function list-to-json_dartsass($list) {
+@function list-to-json($list) {
     $glue: "', '";
     $result: to-string($list, $glue);
 
     @return "['#{$result}']";
-}
-
-///
-/// Convert a list to a JSON list depending the enabled compiler support.
-///
-/// @arg {List} $list [null]
-///   A list.
-///
-@function list-to-json($list) {
-    @if $pycssstyleguide-compiler-support == "dartsass" {
-        @return list-to-json_dartsass($list);
-    } @else {
-        @return list-to-json_libsass($list);
-    }
 }
 
 ///
@@ -144,10 +118,10 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 ///
 @function get-names($map, $prefix: "") {
     $values: ();
-    @each $name in map-keys($map) {
-        $values: append($values, $prefix+$name);
+    @each $name in map.keys($map) {
+        $values: list.append($values, $prefix+$name);
     }
-    @return to-string($values, $glue: ' ');
+    @return to-string($values, $glue: '');
 }
 
 ///
@@ -161,8 +135,8 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 ///
 @function get-names-to-json($map, $prefix: "") {
     $values: ();
-    @each $name in map-keys($map) {
-        $values: append($values, $prefix+$name);
+    @each $name in map.keys($map) {
+        $values: list.append($values, $prefix+$name);
     }
     @return list-to-json($values);
 }
@@ -179,8 +153,8 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 ///
 @function get-values($map, $prefix: "") {
     $values: ();
-    @each $name in map-values($map) {
-        $values: append($values, $prefix+$name);
+    @each $name in map.values($map) {
+        $values: list.append($values, $prefix+$name);
     }
     @return to-string($values, $glue: ' ');
 }
@@ -201,9 +175,9 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 ///
 @function get-values-to-json($map, $prefix: "", $safe-string: true) {
     $values: ();
-    @each $name in map-values($map) {
+    @each $name in map.values($map) {
         $val: _safe-string($name, $apply: $safe-string);
-        $values: append($values, $prefix+$val);
+        $values: list.append($values, $prefix+$val);
     }
     @return list-to-json($values);
 }
@@ -224,7 +198,7 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 @function get-props($map, $property, $prefix: "") {
     $values: ();
     @each $name, $scheme in $map {
-        $values: append($values, $prefix+map-get($scheme, $property));
+        $values: list.append($values, $prefix+map.get($scheme, $property));
     }
     @return to-string($values, $glue: ' ');
 }
@@ -248,8 +222,8 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 @function get-props-to-json($map, $property, $prefix: "", $safe-string: true) {
     $values: ();
     @each $name, $scheme in $map {
-        $val: _safe-string(map-get($scheme, $property), $apply: $safe-string);
-        $values: append($values, $prefix+$val);
+        $val: _safe-string(map.get($scheme, $property), $apply: $safe-string);
+        $values: list.append($values, $prefix+$val);
     }
     @return list-to-json($values);
 }
@@ -270,8 +244,8 @@ $pycssstyleguide-compiler-support: "libsass" !default;
 @function floor-number-items($list, $prefix: "") {
     $values: ();
     @each $number in $list {
-        $number: floor($number);
-        $values: append($values, $prefix+$number);
+        $number: math.floor($number);
+        $values: list.append($values, $prefix+$number);
     }
     @return to-string($values, $glue: ' ');
 }

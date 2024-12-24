@@ -1,13 +1,13 @@
 .. _cli_intro:
 
-===========
-Commandline
-===========
+===================
+Commandline scripts
+===================
 
 .. _cli_version:
 
-Version show
-************
+Version display
+***************
 
 
 .. automodule:: py_css_styleguide.cli.version.version_command
@@ -16,8 +16,8 @@ Version show
 
 .. _cli_parse:
 
-CSS manifest parser
-*******************
+Manifest parser
+***************
 
 
 .. automodule:: py_css_styleguide.cli.parse.parse_command

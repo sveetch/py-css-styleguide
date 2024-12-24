@@ -10,24 +10,32 @@ Item separator
 Introduction
 ************
 
-Some serialization structures split values in list items to fit to their Python
+The following serialization structures split values in list items to fit to a Python
 structure:
 
 * ``nested``
 * ``flat``
 * ``list``
 
-These structure can set a variable ``--splitter`` to select the way to split value
-items.
+These structure can set special properties:
 
-Once enable into a rule, the selected splitter is applied on every rule variables,
-you can not use different separators in a same rule.
+* ``--splitter`` to select the way to split value items;
+* ``--cleaner`` to select the way to manage whitespaces in values;
 
+.. Warning::
+    Once enabled into a reference rule the selected splitter and cleaner are applied on
+    every rule values, you can not use different splitters or cleaners in a same rule.
+
+
+.. _serializer_item_separator_splitter:
+
+Splitter
+********
 
 .. _serializer_item_separator_whitespace:
 
 White spaces
-************
+------------
 
 Default behavior is to use a simple white space separator such as: ::
 
@@ -41,7 +49,7 @@ Since it is default behavior, you don't need to declare anything to enable this 
 but if you want to explicitely declare it you just have to add variable ``--splitter``
 with value ``"white-space"``: ::
 
-    .styleguide-reference-dummy{
+    .styleguide-reference-dummy {
         --structure: "list";
         --splitter: "white-space";
         --items: "foo bar";
@@ -49,11 +57,10 @@ with value ``"white-space"``: ::
 
 This is the easiest and more human readable way to define value items.
 
-
 .. _serializer_item_separator_list:
 
 Object list
-***********
+-----------
 
 The white space separator may not fit to every cases particularly when you have value
 items that contains spaces.
@@ -87,14 +94,14 @@ usage depends from enabled compiler support.
 .. _serializer_item_separator_list_libsass:
 
 Libsass behavior
-----------------
+................
 
 This compiler allows to write basic JSON syntax since it does not enforce string
 quotes. Your object list will have to be written in a correct JSON syntax.
 
 In a reference source example: ::
 
-    .styleguide-reference-dummy{
+    .styleguide-reference-dummy {
         --structure: "list";
         --splitter: "object-list";
         --items: '["foo", "bar", 42, null, true, "ping pong"]';
@@ -129,7 +136,7 @@ Reference content will be parsed to a Python list: ::
 .. _serializer_item_separator_list_dartsass:
 
 Dart Sass behavior
-------------------
+..................
 
 This compiler does not allow to write valid JSON due to enforcing double quotes on
 Sass strings that prevent us to write JSON strings.
@@ -139,7 +146,7 @@ single or double quotes for a Python string.
 
 In a reference source example: ::
 
-    .styleguide-reference-dummy{
+    .styleguide-reference-dummy {
         --structure: "list";
         --splitter: "object-list";
         --items: "['foo', 'bar', 42, None, True, 'ping pong']";
@@ -168,3 +175,101 @@ Reference content will be parsed to a Python list: ::
 .. Hint::
     Remember that in Python the boolean values are ``True`` or ``False`` and null value
     is ``None``.
+
+Cleaner
+*******
+
+There is actually only a single effective cleaner named ``whitespaces`` but it has
+different behavior depending the enabled splitter.
+
+For White spaces splitter
+-------------------------
+
+Sometime your values may have many whitespaces, like this: ::
+
+    .styleguide-reference-dummy {
+        --structure: "list";
+        --splitter: "white-space";
+        --items: " foo   bar ";
+    }
+
+That would result to: ::
+
+    {
+        "dummy": [
+            "",
+            "foo",
+            "",
+            "bar",
+            "",
+        ]
+    }
+
+This is because *White spaces* splitter splits on a single whitespace, considering
+every other whitespaces as meaningful.
+
+You may however consider them as artefacts, you can easily remove them using cleaner: ::
+
+    .styleguide-reference-dummy {
+        --structure: "list";
+        --splitter: "white-space";
+        --cleaner: "whitespaces";
+        --items: " foo   bar ";
+    }
+
+That would result to: ::
+
+    {
+        "dummy": [
+            "foo",
+            "bar",
+        ]
+    }
+
+For Object list splitter
+------------------------
+
+Sometime your values may include leading or ending whitespaces, like this: ::
+
+    .styleguide-reference-dummy {
+        --structure: "list";
+        --splitter: "object-list";
+        --items: "[' foo', 'bar ', ' ping pong ']";
+    }
+
+That would result to: ::
+
+    {
+        "dummy": [
+            " foo",
+            "bar ",
+            " ping pong "
+        ]
+    }
+
+You may consider leading or ending whitespace as artefacts, you can easily remove them
+using cleaner: ::
+
+    .styleguide-reference-dummy {
+        --structure: "list";
+        --splitter: "object-list";
+        --cleaner: "whitespaces";
+        --items: "[' foo', 'bar ', ' ping pong ']";
+    }
+
+That would result to: ::
+
+    {
+        "dummy": [
+            "foo",
+            "bar",
+            "ping pong"
+        ]
+    }
+
+.. Note::
+    * Only leading and ending whitespaces are removed, whitespace between word are
+      keeped;
+    * Whitespace between item (before or after the coma) are never meaningful, cleaner
+      has no effect on them because they are initially ignored from parsed;
+    * Cleaner is only effective on string type;

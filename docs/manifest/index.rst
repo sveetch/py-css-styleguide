@@ -8,10 +8,11 @@
 Manifest
 ========
 
-A manifest is a valid CSS3 stylesheet composed of rules.
+A manifest is a valid CSS3 stylesheet composed of reference rules.
 
-Even though it is a valid CSS3 stylesheet the purpose of a manifest is not to be
-published on frontend, only to be parsed from manifest serializer.
+.. Note::
+    Even though it is a valid CSS3 stylesheet the purpose of a manifest is not to be
+    published on frontend, only to be parsed from manifest serializer.
 
 .. _manifest_rule_format:
 

@@ -1,3 +1,5 @@
+.. _core_contrib_django:
+
 Django mixin and view
 =====================
 

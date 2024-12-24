@@ -4,28 +4,50 @@
 Sass mixin library
 ==================
 
-This is the included Sass mixin library you should use to build CSS manifest from Sass.
-Copy the following source into your Sass project and import it, we recommend you to
-name it ``_styleguide_helpers.scss``.
+PyCssStyleguide package is shipped with some Mixin libraries to help writing a CSS
+manifest from Sass sources.
 
-Once imported you will be able to write manifest using your Sass variables, remember
-to define compiler behavior support in your Sass settings: ::
+A Mixin library provide some Sass functions to ease converting some variables to values
+for the manifest rules structures.
 
-    $pycssstyleguide-compiler-support: "libsass";
+We currently support two Sass compilers:
 
-Or: ::
+* Libsass is the legacy compiler that was used from tools like ``node-sass`` or
+  ``Boussole``. This compiler is now deprecated and many modern CSS framework don't
+  support them anymore;
+* Dartsass is the successor of Libsass that implements every new Sass features;
 
-    $pycssstyleguide-compiler-support: "dartsass";
+.. Note::
+    Previously we managed an unique mixin library for both compilers but now Dartsass
+    has implemented some new feature and behavior changes that made it too difficult
+    to manage compatilibity.
 
-Depending you are using a Libsass or Dart Sass compiler. This variable have to be set
-after the library import.
+    So there is now a distinct mixin library for each compiler. If you were using
+    PyCssStyleguide before version 1.2.0, with these new mixin libraries you don't
+    need anymore to define variable ``$pycssstyleguide-compiler-support`` since it is
+    already included.
 
-.. _sassmixins_source:
+You may find the mixin library files from the Python package: ::
 
-_styleguide_helpers.scss
-************************
+    from py_css_styleguide import COMPILER_DARTSASS_HELPER
+    from py_css_styleguide import COMPILER_LIBSASS_HELPER
 
-.. literalinclude:: ../py_css_styleguide/scss/_styleguide_helpers.scss
+These variables are ``pathlib.Path`` objects that point to the absolute file path.
+Choose the one according to your Sass compiler.
 
-Usage of these mixins depends of your Sass settings, see See :ref:`usage_samples` for
-some usages with this Sass library.
+Or copy one of the following code in your Sass sources and name it
+``_styleguide_helpers.scss``.
+
+.. _libsass_mixins_source:
+
+For Libsass compiler
+********************
+
+.. literalinclude:: ../py_css_styleguide/scss/libsass/_styleguide_helpers.scss
+
+.. _dartsass_mixins_source:
+
+For Dartsass compiler
+*********************
+
+.. literalinclude:: ../py_css_styleguide/scss/dartsass/_styleguide_helpers.scss

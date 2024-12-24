@@ -8,10 +8,10 @@ Contents
 .. toctree::
    :maxdepth: 3
 
-   install.rst
    overview.rst
-   manifest/index.rst
+   install.rst
    usage/index.rst
+   manifest/index.rst
    sass_library.rst
    cli.rst
    api/index.rst

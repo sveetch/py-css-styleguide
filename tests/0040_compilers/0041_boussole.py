@@ -17,7 +17,7 @@ from py_css_styleguide.model import Manifest
 @freeze_time("2012-10-15 10:00:00")
 @pytest.mark.parametrize(
     "manifest_name",
-    ["sample_libsass", "sample_dartsass", "sample_excludes", "sample_names"],
+    ["sample_libsass", "sample_excludes", "sample_names"],
 )
 def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     """
@@ -27,10 +27,13 @@ def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
     * Manifest is correctly serialized to expected datas;
     * Builded CSS is the same than stored one in data fixtures;
 
-    .. NOTE::
+    .. TODO:
+        The Dartsass version "sample_dartsass" is not tested anymore because Libsass
+        used by Boussole is not able to manage "@use" rule to import builtin modules
+        from Dartsass.
 
-        Boussole is libsass only, however it still be able to properly compile dartsass
-        behaviors for now so we still use Boussole for everything.
+        Package development would need to install a Dart sass compiler that we could
+        execute to compile the Dart sass version.
     """
     manifest_css = "{}.css".format(manifest_name)
     manifest_json = (

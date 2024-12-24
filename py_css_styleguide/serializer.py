@@ -43,6 +43,7 @@ class ManifestSerializer(object):
             from parsed source.
         _DEFAULT_SPLITTER (string): Default value splitter used for some
             structure kinds.
+        _DEFAULT_CLEANER (string): Default cleaner name.
         _DEFAULT_COMPILER_SUPPORT (string): Default Sass compiler name.
         _DEFAULT_EVALUATION_LIMIT (int): Default limit of string character length for
             evaluation. It has been set to 1000 characters which should be a
@@ -50,6 +51,7 @@ class ManifestSerializer(object):
     """
 
     _DEFAULT_SPLITTER = "white-space"
+    _DEFAULT_CLEANER = "none"
     _DEFAULT_COMPILER_SUPPORT = "libsass"
     _DEFAULT_EVALUATION_LIMIT = 1000
 
@@ -74,75 +76,6 @@ class ManifestSerializer(object):
             string: CSS selector name.
         """
         return "-".join((RULE_REFERENCE, name))
-
-    def value_splitter(self, name, prop, value, mode):
-        """
-        Split a string into a list items.
-
-        Behavior depend on argument ``mode``, either a simple split on white spaces or
-        an evaluation for a list syntax.
-
-        Arguments:
-            name (string): Reference name used when raising possible
-                error.
-            prop (string): Property name used when raising possible error.
-            value (string): Property value to split.
-            mode (string): Splitter mode. Default should come from
-                ``ManifestSerializer._DEFAULT_SPLITTER``.
-
-                Available splitter are:
-
-                * ``white-space``: Simply split a string on white spaces;
-                * ``object-list``: Assume the string is a list object to parse;
-                * ``json-list``: Old name for object-list, deprecated;
-
-        Returns:
-            list: List of values parsed from given original JSON list.
-        """
-        items = []
-        # NOTE: Maybe we should emits a StyleguideUserWarning if "compiler_support" has
-        # not been set, but not exclusively from this method, it is something to put up
-        # level
-        compiler_support = self._metas.get("compiler_support", self.compiler_support)
-
-        if mode == "object-list" or mode == "json-list":
-            if mode == "json-list":
-                message = (
-                    "Reference '{ref}' use deprecated '--splitter: \"json-list\";', "
-                    "change it to '--splitter: \"object-list\";' instead."
-                )
-                warn(
-                    message.format(ref=self.get_ref_varname(name)),
-                    StyleguideUserWarning,
-                )
-
-            if compiler_support == "dartsass":
-                try:
-                    items = ast.literal_eval(value[: self.evaluation_limit])
-                except SyntaxError as e:
-                    msg = (
-                        "Reference '{ref}' raised a syntax error when "
-                        "splitting values from '{prop}': {err}'"
-                    )
-                    raise SerializerError(
-                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
-                    )
-            else:
-                try:
-                    items = json.loads(value)
-                except json.JSONDecodeError as e:
-                    msg = (
-                        "Reference '{ref}' raised JSON decoder error when "
-                        "splitting values from '{prop}': {err}'"
-                    )
-                    raise SerializerError(
-                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
-                    )
-        else:
-            if len(value) > 0:
-                items = value.split(" ")
-
-        return items
 
     def limit_evaluation_string(self, name, value):
         """
@@ -179,191 +112,96 @@ class ManifestSerializer(object):
 
         return value[: self.evaluation_limit]
 
-    def serialize_to_complex(self, name, datas):
+    def value_splitter(self, name, prop, value, mode, cleaner=None):
         """
-        Serialize given datas to any object from assumed JSON string.
+        Split a string into a list items.
+
+        Behavior depend on argument ``mode``, either a simple split on white spaces or
+        an evaluation for a list syntax.
 
         Arguments:
-            name (string): Name only used inside possible exception message.
-            datas (dict): Datas to serialize.
+            name (string): Reference name used when raising possible
+                error.
+            prop (string): Property name used when raising possible error.
+            value (string): Property value to split.
+            mode (string): Splitter mode. Default should come from
+                ``ManifestSerializer._DEFAULT_SPLITTER``.
+
+                Available splitter are:
+
+                * ``white-space``: Simply split a string on white spaces;
+                * ``object-list``: Assume the string is a list object to parse;
+                * ``json-list``: Old name for object-list, deprecated;
+            cleaner (string):
 
         Returns:
-            object: Object depending from content.
+            list: List of values parsed from given original JSON list.
         """
-        data_object = datas.get("object", None)
+        items = []
+        cleaner = cleaner or self._DEFAULT_CLEANER
+        # NOTE: Maybe we should emits a StyleguideUserWarning if "compiler_support" has
+        # not been set, but not exclusively from this method, it is something to put up
+        # level
         compiler_support = self._metas.get("compiler_support", self.compiler_support)
 
-        if data_object is None:
-            msg = "JSON reference '{refname}' lacks of required 'object' variable"
-            raise SerializerError(msg.format(refname=self.get_ref_varname(name)))
-
-        if compiler_support == "dartsass":
-            try:
-                content = ast.literal_eval(data_object[: self.evaluation_limit])
-            except SyntaxError as e:
-                msg = (
-                    "Reference '{ref}' raised a syntax error when "
-                    "parsing values '{values}': {err}'"
+        # Split items using evaluation (JSON or Python depending compiler)
+        if mode == "object-list" or mode == "json-list":
+            #  Until deprecated mode name is removed, warn about its usage
+            if mode == "json-list":
+                message = (
+                    "Reference '{ref}' use deprecated '--splitter: \"json-list\";', "
+                    "change it to '--splitter: \"object-list\";' instead."
                 )
-                raise SerializerError(
-                    msg.format(
-                        ref=self.get_ref_varname(name), values=data_object, err=e
-                    )
+                warn(
+                    message.format(ref=self.get_ref_varname(name)),
+                    StyleguideUserWarning,
                 )
-            else:
-                return content
-        else:
-            try:
-                content = json.loads(data_object, object_pairs_hook=OrderedDict)
-            except json.JSONDecodeError as e:
-                msg = "JSON reference '{refname}' raised error from JSON decoder: {err}"
-                raise SerializerError(
-                    msg.format(refname=self.get_ref_varname(name), err=e)
-                )
-            else:
-                return content
 
-    def serialize_to_json(self, name, datas):
-        """
-        Shortcut around ``ManifestSerializer.serialize_to_complex()`` to maintain
-        support for deprecated structure name ``json`` and emit a deprecation warning.
-
-        Arguments:
-            name (string): Name only used inside possible exception message.
-            datas (dict): Datas to serialize.
-
-        Returns:
-            object: Object depending from content.
-        """
-        message = (
-            "Reference '{ref}' use deprecated '--structure: \"json\";', change it to "
-            "'--structure: \"object-complex\";' instead."
-        )
-        warn(message.format(ref=self.get_ref_varname(name)), StyleguideUserWarning)
-        return self.serialize_to_complex(name, datas)
-
-    def serialize_to_nested(self, name, datas):
-        """
-        Serialize given datas to a nested structure where each key create an
-        item and each other variable is stored as a subitem with corresponding
-        value (according to key index position).
-
-        Arguments:
-            name (string): Name only used inside possible exception message.
-            datas (dict): Datas to serialize.
-
-        Returns:
-            dict: Nested dictionnary of serialized reference datas.
-        """
-        keys = datas.get("keys", None)
-        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
-
-        if not keys:
-            msg = (
-                "Nested reference '{}' lacks of required 'keys' variable " "or is empty"
-            )
-            raise SerializerError(msg.format(name))
-        else:
-            keys = self.value_splitter(name, "keys", keys, mode=splitter)
-
-        # Initialize context dict with reference keys
-        context = OrderedDict()
-        for k in keys:
-            context[k] = OrderedDict()
-
-        # Tidy each variable value to its respective item
-        for k, v in datas.items():
-            # Ignore reserved internal keywords
-            if k not in ("keys", "structure", "splitter"):
-                values = self.value_splitter(name, "values", v, mode=splitter)
-
-                if len(values) != len(keys):
+            # Evaluate string as Python for Dart compiler
+            if compiler_support == "dartsass":
+                try:
+                    items = ast.literal_eval(value[: self.evaluation_limit])
+                except SyntaxError as e:
                     msg = (
-                        "Nested reference '{}' has different length for "
-                        "values of '{}' and 'keys'"
+                        "Reference '{ref}' raised a syntax error when "
+                        "splitting values from '{prop}': {err}'"
                     )
-                    raise SerializerError(msg.format(name, k))
+                    raise SerializerError(
+                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
+                    )
+            # Evaluate string as JSON for Libsass compiler
+            else:
+                try:
+                    items = json.loads(value)
+                except json.JSONDecodeError as e:
+                    msg = (
+                        "Reference '{ref}' raised JSON decoder error when "
+                        "splitting values from '{prop}': {err}'"
+                    )
+                    raise SerializerError(
+                        msg.format(ref=self.get_ref_varname(name), prop=prop, err=e)
+                    )
 
-                # Put each value to its respective key using position index.
-                for i, item in enumerate(values):
-                    ref = keys[i]
-                    context[ref][k] = item
+            # Clean leading and ending whitespaces
+            if cleaner == "whitespaces":
+                cleaned = []
+                for v in items:
+                    if isinstance(v, str):
+                        cleaned.append(v.strip())
+                    else:
+                        cleaned.append(v)
 
-        return context
+                items = cleaned
 
-    def serialize_to_flat(self, name, datas):
-        """
-        Serialize given datas to a flat structure ``KEY:VALUE`` where ``KEY``
-        comes from ``keys`` variable and ``VALUE`` comes from ``values``
-        variable.
-
-        This means both ``keys`` and ``values`` are required variable to be
-        correctly filled (each one is a string of item separated with an empty
-        space). Both resulting list must be the same length.
-
-        Arguments:
-            name (string): Name only used inside possible exception message.
-            datas (dict): Datas to serialize.
-
-        Returns:
-            dict: Flat dictionnay of serialized reference datas.
-        """
-        keys = datas.get("keys", None)
-        values = datas.get("values", None)
-        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
-
-        if not keys:
-            msg = "Flat reference '{}' lacks of required 'keys' variable or is empty"
-            raise SerializerError(msg.format(name))
+        # Default splitter on whitespaces
         else:
-            keys = self.value_splitter(name, "keys", keys, mode=splitter)
-
-        if not values:
-            msg = (
-                "Flat reference '{}' lacks of required 'values' variable or is empty"
-            )
-            raise SerializerError(msg.format(name))
-        else:
-            values = self.value_splitter(name, "values", values, mode=splitter)
-
-        if len(values) != len(keys):
-            msg = (
-                "Flat reference '{name}' has different lengths for 'keys' ({klength}) "
-                "and 'values' ({vlength}) variables"
-            )
-            raise SerializerError(msg.format(
-                name=name,
-                klength=len(keys),
-                vlength=len(values),
-            ))
-
-        return OrderedDict(zip(keys, values))
-
-    def serialize_to_list(self, name, datas):
-        """
-        Serialize given datas to a list structure.
-
-        List structure is very simple and only require a variable ``--items``
-        which is a string of values separated with an empty space. Every other
-        properties are ignored.
-
-        Arguments:
-            name (string): Name only used inside possible exception message.
-            datas (dict): Datas to serialize.
-
-        Returns:
-            list: List of serialized reference datas.
-        """
-        items = datas.get("items", None)
-        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
-
-        if items is None:
-            msg = (
-                "List reference '{}' lacks of required 'items' variable " "or is empty"
-            )
-            raise SerializerError(msg.format(name))
-        else:
-            items = self.value_splitter(name, "items", items, mode=splitter)
+            if len(value) > 0:
+                # Ignore multiple whitespaces
+                if cleaner == "whitespaces":
+                    items = value.split()
+                # Keep every whitespaces
+                else:
+                    items = value.split(" ")
 
         return items
 
@@ -431,6 +269,231 @@ class ManifestSerializer(object):
                 raise SerializerError(msg.format(name, value))
 
         return value
+
+    def serialize_to_flat(self, name, datas):
+        """
+        Serialize given datas to a flat structure ``KEY:VALUE`` where ``KEY``
+        comes from ``keys`` variable and ``VALUE`` comes from ``values``
+        variable.
+
+        This means both ``keys`` and ``values`` are required variable to be
+        correctly filled (each one is a string of item separated with an empty
+        space). Both resulting list must be the same length.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            dict: Flat dictionnay of serialized reference datas.
+        """
+        keys = datas.get("keys", None)
+        values = datas.get("values", None)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
+        cleaner = datas.get("cleaner", self._DEFAULT_CLEANER)
+
+        if not keys:
+            msg = "Flat reference '{}' lacks of required 'keys' variable or is empty"
+            raise SerializerError(msg.format(name))
+        else:
+            keys = self.value_splitter(
+                name,
+                "keys",
+                keys,
+                mode=splitter,
+                cleaner=cleaner
+            )
+
+        if not values:
+            msg = (
+                "Flat reference '{}' lacks of required 'values' variable or is empty"
+            )
+            raise SerializerError(msg.format(name))
+        else:
+            values = self.value_splitter(
+                name,
+                "values",
+                values,
+                mode=splitter,
+                cleaner=cleaner
+            )
+
+        if len(values) != len(keys):
+            msg = (
+                "Flat reference '{name}' has different lengths for 'keys' ({klength}) "
+                "and 'values' ({vlength}) variables"
+            )
+            raise SerializerError(msg.format(
+                name=name,
+                klength=len(keys),
+                vlength=len(values),
+            ))
+
+        return OrderedDict(zip(keys, values))
+
+    def serialize_to_list(self, name, datas):
+        """
+        Serialize given datas to a list structure.
+
+        List structure is very simple and only require a variable ``--items``
+        which is a string of values separated with an empty space. Every other
+        properties are ignored.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            list: List of serialized reference datas.
+        """
+        items = datas.get("items", None)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
+        cleaner = datas.get("cleaner", self._DEFAULT_CLEANER)
+
+        if items is None:
+            msg = (
+                "List reference '{}' lacks of required 'items' variable or is empty"
+            )
+            raise SerializerError(msg.format(name))
+        else:
+            items = self.value_splitter(
+                name, "items",
+                items,
+                mode=splitter,
+                cleaner=cleaner
+            )
+
+        return items
+
+    def serialize_to_nested(self, name, datas):
+        """
+        Serialize given datas to a nested structure where each key create an
+        item and each other variable is stored as a subitem with corresponding
+        value (according to key index position).
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            dict: Nested dictionnary of serialized reference datas.
+        """
+        keys = datas.get("keys", None)
+        splitter = datas.get("splitter", self._DEFAULT_SPLITTER)
+        cleaner = datas.get("cleaner", self._DEFAULT_CLEANER)
+
+        if not keys:
+            msg = (
+                "Nested reference '{}' lacks of required 'keys' variable or is empty"
+            )
+            raise SerializerError(msg.format(name))
+        else:
+            keys = self.value_splitter(
+                name,
+                "keys",
+                keys,
+                mode=splitter,
+                cleaner=cleaner
+            )
+
+        # Initialize context dict with reference keys
+        context = OrderedDict()
+        for k in keys:
+            context[k] = OrderedDict()
+
+        # Tidy each variable value to its respective item
+        for k, v in datas.items():
+            # Ignore reserved internal keywords
+            if k not in ("keys", "structure", "splitter", "cleaner"):
+                values = self.value_splitter(
+                    name,
+                    "values",
+                    v,
+                    mode=splitter,
+                    cleaner=cleaner
+                )
+
+                if len(values) != len(keys):
+                    msg = (
+                        "Nested reference '{name}' has different length for values "
+                        "({vlength}) of '{prop}' and 'keys' ({klength})"
+                    )
+                    raise SerializerError(msg.format(
+                        name=name,
+                        prop=k,
+                        klength=len(keys),
+                        vlength=len(values),
+                    ))
+
+                # Put each value to its respective key using position index.
+                for i, item in enumerate(values):
+                    ref = keys[i]
+                    context[ref][k] = item
+
+        return context
+
+    def serialize_to_complex(self, name, datas):
+        """
+        Serialize given datas to any object from assumed JSON string.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            object: Object depending from content.
+        """
+        data_object = datas.get("object", None)
+        compiler_support = self._metas.get("compiler_support", self.compiler_support)
+
+        if data_object is None:
+            msg = "JSON reference '{refname}' lacks of required 'object' variable"
+            raise SerializerError(msg.format(refname=self.get_ref_varname(name)))
+
+        if compiler_support == "dartsass":
+            try:
+                content = ast.literal_eval(data_object[: self.evaluation_limit])
+            except SyntaxError as e:
+                msg = (
+                    "Reference '{ref}' raised a syntax error when "
+                    "parsing values '{values}': {err}'"
+                )
+                raise SerializerError(
+                    msg.format(
+                        ref=self.get_ref_varname(name), values=data_object, err=e
+                    )
+                )
+            else:
+                return content
+        else:
+            try:
+                content = json.loads(data_object, object_pairs_hook=OrderedDict)
+            except json.JSONDecodeError as e:
+                msg = "JSON reference '{refname}' raised error from JSON decoder: {err}"
+                raise SerializerError(
+                    msg.format(refname=self.get_ref_varname(name), err=e)
+                )
+            else:
+                return content
+
+    def serialize_to_json(self, name, datas):
+        """
+        Shortcut around ``ManifestSerializer.serialize_to_complex()`` to maintain
+        support for deprecated structure name ``json`` and emit a deprecation warning.
+
+        Arguments:
+            name (string): Name only used inside possible exception message.
+            datas (dict): Datas to serialize.
+
+        Returns:
+            object: Object depending from content.
+        """
+        message = (
+            "Reference '{ref}' use deprecated '--structure: \"json\";', change it to "
+            "'--structure: \"object-complex\";' instead."
+        )
+        warn(message.format(ref=self.get_ref_varname(name)), StyleguideUserWarning)
+        return self.serialize_to_complex(name, datas)
 
     def get_meta_compiler(self, datas):
         """

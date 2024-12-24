@@ -4,7 +4,8 @@
         "references": [
             "palette",
             "text_color",
-            "spaces"
+            "spaces",
+            "columns"
         ],
         "created": "2012-10-15T10:00:00"
     },
@@ -28,5 +29,10 @@
         "normal",
         "large",
         "wide"
+    ],
+    "columns": [
+        "w30",
+        "w50",
+        "w70"
     ]
 }

@@ -55,12 +55,14 @@ def test_manifest_load_fileobject(tests_settings):
     assert manifest._path == str(source_filepath)
 
     assert sorted(manifest.metas.get("references")) == sorted(
-        ["palette", "text_color", "spaces"]
+        ["palette", "text_color", "spaces", "columns"]
     )
 
     assert manifest.palette == {"white": "#ffffff", "black": "#000000"}
 
     assert manifest.spaces == ["tiny", "short", "normal", "large", "wide"]
+
+    assert manifest.columns == ["w30", "w50", "w70"]
 
     assert manifest.text_color == {
         "black": {"selectors": ".bg-black", "values": "#000000"},

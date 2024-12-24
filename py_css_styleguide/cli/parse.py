@@ -37,7 +37,7 @@ def parse_command(context, source, destination):
         styleguide parse SOURCE --destination DESTINATION
 
     Optional ``--destination`` is a file path destination where to write serialized
-    JSON manifest.If not given serialized JSON will be outputed to standard output.
+    JSON manifest. If not given serialized JSON will be outputed to standard output.
     """
     logger = logging.getLogger("py-css-styleguide")
 

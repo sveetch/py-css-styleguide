@@ -109,7 +109,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
             },
             "dump",
             "Unable to find CSS manifest from: nope.css",
-            ["palette", "text_color", "spaces"],
+            ["palette", "text_color", "spaces", "columns"],
             True,
         ),
         # CSS failing then using existing JSON dump
@@ -122,7 +122,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
             },
             "dump",
             "Unable to find CSS manifest from: nope.css",
-            ["palette", "text_color", "spaces"],
+            ["palette", "text_color", "spaces", "columns"],
             None,
         ),
         # CSS succeed with relative path to static dirs
@@ -148,7 +148,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
             },
             "live",
             None,
-            ["palette", "text_color", "spaces"],
+            ["palette", "text_color", "spaces", "columns"],
             True,
         ),
         # No development mode, directly try to read JSON
@@ -161,7 +161,7 @@ def test_resolve_css_filepath_unexisting_absolute_path(tests_settings):
             },
             "dump",
             None,
-            ["palette", "text_color", "spaces"],
+            ["palette", "text_color", "spaces", "columns"],
             True,
         ),
         # No development mode, both CSS and JSON failing
