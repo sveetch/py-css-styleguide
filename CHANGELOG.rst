@@ -3,6 +3,14 @@
 Changelog
 =========
 
+Development
+***********
+
+* Added support for Python 3.13;
+* Django contributions are now tested from 3.2 to 6.0;
+* Boussole compiler has been removed from development requirements and tests;
+
+
 Version 1.2.0 - 2024/12/24
 **************************
 

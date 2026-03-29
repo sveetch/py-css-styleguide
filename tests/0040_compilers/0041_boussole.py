@@ -7,13 +7,10 @@ import pytest
 
 from freezegun import freeze_time
 
-from boussole.project import ProjectBase
-from boussole.finder import ScssFinder
-from boussole.compiler import SassCompileHelper
-
 from py_css_styleguide.model import Manifest
 
 
+@pytest.mark.skip("Boussole is deprecated")
 @freeze_time("2012-10-15 10:00:00")
 @pytest.mark.parametrize(
     "manifest_name",
@@ -35,6 +32,10 @@ def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
         Package development would need to install a Dart sass compiler that we could
         execute to compile the Dart sass version.
     """
+    from boussole.project import ProjectBase
+    from boussole.finder import ScssFinder
+    from boussole.compiler import SassCompileHelper
+
     manifest_css = "{}.css".format(manifest_name)
     manifest_json = (
         tests_settings.fixtures_path / "json" / "{}.json".format(manifest_name)
