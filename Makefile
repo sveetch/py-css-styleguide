@@ -1,6 +1,8 @@
 PYTHON_INTERPRETER=python3
 VENV_PATH=.venv
 
+FRONTEND_DIR=frontend
+
 PYTHON_BIN=$(VENV_PATH)/bin/python
 PIP_BIN=$(VENV_PATH)/bin/pip
 FLAKE_BIN=$(VENV_PATH)/bin/flake8
@@ -28,6 +30,7 @@ help:
 	@echo
 	@echo "  clean                      -- to clean EVERYTHING (Warning)"
 	@echo "  clean-doc                  -- to remove documentation builds"
+	@echo "  clean-frontend-install     -- to clean frontend installation"
 	@echo "  clean-install              -- to clean Python side installation"
 	@echo "  clean-pycache              -- to recursively remove all Python cache files"
 	@echo
@@ -42,6 +45,19 @@ help:
 	@echo
 	@echo "  freeze-dependencies        -- to write installed dependencies versions in frozen.txt"
 	@echo "  install                    -- to install this project with virtualenv and Pip"
+	@echo "  install-frontend           -- to install frontend (used for tests)"
+	@echo
+	@echo "  Frontend commands"
+	@echo "  ================="
+	@echo
+	@echo "  css                        -- to build uncompressed CSS from Sass sources"
+	@echo "  watch-css                  -- to watch for Sass changes to rebuild CSS"
+	@echo "  css-prod                   -- to build compressed and minified CSS from Sass sources"
+	@echo "  js                         -- to build uncompressed Javascript from sources"
+	@echo "  watch-js                   -- to watch for Javascript sources changes to rebuild assets"
+	@echo "  js-prod                    -- to build minified JS assets"
+	@echo "  frontend                   -- to build uncompressed frontend assets (CSS, JS, etc..)"
+	@echo "  frontend-prod              -- to build minified frontend assets (CSS, JS, etc..)"
 	@echo
 	@echo "  Quality"
 	@echo "  ======="
@@ -66,6 +82,16 @@ clean-pycache:
 	find . -type d -name "__pycache__"|xargs rm -Rf
 	find . -name "*\.pyc"|xargs rm -f
 .PHONY: clean-pycache
+
+clean-frontend-install:
+	@echo ""
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Cleaning frontend install <---$(FORMATRESET)\n"
+	@echo ""
+	rm -Rf $(FRONTEND_DIR)/node_modules
+.PHONY: clean-frontend-install
+
+clean: clean-var clean-doc clean-backend-install clean-frontend-install clean-frontend-build clean-pycache
+.PHONY: clean
 
 clean-install:
 	@echo ""
@@ -92,12 +118,40 @@ venv:
 	virtualenv -p $(PYTHON_INTERPRETER) $(VENV_PATH)
 .PHONY: venv
 
+install-frontend:
+	@echo ""
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Installing frontend requirements <---$(FORMATRESET)\n"
+	@echo ""
+	cd $(FRONTEND_DIR) && npm install
+.PHONY: install-frontend
+
 install: venv
 	@echo ""
 	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Install everything for development <---$(FORMATRESET)\n"
 	@echo ""
 	$(PIP_BIN) install -e .[dev,django,quality,doc,doc-live,release]
 .PHONY: install
+
+css:
+	@echo ""
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Building CSS for development environment <---$(FORMATRESET)\n"
+	@echo ""
+	cd $(FRONTEND_DIR) && npm run-script css
+.PHONY: css
+
+watch-sass:
+	@echo ""
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Watching Sass sources for development environment <---$(FORMATRESET)\n"
+	@echo ""
+	cd $(FRONTEND_DIR) && npm run-script watch-css
+.PHONY: watch-sass
+
+css-prod:
+	@echo ""
+	@printf "$(FORMATBLUE)$(FORMATBOLD)---> Building CSS for production environment <---$(FORMATRESET)\n"
+	@echo ""
+	cd $(FRONTEND_DIR) && npm run-script css-prod
+.PHONY: css-prod
 
 docs:
 	@echo ""

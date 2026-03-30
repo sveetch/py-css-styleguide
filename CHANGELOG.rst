@@ -7,8 +7,13 @@ Development
 ***********
 
 * Added support for Python 3.13;
+* Removed support for Python<3.10;
 * Django contributions are now tested from 3.2 to 6.0;
-* Boussole compiler has been removed from development requirements and tests;
+* Boussole compiler has been removed from development requirements and tests. This
+  means that the Libsass stylesheet is still in package but will probably not
+  maintained anymore;
+* Currently the (Dart) Sass library is not tested yet from Pytest suite, we just added
+  compilation into quality task so we can see if something changed or fail;
 
 
 Version 1.2.0 - 2024/12/24

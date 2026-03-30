@@ -10,13 +10,13 @@ from freezegun import freeze_time
 from py_css_styleguide.model import Manifest
 
 
-@pytest.mark.skip("Boussole is deprecated")
+@pytest.mark.skip("Libsass is deprecated")
 @freeze_time("2012-10-15 10:00:00")
 @pytest.mark.parametrize(
     "manifest_name",
     ["sample_libsass", "sample_excludes", "sample_names"],
 )
-def test_boussole_compile_auto(tests_settings, tmp_path, manifest_name):
+def test_libsass_compile_auto(tests_settings, tmp_path, manifest_name):
     """
     Testing everything:
 

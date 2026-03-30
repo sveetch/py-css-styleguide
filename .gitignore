@@ -1,5 +1,6 @@
 # virtualenv
 .venv
+.python-version
 
 # Packaging
 build
@@ -9,6 +10,10 @@ dist
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+# Site media and built statics
+/frontend/package-lock.json
+/tests/data_fixtures/sass/css/*.map
 
 # Unit test / coverage reports
 htmlcov/
