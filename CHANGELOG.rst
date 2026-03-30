@@ -3,8 +3,8 @@
 Changelog
 =========
 
-Development
-***********
+Version 1.3.0 - 2026/03/30
+**************************
 
 * Added support for Python 3.13;
 * Removed support for Python<3.10;
@@ -12,8 +12,7 @@ Development
 * Boussole compiler has been removed from development requirements and tests. This
   means that the Libsass stylesheet is still in package but will probably not
   maintained anymore;
-* Currently the (Dart) Sass library is not tested yet from Pytest suite, we just added
-  compilation into quality task so we can see if something changed or fail;
+* Currently the (Dart) Sass library is not tested yet from Pytest suite;
 
 
 Version 1.2.0 - 2024/12/24
